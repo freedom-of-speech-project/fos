@@ -32,10 +32,9 @@
     grid-area: right;
     grid-row: 1;
     text-align: center;
-
 }
 
-
+/* TITLE */
 /* "Freedom of Speech" & "About" */
 .title {
 
@@ -63,7 +62,6 @@ p {
 
 /* LANDING PAGE SVGs
     --> speech bubble is relative, with child divs bubble text and gavin positioned absolute to follow the bubble
-    --> wig is separate & relative
     */
 
 /* speech bubble */
@@ -72,7 +70,8 @@ div.bubble {
     grid-area: content;
     grid-row: 3;
     position: relative;
-    margin-left: 15%;
+    margin:auto;
+    /* margin-left: 35%; */
 }
 
 /* bubble text */
@@ -108,27 +107,16 @@ div.bubble > div.gavin {
 }
 
 /* wig */
-div.wig{
+div.bubble > div.wig{
    /* layout */
-   grid-area: content;
-   grid-row: 3;
-   text-align: right;
-   margin-top: -2%;
-   margin-right: 20%;
-   /*
-    position: absolute;
-    width: 131.93px;
-    height: 111.51px;
-    left: 904px;
-    top: 289px; */
+   position: absolute;
+   left: 227px;
+   top: 170px;
 }
-
-
 
 /* ABOUT PAGE */
 
 /* about page text */
-
 .abstract, .team {
    /* layout */
    grid-area: content;
@@ -166,6 +154,7 @@ p {
     vertical-align: auto;
 }
 
+/* FOOTER */
 .footer{
     /* layout */
     grid-area: footer;
@@ -182,26 +171,53 @@ p {
     color: #0D3FD2;
  }
 
+
 /* GENERAL PURPOSE CSS */
 
-/* GENERAL BODY */
 body {
     background-color: white;
     font-size: 1em;
 }
 
+b{
+    font-weight: bolder;
+}
 /* remove underline from links except when active or hovered */
 /* TODO: specify this only for header links, since we will want visible links in text*/
 a:link {
     text-decoration: none;
+    color: rgb(148, 107, 71);
   }
 a:visited {
     text-decoration: none;
+    color: rgb(208, 150, 99);
+
   }
 a:hover {
     text-decoration: underline;
   }
 a:active {
     text-decoration: underline;
+  }
+
+.glow {
+    font-size: 80px;
+    color: #6096F4;
+    stroke: #011DC5;
+    stroke-width: 1px;;
+    text-align: center;
+    -webkit-animation: glow 1s ease-in-out infinite alternate;
+    -moz-animation: glow 1s ease-in-out infinite alternate;
+    animation: glow 1s ease-in-out infinite alternate;
+    cursor: pointer;
+  }
+  
+  @-webkit-keyframes glow {
+    from {
+      text-shadow: 0 0 10px #fff, 0 0 20px #011DC5, 0 0 30px #011DC5, 0 0 40px #011DC5;
+    }
+    to {
+      text-shadow: 0 0 20px #6096F4, 0 0 30px #6096F4, 0 0 40px #6096F4, 0 0 50px #6096F4;
+    }
   }
 /*# sourceMappingURL=index.de60a1d7.css.map */
