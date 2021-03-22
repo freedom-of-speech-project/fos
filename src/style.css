@@ -32,10 +32,9 @@
     grid-area: right;
     grid-row: 1;
     text-align: center;
-
 }
 
-
+/* TITLE */
 /* "Freedom of Speech" & "About" */
 .title {
 
@@ -115,20 +114,12 @@ div.wig{
    text-align: right;
    margin-top: -2%;
    margin-right: 20%;
-   /*
-    position: absolute;
-    width: 131.93px;
-    height: 111.51px;
-    left: 904px;
-    top: 289px; */
 }
-
 
 
 /* ABOUT PAGE */
 
 /* about page text */
-
 .abstract, .team {
    /* layout */
    grid-area: content;
@@ -166,6 +157,7 @@ p {
     vertical-align: auto;
 }
 
+/* FOOTER */
 .footer{
     /* layout */
     grid-area: footer;
@@ -182,9 +174,9 @@ p {
     color: #0D3FD2;
  }
 
+
 /* GENERAL PURPOSE CSS */
 
-/* GENERAL BODY */
 body {
     background-color: white;
     font-size: 1em;
