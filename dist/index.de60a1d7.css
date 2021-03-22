@@ -1,0 +1,207 @@
+/* HEADER LINKS & CSS GRID SETUP:
+    .wrapper contains <a> tags .left (*) and .right (about) */
+.wrapper {
+    /* layout */
+    display: grid;
+    gap: 40px;
+    row-gap: 20px;
+    grid-template-columns: 1fr 4fr 2fr; /* split the horizontal space into 7, with one fraction for "*" and two for "about" */
+    grid-template-areas:
+      "left center right"
+      "title title title"
+      "content content content"
+      "content content content"
+      "footer footer footer";
+    padding-top: 2%;
+
+    /* styling */
+    font-family: Caveat Brush;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 48px; /* this should probably be changed to em or something relative */
+    line-height: 40px;
+    color: #0D3FD2;
+  }
+
+.left{
+    grid-area: left;
+    grid-row: 1;
+    text-align: center;
+}
+.right{
+    grid-area: right;
+    grid-row: 1;
+    text-align: center;
+
+}
+
+
+/* "Freedom of Speech" & "About" */
+.title {
+
+    /* layout */
+    grid-area: title;
+    grid-row: 2;
+    /*margin: 1% 0 1% 0; /* decreased top margin */
+    
+    /* styling */
+    font-family: Fredericka the Great;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 60px;
+    line-height: 60px;
+    text-align: center;
+    letter-spacing: -0.3px;
+    
+    color: #000000;
+}
+
+p {
+    text-align: center;
+    vertical-align: auto;
+}
+
+/* LANDING PAGE SVGs
+    --> speech bubble is relative, with child divs bubble text and gavin positioned absolute to follow the bubble
+    --> wig is separate & relative
+    */
+
+/* speech bubble */
+div.bubble {
+    /* layout */
+    grid-area: content;
+    grid-row: 3;
+    position: relative;
+    margin-left: 15%;
+}
+
+/* bubble text */
+div.bubble > p.bubble{
+    /* layout: position is absolute, in relation to bounds of div.bubble svg */
+    position: absolute;
+    width: 153px;
+    height: 32px;
+    left: 50px; /* 50px from left of speech bubble, 30 px from top */
+    top: 30px; 
+
+    /* styling */
+    font-family: Caveat Brush;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 32px;
+    line-height: 32px;
+    /* identical to box height, or 100% */
+    text-align: center;
+
+    color: #000000;
+}
+
+/* gavin */
+div.bubble > div.gavin {
+    /* layout: position is absolute, in relation to bounds of div.bubble svg */
+    position: absolute;
+    width: 153px;
+    height: 32px;
+    left: 230px; /* 50px from left of speech bubble, 30 px from top */
+    top: 200px; 
+
+}
+
+/* wig */
+div.wig{
+   /* layout */
+   grid-area: content;
+   grid-row: 3;
+   text-align: right;
+   margin-top: -2%;
+   margin-right: 20%;
+   /*
+    position: absolute;
+    width: 131.93px;
+    height: 111.51px;
+    left: 904px;
+    top: 289px; */
+}
+
+
+
+/* ABOUT PAGE */
+
+/* about page text */
+
+.abstract, .team {
+   /* layout */
+   grid-area: content;
+   grid-row: 3;
+   margin: 0 15% 0 15%; /* add margin to left & right */
+
+    /* styling */
+    font-family: Noto Sans;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 24px;
+    text-align: left;
+    color: #000000;
+}
+
+.team{
+    /* layout -- grid row 4 instead of 3 */
+    grid-area: content;
+    grid-row: 4;
+ }
+
+/* "team" heading 2 */
+.h2#team {
+    font-family: Caveat Brush;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 32px;
+    line-height: 32px;
+    color: #000000;
+}
+
+p {
+    text-align: left;
+    vertical-align: auto;
+}
+
+.footer{
+    /* layout */
+    grid-area: footer;
+    grid-row: 5;
+    text-align: center;
+    margin: 5% 0 5% 0;
+
+    /* styling */ 
+    font-family: Caveat Brush;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 32px;
+    line-height: 32px;
+    color: #0D3FD2;
+ }
+
+/* GENERAL PURPOSE CSS */
+
+/* GENERAL BODY */
+body {
+    background-color: white;
+    font-size: 1em;
+}
+
+/* remove underline from links except when active or hovered */
+/* TODO: specify this only for header links, since we will want visible links in text*/
+a:link {
+    text-decoration: none;
+  }
+a:visited {
+    text-decoration: none;
+  }
+a:hover {
+    text-decoration: underline;
+  }
+a:active {
+    text-decoration: underline;
+  }
+/*# sourceMappingURL=index.de60a1d7.css.map */
