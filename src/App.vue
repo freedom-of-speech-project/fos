@@ -5,27 +5,34 @@
     <span></span>
     <img class="info" src="./assets/Info.svg" />
   </div>
-  <Intro />
-  <!-- <USMap /> -->
-  <!-- <HelloWorld msg="Welcome to Your Vue.js App" /> -->
+  <!-- <Intro /> -->
+  <Guided />
 </template>
 
 <script>
-// import HelloWorld from "./components/HelloWorld.vue";
-import Intro from "./pages/Intro.vue";
-// import USMap from "./components/USMap.vue"
-// import { defineComponent } from '@vue/composition-api'
+// import * as d3 from "d3"
+// import Intro from "./pages/Intro.vue";
+import Guided from "./pages/Guided.vue";
+
 
 export default {
   name: "App",
   components: {
-    Intro,
-    // USMap
+    // Intro,
+    Guided
   },
+  data(){
+    return{
+    guidedtext: "-> Guided Mode",
+    exploretext: "-> Explore Mode"
+    }
+  },
+
 };
 </script>
 
 <style>
+/*eslint-disable*/
 body {
   margin: 0px;
   padding: 0px;
