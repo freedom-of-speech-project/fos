@@ -14,20 +14,18 @@
 // import Intro from "./pages/Intro.vue";
 import Guided from "./pages/Guided.vue";
 
-
 export default {
   name: "App",
   components: {
     // Intro,
-    Guided
+    Guided,
   },
-  data(){
-    return{
-    guidedtext: "-> Guided Mode",
-    exploretext: "-> Explore Mode"
-    }
+  data() {
+    return {
+      guidedtext: "-> Guided Mode",
+      exploretext: "-> Explore Mode",
+    };
   },
-
 };
 </script>
 
@@ -36,6 +34,8 @@ export default {
 body {
   margin: 0px;
   padding: 0px;
+  overflow-x: hidden;
+  overflow-y: hidden;
 }
 
 #app {
