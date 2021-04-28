@@ -5,21 +5,26 @@
     <span></span>
     <img class="info" src="./assets/Info.svg" />
   </div>
-  <Intro />
+  <!--Intro /-->
+  <Explore />
+
   <!-- <USMap /> -->
   <!-- <HelloWorld msg="Welcome to Your Vue.js App" /> -->
 </template>
 
 <script>
 // import HelloWorld from "./components/HelloWorld.vue";
-import Intro from "./pages/Intro.vue";
+//import Intro from "./pages/Intro.vue";
+import Explore from "./pages/Explore.vue";
+
 // import USMap from "./components/USMap.vue"
 // import { defineComponent } from '@vue/composition-api'
 
 export default {
   name: "App",
   components: {
-    Intro,
+    //Intro,
+    Explore,
     // USMap
   },
 };
@@ -42,11 +47,13 @@ body {
 }
 .header {
   height: 8vh;
+  min-height: 40px;
   background-color: #0022d9;
   color: white;
   display: grid;
   grid-template-columns: 200px auto 40px;
   align-content: center;
+  /** drop shadow?? */
 }
 
 .title {
