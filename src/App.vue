@@ -7,6 +7,7 @@
   </div>
   <!--Intro /-->
   <Explore />
+  <!--Explore :data="loadData"/-->
 
   <!-- <USMap /> -->
   <!-- <HelloWorld msg="Welcome to Your Vue.js App" /> -->
@@ -16,6 +17,7 @@
 // import HelloWorld from "./components/HelloWorld.vue";
 //import Intro from "./pages/Intro.vue";
 import Explore from "./pages/Explore.vue";
+// import * as d3 from "d3";
 
 // import USMap from "./components/USMap.vue"
 // import { defineComponent } from '@vue/composition-api'
@@ -26,6 +28,21 @@ export default {
     //Intro,
     Explore,
     // USMap
+  },
+  data() {
+    return {
+      loadData: {},
+    };
+  },
+  mounted() {
+    console.log("App loaded");
+    // this.fetchData();
+  },
+  methods: {
+    // async fetchData() {
+    //   let data = await d3.csv("/merged-tm-10-by-20-3.csv", d3.autotype);
+    //   this.loadData = data;
+    // },
   },
 };
 </script>

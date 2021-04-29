@@ -116,8 +116,14 @@
 
     <div class="content-explore">
       <div class="card">
-        <img class="card" src="../assets/Iconography/card-tall.svg" />
-        <div class="card-content">{{ card(data) }}hi d3 goes here</div>
+        <!-- <img class="card" src="../assets/Iconography/utb.svg" /> -->
+        {{ card() }}
+        <!-- <div id="card-content">{{ card() }}</div> -->
+        <button type="button" class="ruling-btn" v-on:click="caseModal">
+          <img style="width: 75%" src="../assets/Iconography/ruling-btn.svg" />
+        </button>
+        <img class="topic-tag" src="../assets/Iconography/topic-tag.svg" />
+        <!-- should this topic tag be a button that re-arranges by topic? nice to have** -->
       </div>
     </div>
   </div>
@@ -130,17 +136,16 @@ export default defineComponent({
 });
 */
 import * as d3 from "d3";
+
 export default {
   name: "Explore",
+  props: ["caseData"],
+  //{data: Object,}
   data() {
-    const data = d3
-      .csv("/merged-tm-10-by-20-3.csv", d3.autotype)
-      .then((data) => {
-        console.log("data1", data);
-      });
-    console.log("data", data); // this doesn't work
     return {
-      data: data,
+      msg: "hi from Explore component",
+      title: "caseName",
+      cases: [],
     };
   },
   methods: {
@@ -150,11 +155,69 @@ export default {
     takeMeToExplore: function () {
       console.log("of course it did");
     },
-    card: function (data) {
+    card: function () {
       console.log("card method");
-      const title = data.caseName; // question: how do i pass data from above to here?
-      title;
+
+      this.svg = d3
+        .selectAll(".card")
+        .append("div")
+        .attr("id", "card-content")
+        .style("position", "absolute")
+        .style("top", "25%")
+        .style("left", " 12%")
+        .style("right", " 12%")
+        .style("margin-left", "auto")
+        .style("margin-right", " auto");
+
+      console.log("this svg", this.svg);
+
+      this.svg
+        .data(this.cases)
+        .join("text")
+        .text(function (d) {
+          return d.caseName;
+        });
+      console.log("this svg again", this.svg);
+
+      /*
+      this.svg = d3.selectAll("#card-content").append("svg");
+
+      this.svg
+        .data(this.cases)
+        .join("text")
+        .text(function (d) {
+          return d.caseName;
+        });
+        */
+
+      //.append("svg");
+      //.attr("class", "newCard");
+
+      // TODO: make this replicate all cards (one card for each case, filtered)
     },
+    caseModal: function () {
+      console.log("show me the case");
+    },
+  },
+  created() {
+    Promise.all([d3.csv("/merged-tm-10-by-20-3.csv", d3.autoType)]).then(
+      ([caseData]) => {
+        this.cases = caseData;
+        //console.log("cases: ", this.cases);
+      }
+    );
+  },
+  computed: {
+    nameData() {
+      const caseTitle = this.data;
+      //console.log("caseTitle", caseTitle);
+      return { caseTitle };
+    },
+
+    // return {
+    //   caseName: this.data[1].caseName,
+    // };
+    // },
   },
 };
 </script>
@@ -226,7 +289,7 @@ export default {
 .wrapper-explore {
   margin: 0;
   padding: 0;
-  top: 17vh; /** .header height + .header-explore height // IDEALLY we could add min-height: 70px so it matches the min heights but not sure how to do that rn*/
+  top: 30vh; /**17vh; /** .header height + .header-explore height // IDEALLY we could add min-height: 70px so it matches the min heights but not sure how to do that rn*/
   background-color: white;
   position: fixed;
   height: 100%;
@@ -351,23 +414,47 @@ input:checked + .slider:before {
 .content-explore {
   /* border: 1px solid pink; */
   /* background-color: #e6b996; */
-  background-color: white;
+  background-color: #e6b996;
 }
 
 div.card {
   margin: auto;
   margin-top: 5%;
   position: relative;
+  background-image: url("../assets/Iconography/utb.svg");
+  background-size: 100% 100%;
+  width: 85%;
+  height: 35%;
 }
 
-img.card {
-  width: 75%;
-}
-
-.card-content {
+/** styled in d3.append */
+/* #card-content {
   position: absolute;
-  top: 15%;
-  left: 50%;
-  margin: auto;
+  top: 25%;
+  left: 12%;
+  right: 12%;
+  margin-left: auto;
+  margin-right: auto;
+  /* font-size: 1.25em; */
+/* set min and max font sizes for re-sizing *
+} */
+
+.ruling-btn {
+  position: absolute;
+  bottom: 25%;
+  left: 12%;
+  right: 12%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+img.topic-tag {
+  position: absolute;
+  bottom: 15%;
+  width: 10%;
+  left: 12%;
+  right: 12%;
+  margin-left: auto;
+  margin-right: auto;
 }
 </style>
