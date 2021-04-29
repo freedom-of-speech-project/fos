@@ -135,8 +135,6 @@ export default defineComponent({
 });
 */
 import * as d3 from "d3";
-import background from "../assets/Iconography/utb.svg";
-//const background = require("../assets/Iconography/utb.svg");
 
 export default {
   name: "Explore",
@@ -146,7 +144,6 @@ export default {
     return {
       msg: "hi from Explore component",
       title: "caseName",
-      bg: background,
       cases: [],
     };
   },
@@ -169,14 +166,15 @@ export default {
           return d.caseName + "  (year)";
         })
         .attr("class", "card")
-        .style("margin", " auto")
+        .style("margin", "auto")
         .style("margin-top", "5%")
         .style("position", "relative")
-        .style("background-image", `"${background}"`)
-        .style("background-size", " 100% 100%")
-        .style("width", " 85%");
-
-      console.log("bg", `${background}`);
+        .style(
+          "background-image",
+          'url("https://raw.githubusercontent.com/freedom-of-speech-project/fos/vue-eva/src/assets/Iconography/utb.svg")'
+        )
+        .style("background-size", "cover")
+        .style("width", "85%");
 
       //.style("height", " 3.style(5%");
 
