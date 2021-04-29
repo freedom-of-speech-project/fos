@@ -36,14 +36,8 @@ export default {
   },
   mounted() {
     console.log("App loaded");
-    // this.fetchData();
   },
-  methods: {
-    // async fetchData() {
-    //   let data = await d3.csv("/merged-tm-10-by-20-3.csv", d3.autotype);
-    //   this.loadData = data;
-    // },
-  },
+  methods: {},
 };
 </script>
 

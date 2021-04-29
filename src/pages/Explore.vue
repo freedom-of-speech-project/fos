@@ -115,16 +115,15 @@
     </div>
 
     <div class="content-explore">
-      <div class="card">
-        <!-- <img class="card" src="../assets/Iconography/utb.svg" /> -->
+      {{ card() }}
+      <!-- <div class="card">
         {{ card() }}
-        <!-- <div id="card-content">{{ card() }}</div> -->
         <button type="button" class="ruling-btn" v-on:click="caseModal">
           <img style="width: 75%" src="../assets/Iconography/ruling-btn.svg" />
         </button>
         <img class="topic-tag" src="../assets/Iconography/topic-tag.svg" />
-        <!-- should this topic tag be a button that re-arranges by topic? nice to have** -->
-      </div>
+        < should this topic tag be a button that re-arranges by topic? nice to have** >
+      </div> -->
     </div>
   </div>
 </template>
@@ -136,6 +135,8 @@ export default defineComponent({
 });
 */
 import * as d3 from "d3";
+import background from "../assets/Iconography/utb.svg";
+//const background = require("../assets/Iconography/utb.svg");
 
 export default {
   name: "Explore",
@@ -145,6 +146,7 @@ export default {
     return {
       msg: "hi from Explore component",
       title: "caseName",
+      bg: background,
       cases: [],
     };
   },
@@ -159,7 +161,43 @@ export default {
       console.log("card method");
 
       this.svg = d3
-        .selectAll(".card")
+        .select(".content-explore")
+        .selectAll("card")
+        .data(this.cases)
+        .join("div")
+        .text(function (d) {
+          return d.caseName + "  (year)";
+        })
+        .attr("class", "card")
+        .style("margin", " auto")
+        .style("margin-top", "5%")
+        .style("position", "relative")
+        .style("background-image", `"${background}"`)
+        .style("background-size", " 100% 100%")
+        .style("width", " 85%");
+
+      console.log("bg", `${background}`);
+
+      //.style("height", " 3.style(5%");
+
+      // .style("position", "relative")
+      // .style("top", "25%")
+      // .style("left", " 12%")
+      // .style("right", " 12%")
+      // .style("margin-left", "auto")
+      // .style("margin-right", " auto");
+
+      console.log("this svg", this.svg);
+
+      this.svg;
+
+      //console.log("this svg again", this.svg);
+
+      /**
+      this.svg = d3
+        .select(".content-explore")
+                .selectAll("card")
+
         .append("div")
         .attr("id", "card-content")
         .style("position", "absolute")
@@ -178,22 +216,7 @@ export default {
           return d.caseName;
         });
       console.log("this svg again", this.svg);
-
-      /*
-      this.svg = d3.selectAll("#card-content").append("svg");
-
-      this.svg
-        .data(this.cases)
-        .join("text")
-        .text(function (d) {
-          return d.caseName;
-        });
-        */
-
-      //.append("svg");
-      //.attr("class", "newCard");
-
-      // TODO: make this replicate all cards (one card for each case, filtered)
+ */
     },
     caseModal: function () {
       console.log("show me the case");
@@ -289,7 +312,7 @@ export default {
 .wrapper-explore {
   margin: 0;
   padding: 0;
-  top: 30vh; /**17vh; /** .header height + .header-explore height // IDEALLY we could add min-height: 70px so it matches the min heights but not sure how to do that rn*/
+  top: 17vh; /** .header height + .header-explore height // IDEALLY we could add min-height: 70px so it matches the min heights but not sure how to do that rn*/
   background-color: white;
   position: fixed;
   height: 100%;
