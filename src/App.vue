@@ -48,7 +48,7 @@ body {
 .header {
   height: 8vh;
   min-height: 40px;
-  background-color: #0022d9;
+  background-color: #0d3fd2;
   color: white;
   display: grid;
   grid-template-columns: 200px auto 40px;
