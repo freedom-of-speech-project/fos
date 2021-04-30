@@ -7,7 +7,7 @@
   </div>
   <!--Intro /-->
   <Explore />
-  <CaseModal />
+  <!-- <CaseModal /> -->
   <!--Explore :data="loadData"/-->
 
   <!-- <USMap /> -->
@@ -18,7 +18,7 @@
 // import HelloWorld from "./components/HelloWorld.vue";
 //import Intro from "./pages/Intro.vue";
 import Explore from "./pages/Explore.vue";
-import CaseModal from "./components/CaseModal.vue";
+// import CaseModal from "./components/CaseModal.vue";
 
 // import * as d3 from "d3";
 
@@ -31,7 +31,7 @@ export default {
     //Intro,
     Explore,
     // USMap
-    CaseModal,
+    //CaseModal,
   },
   data() {
     return {

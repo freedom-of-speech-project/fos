@@ -43,7 +43,7 @@
   </div>
   <img
     class="header-border-line"
-    style="width: 99%"
+    style="width: 99.9%"
     src="../assets/Iconography/border-line.svg"
   />
 
@@ -116,14 +116,6 @@
 
     <div class="content-explore">
       {{ card() }}
-      <!-- <div class="card">
-        {{ card() }}
-        <button type="button" class="ruling-btn" v-on:click="caseModal">
-          <img style="width: 75%" src="../assets/Iconography/ruling-btn.svg" />
-        </button>
-        <img class="topic-tag" src="../assets/Iconography/topic-tag.svg" />
-        < should this topic tag be a button that re-arranges by topic? nice to have** >
-      </div> -->
     </div>
   </div>
 </template>
@@ -155,76 +147,78 @@ export default {
       console.log("of course it did");
     },
     card: function () {
-      console.log("card method");
-
-      this.svg = d3
+      /** select the .content-explore div and create a card for every case in the dataset,
+       * give it a class based on Landmark status, set the background image and sizing
+       */
+      const svg = d3
         .select(".content-explore")
         .selectAll("card")
         .data(this.cases)
         .join("div")
-        .text(function (d) {
-          return d.caseName + "  (year)";
+        .attr("class", function (d) {
+          return "Landmark" + d.landmark;
         })
-        .attr("class", "card")
-        .style("margin", "auto")
         .style("margin-top", "5%")
+        .style("margin-left", "auto")
+        .style("margin-right", " auto")
         .style("position", "relative")
         .style(
           "background-image",
           'url("https://raw.githubusercontent.com/freedom-of-speech-project/fos/vue-eva/src/assets/Iconography/utb.svg")'
         )
-        .style("background-size", "cover")
-        .style("width", "85%");
+        .style("background-size", "contain")
+        .style("background-repeat", "no-repeat")
+        .style("width", "70%")
+        .style("height", 0)
+        .style("padding-top", "30%");
 
-      //.style("height", " 3.style(5%");
-
-      // .style("position", "relative")
-      // .style("top", "25%")
-      // .style("left", " 12%")
-      // .style("right", " 12%")
-      // .style("margin-left", "auto")
-      // .style("margin-right", " auto");
-
-      console.log("this svg", this.svg);
-
-      this.svg;
-
-      //console.log("this svg again", this.svg);
-
-      /**
-      this.svg = d3
-        .select(".content-explore")
-                .selectAll("card")
-
+      /** add a div for case name and year */
+      svg
         .append("div")
-        .attr("id", "card-content")
         .style("position", "absolute")
-        .style("top", "25%")
-        .style("left", " 12%")
-        .style("right", " 12%")
-        .style("margin-left", "auto")
-        .style("margin-right", " auto");
-
-      console.log("this svg", this.svg);
-
-      this.svg
-        .data(this.cases)
-        .join("text")
+        .style("top", "20%")
+        .style("width", "80%")
+        .style("left", "5%")
+        .style("right", "5%")
+        .style("margin", "auto")
+        .attr("class", "text")
         .text(function (d) {
-          return d.caseName;
-        });
-      console.log("this svg again", this.svg);
- */
+          return d.caseName + "  (" + d.term + ")";
+        })
+        .style("font-size", ".75em");
+
+      /** add the button to open the modal */
+      svg
+        .append("button")
+        .attr("type", "button")
+        .attr("class", "button")
+        .style("position", "absolute")
+        .style("border", "none")
+        .style("background", "none")
+        .style(
+          "background-image",
+          'url("https://raw.githubusercontent.com/freedom-of-speech-project/fos/vue-eva/src/assets/Iconography/ruling-btn.svg")'
+        )
+        .style("background-size", "contain")
+        .style("background-repeat", "no-repeat")
+        .style("align-content", "center")
+        .style("left", "30%")
+        .style("bottom", "20%")
+        .style("width", "40%")
+        .style("height", "12%");
+
+      /** call the cards */
+      svg;
     },
     caseModal: function () {
       console.log("show me the case");
     },
   },
   created() {
-    Promise.all([d3.csv("/merged-tm-10-by-20-3.csv", d3.autoType)]).then(
+    Promise.all([d3.csv("/full-merged-tm-10-by-20-3.csv", d3.autoType)]).then(
       ([caseData]) => {
         this.cases = caseData;
-        //console.log("cases: ", this.cases);
+        console.log("cases: ", this.cases);
       }
     );
   },
@@ -310,7 +304,7 @@ export default {
 .wrapper-explore {
   margin: 0;
   padding: 0;
-  top: 17vh; /** .header height + .header-explore height // IDEALLY we could add min-height: 70px so it matches the min heights but not sure how to do that rn*/
+  top: 16.23vh; /** .header height + .header-explore height // IDEALLY we could add min-height: 70px so it matches the min heights but not sure how to do that rn*/
   background-color: white;
   position: fixed;
   height: 100%;
@@ -333,7 +327,7 @@ export default {
 }
 
 img.border-line {
-  width: 140%;
+  width: 142%;
   height: 20px;
 }
 
@@ -436,13 +430,14 @@ input:checked + .slider:before {
   /* border: 1px solid pink; */
   /* background-color: #e6b996; */
   background-color: #e6b996;
+  overflow: scroll;
 }
 
-div.card {
+#card {
   margin: auto;
   margin-top: 5%;
   position: relative;
-  background-image: url("../assets/Iconography/utb.svg");
+  background-image: 'url("https://raw.githubusercontent.com/freedom-of-speech-project/fos/vue-eva/src/assets/Iconography/utb.svg")';
   background-size: 100% 100%;
   width: 85%;
   height: 35%;
