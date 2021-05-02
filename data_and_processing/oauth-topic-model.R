@@ -114,6 +114,9 @@ subset.data.df <- data.df[,c(1,13)]
 merged.df <- merge(topic.proportions.df, subset.data.df, by.x = "index", by.y = "number")
 write.csv(merged.df, "merged-tm-10-by-20-3.csv")
 
-df1 = subset(merged.df, select = -c(cleansyl) )
-head(df1)
+df2 = subset(merged.df, select = -c(cleansyl) )
+head(df2)
+
+write.csv(df2, "full-merged-tm-10-by-20-3.csv")
+
 
