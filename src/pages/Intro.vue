@@ -129,6 +129,7 @@ div.guided {
 .ticker {
   white-space: nowrap;
   -webkit-animation: ticker 80s linear 0s infinite normal;
+  animation: ticker 80s linear 0s infinite normal;
 }
 
 @keyframes ticker {
