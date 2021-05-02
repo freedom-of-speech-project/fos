@@ -7,6 +7,7 @@
       <img class="info" src="./assets/Info.svg" />
     </button>
   </div>
+
   <div v-show="about" id="about">
     <div class="about">
       <h1>About</h1>
@@ -99,28 +100,49 @@
       </div>
     </div>
   </div>
-  <!-- <Intro /> -->
-  <Guided />
+  
+    <Intro />
+  <!--<Explore />-->
+    <!--<Guided />-->
+  <!-- <CaseModal /> -->
+  <!--Explore :data="loadData"/-->
+
+  <!-- <USMap /> -->
+  <!-- <HelloWorld msg="Welcome to Your Vue.js App" /> -->
 </template>
 
 <script>
-// import * as d3 from "d3"
+// import * as d3 from "d3";
+
 // import Intro from "./pages/Intro.vue";
-import Guided from "./pages/Guided.vue";
+// import Explore from "./pages/Explore.vue";
+// import Guided from "./pages/Guided.vue";
+// import CaseModal from "./components/CaseModal.vue";
+
 
 export default {
   name: "App",
   components: {
+
     // Intro,
     Guided,
+    Explore,
+    //USMap,
+    //CaseModal,
   },
   data() {
     return {
       guidedtext: "-> Guided Mode",
       exploretext: "-> Explore Mode",
       about: false,
+      loadData: {},
     };
+    },
+  mounted() {
+    console.log("App loaded");
+
   },
+  methods: {},
 };
 </script>
 
@@ -185,11 +207,13 @@ h1 {
 
 .header {
   height: 8vh;
-  background-color: #0022d9;
+  min-height: 40px;
+  background-color: #0d3fd2;
   color: white;
   display: grid;
   grid-template-columns: 200px auto 60px;
   align-content: center;
+  /** drop shadow?? */
 }
 
 .title {
