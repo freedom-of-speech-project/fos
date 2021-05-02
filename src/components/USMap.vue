@@ -26,10 +26,16 @@
         />
       </div>
     </div>
-    <div id="utbh-cont">
-      <div class="utbh-content">
-        <span class="close">( X )</span>
-        <p>Content</p>
+    <div v-if="guided == true" @click="guided = !guided" id="utbhc-cont">
+      <div id="utbh-cont">
+        <button><div class="guided-nav left">&lt;</div></button>
+        <div class="utbh-content">
+          <!-- <button class="modal-close">
+            <span class="close">( X )</span>
+          </button> -->
+          <div class="guided-content"><p>Content</p></div>
+        </div>
+        <button><div class="guided-nav right">&gt;</div></button>
       </div>
     </div>
   </div>
@@ -49,6 +55,7 @@ export default {
       height,
       margin,
       aster: false,
+      guided: true,
       states: [],
     };
   },
@@ -61,7 +68,6 @@ export default {
         .geoAlbersUsa()
         .fitSize([width * 0.99, height * 0.49], this.states);
       const path = d3.geoPath().projection(projection);
-      console.log(path);
       this.svg = d3
         .select("#map")
         .append("svg")
@@ -118,7 +124,7 @@ export default {
   position: relative;
 }
 
-.aster-help {
+button {
   -webkit-appearance: none;
   appearance: none;
   border: 0px;
@@ -128,8 +134,8 @@ export default {
 .aster-tips {
   height: 200px;
   width: 300px;
-  position: absolute;
-  background-color: white;
+  background-image: url("../assets/Iconography/asterspeech.png");
+  position: fixed;
   margin-left: 100px;
   z-index: 99999;
 }
@@ -156,28 +162,61 @@ export default {
   margin: 0% 0% 0% 26%;
 }
 
+#utbhc-cont {
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  margin: auto;
+  position: fixed;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.427);
+}
+
 #utbh-cont {
   position: fixed;
-  top: 22%;
-  left: 33%;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
   z-index: 1;
   background-image: url("../assets/images/backgroundbox.png");
   background-size: cover;
   background-repeat: no-repeat;
-  width: 25%;
-  height: 30%;
-  padding: 50px;
+  width: 532px;
+  height: 375px;
+  padding: 40px;
   margin: auto;
-  text-align: center;
-}
-
-#utbh-cont::before {
-  display: none;
+  display: grid;
+  grid-template-columns: 50px auto 50px;
 }
 
 .utbh-content {
-  top: 25%;
-  left: 25%;
+  height: 250px;
+  text-align: center;
+}
+
+.guided-nav {
+  height: 25px;
+  width: 25px;
+  background-color: #b5bbc0;
+  color: white;
+  border-radius: 50%;
+  position: fixed;
+  font-size: 18px;
+  font-family: Caveat Brush, sans-serif;
+}
+
+.guided-nav:hover {
+  background-color: #3d6fee;
+}
+
+.left {
+  grid-column-start: 1;
+}
+
+.right {
+  grid-column-end: 3;
 }
 
 .close {
@@ -187,8 +226,8 @@ export default {
   font-weight: bold;
 }
 
-.close::hover,
-.close::focus {
+.close:hover,
+.close:focus {
   color: black;
   text-decoration: none;
   cursor: pointer;

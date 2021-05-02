@@ -6,7 +6,6 @@
       ><span class="toglabel">Explore by era (Guided experience)</span>
     </div>
     <div id="timeline">
-      {{ eras() }}
       <img style="position: absolute" src="../assets/Iconography/tlarrow.svg" />
     </div>
   </div>
@@ -21,7 +20,7 @@ const margin = { top: 0, bottom: 0, left: 50, right: 460 };
 export default {
   name: "Timeline",
   data() {
-    return { width, height, margin };
+    return { width, height, margin, explore: false };
   },
   methods: {
     eras: function () {
@@ -68,6 +67,9 @@ export default {
         });
     },
   },
+  mounted() {
+    this.eras();
+  },
 };
 </script>
 <style scoped>
@@ -113,9 +115,8 @@ export default {
   bottom: 0;
   background-color: #3d6fee;
   border: 3px solid #7ba6f1;
-
   -webkit-transition: 0.4s;
-  transition: 4s;
+  transition: 0.4s;
 }
 
 .slider:before {
@@ -126,8 +127,8 @@ export default {
   left: 26px;
   bottom: 0px;
   background-color: white;
-  -webkit-transition: 0.4s;
-  transition: 0.4s;
+  -webkit-transition: 0.7s;
+  transition: 0.7s;
 }
 
 input:checked + .slider {
