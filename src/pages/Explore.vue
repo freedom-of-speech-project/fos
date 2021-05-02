@@ -91,7 +91,7 @@
       <span />
       <div class="sidebar-item text">landmark case</div>
       <label class="switch sidebar-item">
-        <input type="checkbox" />
+        <input type="checkbox" v-on:click="landmarkVis" />
         <span class="slider round"></span>
       </label>
       <img
@@ -127,6 +127,7 @@ export default defineComponent({
 });
 */
 import * as d3 from "d3";
+let landmarkVisible = true;
 
 export default {
   name: "Explore",
@@ -137,6 +138,8 @@ export default {
       msg: "hi from Explore component",
       title: "caseName",
       cases: [],
+      topicSubset: {},
+      // could define landmarkVisible here
     };
   },
   methods: {
@@ -146,17 +149,39 @@ export default {
     takeMeToExplore: function () {
       console.log("of course it did");
     },
+    landmarkVis: function () {
+      landmarkVisible = !landmarkVisible;
+      // console.log("Default value of landmarkVisible is", landmarkVisible);
+      // console.log("Toggled lv is", landmarkVisible);
+      if (landmarkVisible) {
+        d3.selectAll(".landmarkNo")
+          .transition()
+          //.style("opacity", "1.0")
+          .delay(500)
+          .style("display", "block");
+      } else {
+        d3.selectAll(".landmarkNo")
+          .transition()
+          //.style("opacity", "0.5")
+          .delay(500)
+          .style("display", "none");
+      }
+    },
+    sortByYear: function () {
+      d3.selectAll(".card").sort((a, b) => d3.descending(a.term, b.term));
+    },
     card: function () {
       /** select the .content-explore div and create a card for every case in the dataset,
        * give it a class based on Landmark status, set the background image and sizing
        */
+
       const svg = d3
         .select(".content-explore")
         .selectAll("card")
         .data(this.cases)
         .join("div")
         .attr("class", function (d) {
-          return "Landmark" + d.landmark;
+          return "card landmark" + d.landmark;
         })
         .style("margin-top", "5%")
         .style("margin-left", "auto")
@@ -170,7 +195,19 @@ export default {
         .style("background-repeat", "no-repeat")
         .style("width", "70%")
         .style("height", 0)
-        .style("padding-top", "30%");
+        .style("padding-top", "30%")
+        .on("mouseover", function () {
+          d3.select(this).style(
+            "background-image",
+            'url("https://raw.githubusercontent.com/freedom-of-speech-project/fos/vue-eva/src/assets/Iconography/utbh.svg")'
+          );
+        })
+        .on("mouseout", function () {
+          d3.selectAll(".card").style(
+            "background-image",
+            'url("https://raw.githubusercontent.com/freedom-of-speech-project/fos/vue-eva/src/assets/Iconography/utb.svg")'
+          );
+        });
 
       /** add a div for case name and year */
       svg
@@ -185,7 +222,8 @@ export default {
         .text(function (d) {
           return d.caseName + "  (" + d.term + ")";
         })
-        .style("font-size", ".75em");
+        .style("color", "black")
+        .style("font-size", "1.75vw");
 
       /** add the button to open the modal */
       svg
@@ -207,8 +245,86 @@ export default {
         .style("width", "40%")
         .style("height", "12%");
 
+      /** add gavin icon to landmark cases */
+      d3.selectAll(".landmarkYes")
+        .append("rect")
+        .attr("class", "landmark")
+        .style("position", "absolute")
+        .style("border", "none")
+        .style("background-image", function (d) {
+          if (d.landmark === "No") return "none";
+          else if (d.landmark === "Yes")
+            return 'url("https://raw.githubusercontent.com/freedom-of-speech-project/fos/vue-eva/src/assets/Iconography/gavinblock.svg")';
+        })
+        .style("background-size", "contain")
+        .style("background-repeat", "no-repeat")
+        .style("align-content", "center")
+        .style("left", "7%")
+        .style("bottom", "10%")
+        .style("width", "15%")
+        .style("height", "15%")
+        .on("mouseenter", function () {
+          d3.select(this)
+            .append("rect")
+            .style("position", "absolute")
+            .style("left", "40%")
+            .style("bottom", "40%")
+            .attr("id", "text")
+            .text("Landmark case!")
+            .style("font-size", "1.25vw")
+            .style("color", "#0d3fd2");
+        })
+        .on("mouseleave", function () {
+          d3.select("#text").remove();
+        });
+
       /** call the cards */
       svg;
+    },
+    topTopic2: function () {
+      console.log("show me", this.topicSubset);
+
+      const topicSubset = this.topicSubset;
+
+      function topicValuesSubsetSimple(d) {
+        var arr = [];
+        for (let i = 1; i < 21; i++) {
+          arr.push(Object.values(topicSubset[d])[i]);
+        }
+        return arr;
+      }
+
+      function compareNumbers(a, b) {
+        return b - a;
+      }
+
+      function getKeyByValue(object, value) {
+        return Object.keys(object).find((key) => object[key] === value);
+      }
+
+      function object(d) {
+        return topicSubset[d];
+      }
+
+      function topTopicValue(d) {
+        return topicValuesSubsetSimple(d).sort(compareNumbers)[0];
+      }
+
+      function topTopicInSyllabus(indexNumber) {
+        return getKeyByValue(object(indexNumber), topTopicValue(indexNumber));
+      }
+      console.log("the top topic is:", topTopicInSyllabus(400));
+      //console.log("topicSubset[]:", this.topicSubset.d);
+
+      //topTopicInSyllabus();
+      //d3.selectAll(".card").append("div");
+      // .data(topicSubset)
+      // .text(function (d) {
+      //   return topTopicInSyllabus(d);
+      // })
+      // .text(function (d) {
+      //   topTopicInSyllabus(topicSubset.d);
+      // });
     },
     caseModal: function () {
       console.log("show me the case");
@@ -218,22 +334,114 @@ export default {
     Promise.all([d3.csv("/full-merged-tm-10-by-20-3.csv", d3.autoType)]).then(
       ([caseData]) => {
         this.cases = caseData;
-        console.log("cases: ", this.cases);
+        //console.log("cases: ", this.cases);
+        // topic subset
+        this.topicSubset = caseData.map(function (d) {
+          return {
+            //index: d.index,
+            case: d.caseName,
+            labor:
+              d[
+                "employees.employee.employment.public.union.board.political.labor.employer.government"
+              ],
+            general:
+              d[
+                "general.attorney.briefs.solicitor.argued.assistant.cause.curiae.brief.jr"
+              ],
+            communism:
+              d[
+                "communist.party.organization.board.foreign.registration.act.control.movement.organizations"
+              ],
+            school:
+              d[
+                "school.religious.schools.student.establishment.religion.students.forum.program.university"
+              ],
+            investigation:
+              d[
+                "grand.jury.press.information.footnote.privilege.news.criminal.sources.investigation"
+              ],
+            senator:
+              d[
+                "mr.debate.senator.clause.legislative.said.privilege.plaintiff.office.house"
+              ],
+            inquiry:
+              d[
+                "act.congress.committee.answer.service.inquiry.president.united.questions.security"
+              ],
+            opinion:
+              d[
+                "opinion.filed.joined.district.post.respondents.held.argued.dissenting.jj"
+              ],
+            interest:
+              d[
+                "speech.government.interest.act.interests.governmental.opinion.case.united.states"
+              ],
+            advertising:
+              d[
+                "advertising.commercial.speech.regulations.information.central.cable.marketing.interest.broadcasting"
+              ],
+            campaign:
+              d[
+                "candidates.candidate.political.election.footnote.contributions.party.expenditures.contribution.campaign"
+              ],
+            injunction:
+              d[
+                "injunction.review.maryland.district.restraint.prior.judicial.order.footnote.relief"
+              ],
+            contributions:
+              d[
+                "limits.federal.election.buckley.bcra.contributions.campaign.political.candidates.candidate"
+              ],
+            affirmed:
+              d[
+                "affirmed.syllabus.decided.argued.freedom.held.act.law.case.reversed"
+              ],
+            damages:
+              d[
+                "false.statements.jury.damages.petitioner.malice.times.respondent.actual.trial"
+              ],
+            telemarketers:
+              d[
+                "solicitation.charitable.fraud.paid.fee.organizations.requirement.telemarketers.circulators.north"
+              ],
+            flag:
+              d[
+                "flag.words.peace.conviction.ohio.convicted.conduct.street.symbol.group"
+              ],
+            obscenity:
+              d[
+                "obscene.obscenity.material.materials.film.sexual.standards.films.indecent.minors"
+              ],
+            religious:
+              d[
+                "religious.tax.prison.religion.inmates.rfra.exercise.burden.inmate.sales"
+              ],
+            public:
+              d[
+                "ordinance.city.picketing.public.streets.ordinances.park.police.permit.regulation"
+              ],
+          };
+        });
+        //console.log("subset", this.topicSubset);
       }
     );
   },
   computed: {
-    nameData() {
-      const caseTitle = this.data;
-      //console.log("caseTitle", caseTitle);
-      return { caseTitle };
-    },
-
-    // return {
-    //   caseName: this.data[1].caseName,
-    // };
+    // nameData() {
+    //   const caseTitle = this.data;
+    //   //console.log("caseTitle", caseTitle);
+    //   return { caseTitle };
     // },
+    topTopicPerCase() {
+      console.log("to come");
+      const thing = "Thing";
+      return { thing };
+    },
   },
+  updated() {
+    this.topTopic2();
+  },
+  // might need to put topTopic2() in watched or something
 };
 </script>
 <style scoped>
@@ -433,14 +641,14 @@ input:checked + .slider:before {
   overflow: scroll;
 }
 
-#card {
-  margin: auto;
+.card:hover {
+  /* margin: auto;
   margin-top: 5%;
-  position: relative;
-  background-image: 'url("https://raw.githubusercontent.com/freedom-of-speech-project/fos/vue-eva/src/assets/Iconography/utb.svg")';
-  background-size: 100% 100%;
+  position: relative; */
+  background-image: 'url("https://raw.githubusercontent.com/freedom-of-speech-project/fos/vue-eva/src/assets/Iconography/utbh.svg")';
+  /* background-size: 100% 100%;
   width: 85%;
-  height: 35%;
+  height: 35%; */
 }
 
 /** styled in d3.append */
