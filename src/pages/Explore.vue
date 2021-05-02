@@ -50,7 +50,7 @@
   <div class="wrapper-explore">
     <div class="sidebar">
       <div class="sidebar-item text">topic</div>
-      <button type="button" class="sidebar-item topic">
+      <button type="button" class="sidebar-item topic" v-on:click="showTopics">
         <img
           style="position: relative"
           src="../assets/Iconography/caret-down.svg"
@@ -62,7 +62,12 @@
       />
       <span />
       <div class="sidebar-item-hidden">hi</div>
-      <div class="sidebar-item-hidden">okay</div>
+      <div class="sidebar-item-hidden">hi</div>
+      <img
+        class="border-line sidebar-item-hidden"
+        src="../assets/Iconography/sidebar-border-line.svg"
+      />
+      <span class="sidebar-item-hidden" />
       <div class="sidebar-item year text">year</div>
       <button type="button" class="sidebar-item">
         <img
@@ -114,9 +119,7 @@
       <!--/div-->
     </div>
 
-    <div class="content-explore">
-      {{ card() }}
-    </div>
+    <div class="content-explore">{{ card() }}</div>
   </div>
 </template>
 <script>
@@ -128,6 +131,7 @@ export default defineComponent({
 */
 import * as d3 from "d3";
 let landmarkVisible = true;
+let showTopics = true;
 
 export default {
   name: "Explore",
@@ -148,6 +152,18 @@ export default {
     },
     takeMeToExplore: function () {
       console.log("of course it did");
+    },
+    showTopics: function () {
+      showTopics = !showTopics;
+      if (showTopics) {
+        d3.selectAll(".sidebar-item-hidden")
+          .data(this.topicSubset)
+          .text(console.log("plz show topics", [...this.topicSubset.values(0)]))
+          .join("div")
+          .style("display", "block");
+      } else {
+        d3.selectAll(".sidebar-item-hidden").style("display", "none");
+      }
     },
     landmarkVis: function () {
       landmarkVisible = !landmarkVisible;
@@ -278,6 +294,16 @@ export default {
           d3.select("#text").remove();
         });
 
+      svg
+        .append("div")
+        .style("position", "absolute")
+        .style("top", "20%")
+        .style("width", "80%")
+        .style("left", "5%")
+        .style("right", "5%")
+        .style("margin", "auto")
+        .text(this.topTopic2());
+
       /** call the cards */
       svg;
     },
@@ -313,18 +339,8 @@ export default {
       function topTopicInSyllabus(indexNumber) {
         return getKeyByValue(object(indexNumber), topTopicValue(indexNumber));
       }
-      console.log("the top topic is:", topTopicInSyllabus(400));
-      //console.log("topicSubset[]:", this.topicSubset.d);
-
-      //topTopicInSyllabus();
-      //d3.selectAll(".card").append("div");
-      // .data(topicSubset)
-      // .text(function (d) {
-      //   return topTopicInSyllabus(d);
-      // })
-      // .text(function (d) {
-      //   topTopicInSyllabus(topicSubset.d);
-      // });
+      topTopicInSyllabus;
+      // console.log("the top topic is:", topTopicInSyllabus);
     },
     caseModal: function () {
       console.log("show me the case");
@@ -427,11 +443,6 @@ export default {
     );
   },
   computed: {
-    // nameData() {
-    //   const caseTitle = this.data;
-    //   //console.log("caseTitle", caseTitle);
-    //   return { caseTitle };
-    // },
     topTopicPerCase() {
       console.log("to come");
       const thing = "Thing";
