@@ -5,23 +5,43 @@
     <span></span>
     <img class="info" src="./assets/Info.svg" />
   </div>
-  <Intro />
+  <!--Intro /-->
+  <Explore />
+  <!-- <CaseModal /> -->
+  <!--Explore :data="loadData"/-->
+
   <!-- <USMap /> -->
   <!-- <HelloWorld msg="Welcome to Your Vue.js App" /> -->
 </template>
 
 <script>
 // import HelloWorld from "./components/HelloWorld.vue";
-import Intro from "./pages/Intro.vue";
+//import Intro from "./pages/Intro.vue";
+import Explore from "./pages/Explore.vue";
+// import CaseModal from "./components/CaseModal.vue";
+
+// import * as d3 from "d3";
+
 // import USMap from "./components/USMap.vue"
 // import { defineComponent } from '@vue/composition-api'
 
 export default {
   name: "App",
   components: {
-    Intro,
+    //Intro,
+    Explore,
     // USMap
+    //CaseModal,
   },
+  data() {
+    return {
+      loadData: {},
+    };
+  },
+  mounted() {
+    console.log("App loaded");
+  },
+  methods: {},
 };
 </script>
 
@@ -42,11 +62,13 @@ body {
 }
 .header {
   height: 8vh;
-  background-color: #0022d9;
+  min-height: 40px;
+  background-color: #0d3fd2;
   color: white;
   display: grid;
   grid-template-columns: 200px auto 40px;
   align-content: center;
+  /** drop shadow?? */
 }
 
 .title {
