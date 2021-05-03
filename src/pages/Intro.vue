@@ -13,12 +13,12 @@
   <div class="mode-wrapper">
     <div class="explore">
       <div class="guide">
-        <button v-on:click="takeMeToExplore">explore</button>
+        <button @click="takeMeToExplore">explore</button>
       </div>
     </div>
     <div class="guided">
       <div class="guide">
-        <button v-on:click="takeMeToGuided">guide me through</button>
+        <button @click="takeMeToGuided">guide me through</button>
       </div>
     </div>
   </div>
@@ -36,6 +36,18 @@
 <script>
 export default {
   name: "Intro",
+  // emits: ["takeMeToGuided", "takeMeToExplore"],
+  // emits: {
+  //   guided: function () {
+  //     console.log("did that work");
+  //     this.guided = !this.guided;
+  //   },
+  //   takeMeToExplore: function () {
+  //     console.log("of course it did");
+  //     this.explore = !this.explore;
+  //     console.log(this.explore);
+  //   },
+  // },
   data() {
     return {
       gavin: "../assets/Iconography/gavin.svg",
@@ -46,9 +58,12 @@ export default {
   methods: {
     takeMeToGuided: function () {
       console.log("did that work");
+      this.guided = !this.guided;
     },
     takeMeToExplore: function () {
       console.log("of course it did");
+      this.explore = !this.explore;
+      console.log(this.explore);
     },
   },
 };
