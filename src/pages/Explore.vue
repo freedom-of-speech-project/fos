@@ -1,12 +1,13 @@
 <template>
   <div class="header-explore">
     <div class="header-relevant"># relevant cases</div>
-    <div>
+    <div class="header-topic">
       <img
-        style="position: relative; width: 75%"
+        style="position: relative; height: 75%"
         src="../assets/Iconography/topic-tag.svg"
       />
     </div>
+    <span></span>
     <div class="dropdown">
       <button class="dropbtn">
         <img
@@ -18,9 +19,14 @@
         <!-- <a href="#">case name</a>
         <a href="#">year</a> -->
         <img
-          style="position: absolute"
-          src="../assets/Iconography/dropdown-menu.svg"
+          id="dropdown1"
+          style="position: relative"
+          src="../assets/Iconography/alpha-year-menu.svg"
         />
+        <div>
+          <button id="dropdown1-1" @click="sortByAlpha"></button>
+        </div>
+        <div><button id="dropdown1-2" @click="sortByYear"></button></div>
       </div>
     </div>
     <!-- year / alpha / -->
@@ -35,7 +41,7 @@
         <!-- <a href="#">case name</a>
         <a href="#">year</a> -->
         <img
-          style="position: absolute"
+          style="position: absolute; right: 0"
           src="../assets/Iconography/dropdown-menu.svg"
         />
       </div>
@@ -185,6 +191,11 @@ export default {
     },
     sortByYear: function () {
       d3.selectAll(".card").sort((a, b) => d3.descending(a.term, b.term));
+    },
+    sortByAlpha: function () {
+      d3.selectAll(".card").sort((a, b) =>
+        d3.ascending(a.caseName, b.caseName)
+      );
     },
     card: function () {
       /** select the .content-explore div and create a card for every case in the dataset,
@@ -463,7 +474,7 @@ export default {
   background-color: white;
   /* border-bottom: 2px solid gray; */
   display: grid;
-  grid-template-columns: auto auto auto auto /* 150px auto auto 150px*/;
+  grid-template-columns: 2fr 1fr 1fr 2fr 2fr; /*auto auto auto auto auto /* 150px auto auto 150px*/
   align-content: center;
 }
 
@@ -480,6 +491,10 @@ export default {
 .header-relevant {
   font-size: 1.5em;
   align-self: center; /** TODO: do this everything else that needs it */
+  padding-left: 10px;
+}
+.header-topic {
+  align-self: center;
 }
 /* The container <div> - needed to position the dropdown content */
 .dropdown {
@@ -491,9 +506,9 @@ export default {
 .dropdown-content {
   display: none;
   position: absolute;
-  background-color: #f1f1f1;
+  background-color: none;
   min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  /* box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2); */
   z-index: 1;
 }
 
@@ -518,6 +533,25 @@ export default {
 /* Change the background color of the dropdown button when the dropdown content is shown */
 .dropdown:hover .dropbtn {
   background-color: #e6b996;
+}
+#dropdown1-1,
+#dropdown1-2 {
+  position: absolute;
+  bottom: 43%;
+  left: -9px;
+  /* border: 1px solid red; */
+  width: 98%;
+  height: 47%;
+  background: transparent;
+}
+#dropdown1-2 {
+  top: 35%;
+  /* border: 1px solid purple; */
+}
+
+#dropdown1-1:hover,
+#dropdown1-2:hover {
+  border: 2px solid #0d3fd2;
 }
 
 /* wrapper for sidebar and content */

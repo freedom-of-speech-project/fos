@@ -275,9 +275,11 @@ h1 {
 
 .title {
   justify-self: center;
+  cursor: pointer;
 }
 .info {
   justify-self: start;
+  cursor: pointer;
 }
 
 .h2#team {
@@ -314,6 +316,7 @@ button {
   margin: 15px;
   background-repeat: no-repeat;
   position: absolute;
+  cursor: pointer;
 }
 
 .friends {
