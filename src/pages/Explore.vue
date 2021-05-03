@@ -479,6 +479,7 @@ export default {
 }
 .header-relevant {
   font-size: 1.5em;
+  align-self: center; /** TODO: do this everything else that needs it */
 }
 /* The container <div> - needed to position the dropdown content */
 .dropdown {
