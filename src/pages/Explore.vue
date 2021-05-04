@@ -14,6 +14,7 @@
           style="position: relative; width: 90%"
           src="../assets/Iconography/select-dropdown.svg"
         />
+        <!-- TODO: change select-dropdown button -->
       </button>
       <div class="dropdown-content">
         <!-- <a href="#">case name</a>
@@ -21,12 +22,19 @@
         <img
           id="dropdown1"
           style="position: relative"
-          src="../assets/Iconography/alpha-year-menu.svg"
+          src="../assets/Iconography/alpha-year-menu2.svg"
         />
         <div>
-          <button id="dropdown1-1" @click="sortByAlpha"></button>
+          <button id="dropdown1-1" @click="sortByAlphaAsc"></button>
         </div>
-        <div><button id="dropdown1-2" @click="sortByYear"></button></div>
+
+        <div>
+          <button id="dropdown1-2" @click="sortByAlphaDesc"></button>
+        </div>
+
+        <div><button id="dropdown1-3" @click="sortByYearAsc"></button></div>
+
+        <div><button id="dropdown1-4" @click="sortByYearDesc"></button></div>
       </div>
     </div>
     <!-- year / alpha / -->
@@ -55,7 +63,7 @@
 
   <div class="wrapper-explore">
     <div class="sidebar">
-      <div class="sidebar-item text">topic</div>
+      <div class="sidebar-item text topic">topic</div>
       <button type="button" class="sidebar-item topic" v-on:click="showTopics">
         <img
           style="position: relative"
@@ -68,7 +76,8 @@
       />
       <span />
       <div class="sidebar-item-hidden">hi</div>
-      <div class="sidebar-item-hidden">hi</div>
+      <span class="sidebar-item-hidden" />
+      <!-- <div class="sidebar-item-hidden">hi</div> -->
       <img
         class="border-line sidebar-item-hidden"
         src="../assets/Iconography/sidebar-border-line.svg"
@@ -154,21 +163,23 @@ export default {
   },
   methods: {
     takeMeToGuided: function () {
-      console.log("did that work");
+      // console.log("did that work");
     },
     takeMeToExplore: function () {
-      console.log("of course it did");
+      // console.log("of course it did");
     },
     showTopics: function () {
       showTopics = !showTopics;
       if (showTopics) {
-        d3.selectAll(".sidebar-item-hidden")
-          .data(this.topicSubset)
-          .text(console.log("plz show topics", [...this.topicSubset.values(0)]))
+        d3.select(".sidebar")
+          .selectAll("new")
+          .data(Object.keys(this.topicSubset[0])) // all 20 of the topic names
           .join("div")
-          .style("display", "block");
+          .style("display", "grid")
+          .attr("class", "showTopics")
+          .text((d) => [d]);
       } else {
-        d3.selectAll(".sidebar-item-hidden").style("display", "none");
+        d3.selectAll(".showTopics").style("display", "none");
       }
     },
     landmarkVis: function () {
@@ -189,12 +200,20 @@ export default {
           .style("display", "none");
       }
     },
-    sortByYear: function () {
+    sortByYearAsc: function () {
+      d3.selectAll(".card").sort((a, b) => d3.ascending(a.term, b.term));
+    },
+    sortByYearDesc: function () {
       d3.selectAll(".card").sort((a, b) => d3.descending(a.term, b.term));
     },
-    sortByAlpha: function () {
+    sortByAlphaAsc: function () {
       d3.selectAll(".card").sort((a, b) =>
         d3.ascending(a.caseName, b.caseName)
+      );
+    },
+    sortByAlphaDesc: function () {
+      d3.selectAll(".card").sort((a, b) =>
+        d3.descending(a.caseName, b.caseName)
       );
     },
     card: function () {
@@ -307,22 +326,21 @@ export default {
 
       svg
         .append("div")
+        .attr("class", "topicUgh")
         .style("position", "absolute")
-        .style("top", "20%")
+        .style("top", "80%")
         .style("width", "80%")
         .style("left", "5%")
         .style("right", "5%")
         .style("margin", "auto")
-        .text(this.topTopic2());
+        .text("okay");
 
       /** call the cards */
       svg;
     },
     topTopic2: function () {
       console.log("show me", this.topicSubset);
-
       const topicSubset = this.topicSubset;
-
       function topicValuesSubsetSimple(d) {
         var arr = [];
         for (let i = 1; i < 21; i++) {
@@ -330,28 +348,23 @@ export default {
         }
         return arr;
       }
-
       function compareNumbers(a, b) {
         return b - a;
       }
-
       function getKeyByValue(object, value) {
         return Object.keys(object).find((key) => object[key] === value);
       }
-
       function object(d) {
         return topicSubset[d];
       }
-
       function topTopicValue(d) {
         return topicValuesSubsetSimple(d).sort(compareNumbers)[0];
       }
-
       function topTopicInSyllabus(indexNumber) {
         return getKeyByValue(object(indexNumber), topTopicValue(indexNumber));
       }
-      topTopicInSyllabus;
-      // console.log("the top topic is:", topTopicInSyllabus);
+      this.topTopicInSyllabus();
+      console.log("the top topic is:", topTopicInSyllabus(300));
     },
     caseModal: function () {
       console.log("show me the case");
@@ -453,15 +466,24 @@ export default {
       }
     );
   },
-  computed: {
-    topTopicPerCase() {
-      console.log("to come");
-      const thing = "Thing";
-      return { thing };
-    },
-  },
+  computed: {},
   updated() {
-    this.topTopic2();
+    this.topTopic2,
+      d3
+        .selectAll(".card")
+        .append("div")
+        .attr("class", "topicUgh")
+        .style("position", "absolute")
+        .style("top", "80%")
+        .style("width", "80%")
+        .style("left", "5%")
+        .style("right", "5%")
+        .style("margin", "auto")
+        // .text("hello")
+        .data(this.topicSubset);
+    // .text(this.topTopicInSyllabus(300));
+    //.text((d) => this.topTopic2(d));
+    console.log("the top topic is:", this.topTopicInSyllabus(300));
   },
   // might need to put topTopic2() in watched or something
 };
@@ -472,7 +494,6 @@ export default {
   min-height: 30px;
   width: 100%;
   background-color: white;
-  /* border-bottom: 2px solid gray; */
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 2fr 2fr; /*auto auto auto auto auto /* 150px auto auto 150px*/
   align-content: center;
@@ -535,18 +556,28 @@ export default {
   background-color: #e6b996;
 }
 #dropdown1-1,
-#dropdown1-2 {
+#dropdown1-2,
+#dropdown1-3,
+#dropdown1-4 {
   position: absolute;
-  bottom: 43%;
+  bottom: 70%;
   left: -9px;
-  /* border: 1px solid red; */
-  width: 98%;
-  height: 47%;
+  /* border: 2px solid red; */
+  width: 95%;
+  height: 25%;
   background: transparent;
 }
 #dropdown1-2 {
-  top: 35%;
-  /* border: 1px solid purple; */
+  top: 18%;
+  /* border: 2px solid purple; */
+}
+#dropdown1-3 {
+  top: 42%;
+  /* border: 2px solid blue; */
+}
+#dropdown1-4 {
+  top: 65%;
+  /* border: 2px solid green; */
 }
 
 #dropdown1-1:hover,
