@@ -339,17 +339,19 @@ export default {
       this.svg;
     },
     topTopic2: function () {
-      console.log("this", this);
-      const topicSubset = this.topicSubset;
+      //console.log("this", this);
+      let topicSubset = this.topicSubset;
       // this.$nextTick(function () {
       function topicValuesSubsetSimple(d) {
-        console.log("this2", d);
+        //console.log("this2", this);
 
-        var arr = [];
+        let arr = [];
+
         for (let i = 1; i < 21; i++) {
-          console.log("this3", Object.values(topicSubset[d])[i]);
+          // console.log("this3", this); //Object.values(topicSubset[i]));
           arr.push(Object.values(topicSubset[d])[i]);
         }
+        // console.log("array", arr);
         return arr;
       }
 
@@ -368,9 +370,9 @@ export default {
       function topTopicInSyllabus(indexNumber) {
         return getKeyByValue(object(indexNumber), topTopicValue(indexNumber));
       }
-      //this.topTopicInSyllabus;
+      // this.topTopicInSyllabus;
 
-      console.log("the top topic is:", topTopicInSyllabus(300));
+      // console.log("the top topic is:", topTopicInSyllabus(300));
       this.svg
         .append("div")
         .attr("class", "topicUgh")
@@ -381,7 +383,13 @@ export default {
         .style("right", "5%")
         .style("margin", "auto")
         .data(this.cases)
-        .text(topTopicInSyllabus((d) => d.index));
+        .text(
+          (d) =>
+            topTopicInSyllabus(d.index) +
+            ", " +
+            (topTopicValue(d.index) * 100).toFixed(1) +
+            "%"
+        );
       // });
     },
     caseModal: function () {
@@ -485,23 +493,11 @@ export default {
     );
   },
   computed: {},
+  // mounted() {
+  //   this.topTopic2();
+  // },
   updated() {
     this.topTopic2();
-    // d3
-    //   .selectAll(".card")
-    //   .append("div")
-    //   .attr("class", "topicUgh")
-    //   .style("position", "absolute")
-    //   .style("top", "80%")
-    //   .style("width", "80%")
-    //   .style("left", "5%")
-    //   .style("right", "5%")
-    //   .style("margin", "auto")
-    //   // .text("hello")
-    //   .data(this.topicSubset);
-    // .text(this.topTopicInSyllabus(300));
-    //.text((d) => this.topTopic2(d));
-    // console.log("the top topic is:", this.topTopicInSyllabus(300));
   },
   // might need to put topTopic2() in watched or something
 };
