@@ -311,10 +311,13 @@ export default {
       console.log("show me", this.topicSubset);
 
       const topicSubset = this.topicSubset;
-
+      console.log(topicSubset);
+      // this.$nextTick(function () {
       function topicValuesSubsetSimple(d) {
-        var arr = [];
+        // console.log("this2", d);
+        let arr = [];
         for (let i = 1; i < 21; i++) {
+          // console.log("this3", Object.values(topicSubset[d])[i]);
           arr.push(Object.values(topicSubset[d])[i]);
         }
         return arr;
@@ -339,8 +342,21 @@ export default {
       function topTopicInSyllabus(indexNumber) {
         return getKeyByValue(object(indexNumber), topTopicValue(indexNumber));
       }
-      topTopicInSyllabus;
-      // console.log("the top topic is:", topTopicInSyllabus);
+      //this.topTopicInSyllabus;
+
+      console.log("the top topic is:", topTopicInSyllabus(300));
+      this.svg
+        .append("div")
+        .attr("class", "topicUgh")
+        .style("position", "absolute")
+        .style("top", "80%")
+        .style("width", "80%")
+        .style("left", "5%")
+        .style("right", "5%")
+        .style("margin", "auto")
+        .data(this.cases)
+        .text((d) => topTopicInSyllabus(d.index));
+      // });
     },
     caseModal: function () {
       console.log("show me the case");
@@ -468,15 +484,16 @@ export default {
 }
 
 /* Dropdown Button */
-.dropbtn {
-  /* background-color: white(207, 206, 206);
+/* .dropbtn {
+  background-color: white(207, 206, 206);
   color: black;
   border: none;
   font-family: Caveat Brush;
   font-size: 16px;
   border: 1px solid gray;
-  padding: 0 5% 0 5%; */
-}
+  padding: 0 5% 0 5%;
+} */
+
 .header-relevant {
   font-size: 1.5em;
   align-self: center; /** TODO: do this everything else that needs it */
