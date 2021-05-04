@@ -134,7 +134,9 @@
       <!--/div-->
     </div>
 
-    <div class="content-explore">{{ card() }}</div>
+    <div class="content-explore">
+      {{ card() }}
+    </div>
   </div>
 </template>
 <script>
@@ -151,10 +153,8 @@ let showTopics = true;
 export default {
   name: "Explore",
   props: ["caseData"],
-  //{data: Object,}
   data() {
     return {
-      msg: "hi from Explore component",
       title: "caseName",
       cases: [],
       topicSubset: {},
@@ -221,7 +221,7 @@ export default {
        * give it a class based on Landmark status, set the background image and sizing
        */
 
-      const svg = d3
+      this.svg = d3
         .select(".content-explore")
         .selectAll("card")
         .data(this.cases)
@@ -256,7 +256,7 @@ export default {
         });
 
       /** add a div for case name and year */
-      svg
+      this.svg
         .append("div")
         .style("position", "absolute")
         .style("top", "20%")
@@ -272,7 +272,7 @@ export default {
         .style("font-size", "1.75vw");
 
       /** add the button to open the modal */
-      svg
+      this.svg
         .append("button")
         .attr("type", "button")
         .attr("class", "button")
@@ -324,30 +324,35 @@ export default {
           d3.select("#text").remove();
         });
 
-      svg
-        .append("div")
-        .attr("class", "topicUgh")
-        .style("position", "absolute")
-        .style("top", "80%")
-        .style("width", "80%")
-        .style("left", "5%")
-        .style("right", "5%")
-        .style("margin", "auto")
-        .text("okay");
+      // svg
+      //   .append("div")
+      //   .attr("class", "topicUgh")
+      //   .style("position", "absolute")
+      //   .style("top", "80%")
+      //   .style("width", "80%")
+      //   .style("left", "5%")
+      //   .style("right", "5%")
+      //   .style("margin", "auto")
+      //   .text("okay");
 
       /** call the cards */
-      svg;
+      this.svg;
     },
     topTopic2: function () {
-      console.log("show me", this.topicSubset);
+      console.log("this", this);
       const topicSubset = this.topicSubset;
+      // this.$nextTick(function () {
       function topicValuesSubsetSimple(d) {
+        console.log("this2", d);
+
         var arr = [];
         for (let i = 1; i < 21; i++) {
+          console.log("this3", Object.values(topicSubset[d])[i]);
           arr.push(Object.values(topicSubset[d])[i]);
         }
         return arr;
       }
+
       function compareNumbers(a, b) {
         return b - a;
       }
@@ -363,8 +368,21 @@ export default {
       function topTopicInSyllabus(indexNumber) {
         return getKeyByValue(object(indexNumber), topTopicValue(indexNumber));
       }
-      this.topTopicInSyllabus();
+      //this.topTopicInSyllabus;
+
       console.log("the top topic is:", topTopicInSyllabus(300));
+      this.svg
+        .append("div")
+        .attr("class", "topicUgh")
+        .style("position", "absolute")
+        .style("top", "80%")
+        .style("width", "80%")
+        .style("left", "5%")
+        .style("right", "5%")
+        .style("margin", "auto")
+        .data(this.cases)
+        .text(topTopicInSyllabus((d) => d.index));
+      // });
     },
     caseModal: function () {
       console.log("show me the case");
@@ -374,7 +392,7 @@ export default {
     Promise.all([d3.csv("/full-merged-tm-10-by-20-3.csv", d3.autoType)]).then(
       ([caseData]) => {
         this.cases = caseData;
-        //console.log("cases: ", this.cases);
+        console.log("cases: ", this.cases);
         // topic subset
         this.topicSubset = caseData.map(function (d) {
           return {
@@ -468,22 +486,22 @@ export default {
   },
   computed: {},
   updated() {
-    this.topTopic2,
-      d3
-        .selectAll(".card")
-        .append("div")
-        .attr("class", "topicUgh")
-        .style("position", "absolute")
-        .style("top", "80%")
-        .style("width", "80%")
-        .style("left", "5%")
-        .style("right", "5%")
-        .style("margin", "auto")
-        // .text("hello")
-        .data(this.topicSubset);
+    this.topTopic2();
+    // d3
+    //   .selectAll(".card")
+    //   .append("div")
+    //   .attr("class", "topicUgh")
+    //   .style("position", "absolute")
+    //   .style("top", "80%")
+    //   .style("width", "80%")
+    //   .style("left", "5%")
+    //   .style("right", "5%")
+    //   .style("margin", "auto")
+    //   // .text("hello")
+    //   .data(this.topicSubset);
     // .text(this.topTopicInSyllabus(300));
     //.text((d) => this.topTopic2(d));
-    console.log("the top topic is:", this.topTopicInSyllabus(300));
+    // console.log("the top topic is:", this.topTopicInSyllabus(300));
   },
   // might need to put topTopic2() in watched or something
 };
