@@ -68,7 +68,7 @@ N <- sum(syl.length)
 term.frequency <- as.integer(term.table)
 
 # MCMC and model tuning parameters:
-K <- 30 # number of topics -- this one has the greatest effect on the results
+K <- 25 # number of topics -- this one has the greatest effect on the results
 G <- 5000 # number of iterations of sampling over the corpus
 alpha <- 0.2 # scalar value of Dirichlet hyperparameter for topic proportions
 eta <- 0.2 # scalar value of Dirichlet hyperparameter for topic multinomials
@@ -91,7 +91,7 @@ t2 - t1  # 20 topics took about 4 minutes on my laptop
 # WRITE TO CSV
 # make a "top.words" spreadsheet that contains the top 10 words in each of the 20 topics
 top.words <- top.topic.words(fit$topics,10, by.score=TRUE)
-write.csv(top.words, "tm-10-by-20-3.csv", row.names=FALSE)
+write.csv(top.words, "tm-10-by-30-1a.csv", row.names=FALSE)
 # determine propotional relationships between topics-- i.e. how important is each topic within a syllabus? or compared to the other topics?
 topic.proportions <- t(fit$document_sums) / colSums(fit$document_sums)
 # put column names on so that we know which topic is referred to
@@ -105,7 +105,7 @@ topic.proportions.df <- cbind(data.frame(topic.proportions),
 topic.proportions.melt.df <- melt(topic.proportions.df)
 
 # show each syllabus's representation of topics
-write.csv(topic.proportions.df, "tm-10-by-20-3_TopicProportions.csv")
+write.csv(topic.proportions.df, "tm-10-by-30-1a_TopicProportions.csv")
 
 head(subset.data.df)
 subset.data.df <- data.df[,c(1,13)]
