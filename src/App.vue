@@ -180,14 +180,14 @@ export default {
   },
   methods: {
     takeMeToGuided: function () {
-      console.log("did that work");
+      //  console.log("did that work");
       this.guided = !this.guided;
       this.introtoggle = !this.introtoggle;
     },
     takeMeToExplore: function () {
-      console.log("of course it did");
+      // console.log("of course it did");
       this.explore = !this.explore;
-      console.log(this.explore);
+      // console.log(this.explore);
       this.introtoggle = !this.introtoggle;
     },
     whereAmI: function () {
