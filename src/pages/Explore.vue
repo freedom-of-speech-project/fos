@@ -166,11 +166,22 @@ export default {
     },
     showTopics: function () {
       showTopics = !showTopics;
-      console.log("data", Object.keys(this.topicSubset[0]));
+
+      // const topicGroups = d3.group(this.topicSubset2, (d) => d.topTopic);
+      const topicRollup = d3.rollup(
+        this.topicSubset2,
+        (v) => v.length,
+        (d) => d.topTopic
+      );
+
+      console.log("data", [...topicRollup.entries()]);
+
+      //console.log("object", Object.keys(this.topicSubset[0]));
+
       if (showTopics) {
-        d3.select("#hiddenTopic") //or(".sidebar")
+        d3.select(".sidebar") //("#hiddenTopic") //or (".sidebar")
           .selectAll("new")
-          .data(Object.keys(this.topicSubset[0])) // all 20 of the topic names
+          .data([...topicRollup.entries()]) // all 20 of the topic names + number
           .join("div")
           // .html(
           //   ([category, items]) =>
@@ -178,15 +189,12 @@ export default {
           // )
           .style("display", "block")
           .attr("class", "showTopics")
-          .text((d) => [d]);
+          .text((d) => d);
       } else {
         d3.selectAll(".showTopics").style("display", "none");
       }
 
-      // d3.rollup(
-      //     this.topicSubset,
-      //     (v) => v.length,
-      //     (d) => this.topTopicInSyllabus(d.index))
+      // d3.filter - show one topic at a time
     },
     landmarkVis: function () {
       landmarkVisible = !landmarkVisible;
@@ -329,65 +337,6 @@ export default {
         .on("mouseleave", function () {
           d3.select("#text").remove();
         });
-
-      // svg
-      //   .append("div")
-      //   .attr("class", "topicUgh")
-      //   .style("position", "absolute")
-      //   .style("top", "80%")
-      //   .style("width", "80%")
-      //   .style("left", "5%")
-      //   .style("right", "5%")
-      //   .style("margin", "auto")
-      //   .text("okay");
-
-      /** call the cards */
-      this.svg;
-    },
-    topTopic2: function () {
-      // have to define topicSubset in this scope
-      // let topicSubset = this.topicSubset;
-
-      // function topicValuesSubsetSimple(d) {
-      //   let arr = [];
-      //   for (let i = 1; i < 21; i++) {
-      //     arr.push(Object.values(topicSubset[d])[i]);
-      //   }
-      //   return arr;
-      // }
-
-      // function compareNumbers(a, b) {
-      //   return b - a;
-      // }
-      // function getKeyByValue(object, value) {
-      //   return Object.keys(object).find((key) => object[key] === value);
-      // }
-      // function object(d) {
-      //   return topicSubset[d];
-      // }
-      // function topTopicValue(d) {
-      //   return topicValuesSubsetSimple(d).sort(compareNumbers)[0];
-      // }
-      // function topTopicInSyllabus(indexNumber) {
-      //   return getKeyByValue(object(indexNumber), topTopicValue(indexNumber));
-      // }
-
-      // console.log("ts", topTopicInSyllabus(300));
-
-      // console.log("ts", this.topicSubset2);
-      // function topicMap() {
-      //   return d3.rollup(
-      //     topicSubset,
-      //     (v) => v.length,
-      //     (d) => topTopicInSyllabus(d.index)
-      //   );
-      // }
-
-      // console.log(mapThing);
-      // console.log(mapThing);
-
-      //console.log(topicMap());
-
       this.svg
         .append("div")
         .attr("class", "topicUgh")
@@ -399,14 +348,65 @@ export default {
         .style("margin", "auto")
         .data(this.topicSubset2)
         .text((d) => d.topTopic + ", " + (d.topicValue * 100).toFixed(1) + "%");
-      // .text(
-      //   (d) =>
-      //     topTopicInSyllabus(d.index) +
-      //     ", " +
-      //     (topTopicValue(d.index) * 100).toFixed(1) +
-      //     "%"
-      // );
+
+      this.svg;
     },
+    //topTopic2: function () {
+    // have to define topicSubset in this scope
+    // let topicSubset = this.topicSubset;
+    // function topicValuesSubsetSimple(d) {
+    //   let arr = [];
+    //   for (let i = 1; i < 21; i++) {
+    //     arr.push(Object.values(topicSubset[d])[i]);
+    //   }
+    //   return arr;
+    // }
+    // function compareNumbers(a, b) {
+    //   return b - a;
+    // }
+    // function getKeyByValue(object, value) {
+    //   return Object.keys(object).find((key) => object[key] === value);
+    // }
+    // function object(d) {
+    //   return topicSubset[d];
+    // }
+    // function topTopicValue(d) {
+    //   return topicValuesSubsetSimple(d).sort(compareNumbers)[0];
+    // }
+    // function topTopicInSyllabus(indexNumber) {
+    //   return getKeyByValue(object(indexNumber), topTopicValue(indexNumber));
+    // }
+    // console.log("ts", topTopicInSyllabus(300));
+    // console.log("ts", this.topicSubset2);
+    // function topicMap() {
+    //   return d3.rollup(
+    //     topicSubset,
+    //     (v) => v.length,
+    //     (d) => topTopicInSyllabus(d.index)
+    //   );
+    // }
+    // console.log(mapThing);
+    // console.log(mapThing);
+    //console.log(topicMap());
+    // this.svg
+    //   .append("div")
+    //   .attr("class", "topicUgh")
+    //   .style("position", "absolute")
+    //   .style("top", "80%")
+    //   .style("width", "80%")
+    //   .style("left", "5%")
+    //   .style("right", "5%")
+    //   .style("margin", "auto")
+    //   .data(this.topicSubset2)
+    //   .text((d) => d.topTopic + ", " + (d.topicValue * 100).toFixed(1) + "%");
+    // .text(
+    //   (d) =>
+    //     topTopicInSyllabus(d.index) +
+    //     ", " +
+    //     (topTopicValue(d.index) * 100).toFixed(1) +
+    //     "%"
+    // );
+    // },
     caseModal: function () {
       console.log("show me the case");
     },
@@ -418,7 +418,7 @@ export default {
     ]).then(([caseData, subsetData]) => {
       this.cases = caseData;
       console.log("cases: ", this.cases);
-      // topic subset
+      // topic subset - honestly do I even need this
       this.topicSubset = caseData.map(function (d) {
         return {
           index: d.index,
@@ -505,9 +505,8 @@ export default {
             ],
         };
       });
-      console.log("topicSubset:", this.topicSubset);
+      // 4 columns --> incl. top topic + value
       this.topicSubset2 = subsetData;
-      console.log("topicSubset2:", this.topicSubset2);
     });
   },
   computed: {},
@@ -515,7 +514,7 @@ export default {
   //   this.topTopic2();
   // },
   updated() {
-    this.topTopic2();
+    //  this.topTopic2();
   },
 };
 </script>
