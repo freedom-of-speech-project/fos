@@ -68,7 +68,7 @@ N <- sum(syl.length)
 term.frequency <- as.integer(term.table)
 
 # MCMC and model tuning parameters:
-K <- 20 # number of topics -- this one has the greatest effect on the results
+K <- 30 # number of topics -- this one has the greatest effect on the results
 G <- 5000 # number of iterations of sampling over the corpus
 alpha <- 0.2 # scalar value of Dirichlet hyperparameter for topic proportions
 eta <- 0.2 # scalar value of Dirichlet hyperparameter for topic multinomials
