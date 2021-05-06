@@ -24,10 +24,17 @@
         <div class="guide">
           <button @click="takeMeToExplore">explore</button>
         </div>
+        <div class="suptext">
+          Want to explore all the cases? Click through to filter by a case topic
+          like <span id="topicShift">{{ " " + topicShift() }}</span>
+        </div>
       </div>
       <div class="guided">
         <div class="guide">
           <button @click="takeMeToGuided">guide me through</button>
+        </div>
+        <div class="suptext">
+          For a more guided experience, click the button below!
         </div>
       </div>
     </div>
@@ -147,7 +154,7 @@
 </template>
 
 <script>
-// import * as d3 from "d3";
+import * as d3 from "d3";
 
 // import Intro from "./pages/Intro.vue";
 import Explore from "./pages/Explore.vue";
@@ -173,6 +180,10 @@ export default {
       loadData: {},
       introtoggle: true,
       title: "Freedom of Speech Project*",
+      topic: "",
+      topicSubset: [],
+      topicSubset2: [],
+      cases: [],
     };
   },
   mounted() {
@@ -180,14 +191,14 @@ export default {
   },
   methods: {
     takeMeToGuided: function () {
-      console.log("did that work");
+      //  console.log("did that work");
       this.guided = !this.guided;
       this.introtoggle = !this.introtoggle;
     },
     takeMeToExplore: function () {
-      console.log("of course it did");
+      // console.log("of course it did");
       this.explore = !this.explore;
-      console.log(this.explore);
+      // console.log(this.explore);
       this.introtoggle = !this.introtoggle;
     },
     whereAmI: function () {
@@ -199,6 +210,143 @@ export default {
         this.explore = false;
       }
     },
+    topicShift: function () {
+      const topicRollup = d3.rollup(
+        this.topicSubset2,
+        (v) => v.length,
+        (d) => d.topTopic
+      );
+
+      //console.log("d", [...topicRollup.keys()]);
+
+      var t = d3.transition().duration(3000);
+      var topic = d3
+        .select("#topicShift")
+        .data([...topicRollup.keys()])
+        .transition(t)
+        .text("obscenity")
+        .transition(t)
+        .text("communism")
+        .transition(t)
+        .text("flag-burning")
+        .transition(t)
+        .text("campaign finance")
+        .transition(t)
+        .text("money speech")
+        .transition(t)
+        .text("labor unions")
+        .transition(t)
+        .text("libel")
+        .transition(t)
+        .text("broadcasting")
+        .transition(t)
+        .text("public schools")
+        .transition(t);
+
+      //   function (d) {
+      //   return d;
+      // })
+      // .remove();
+      topic;
+    },
+  },
+  created() {
+    Promise.all([
+      d3.csv("/full-merged-tm-10-by-20-3.csv", d3.autoType),
+      d3.csv("/topicSubset2.csv", d3.autoType),
+    ]).then(([caseData, subsetData]) => {
+      this.cases = caseData;
+      console.log("cases: ", this.cases);
+      // topic subset - honestly do I even need this
+      this.topicSubset = caseData.map(function (d) {
+        return {
+          index: d.index,
+          case: d.caseName,
+          labor:
+            d[
+              "employees.employee.employment.public.union.board.political.labor.employer.government"
+            ],
+          general:
+            d[
+              "general.attorney.briefs.solicitor.argued.assistant.cause.curiae.brief.jr"
+            ],
+          communism:
+            d[
+              "communist.party.organization.board.foreign.registration.act.control.movement.organizations"
+            ],
+          school:
+            d[
+              "school.religious.schools.student.establishment.religion.students.forum.program.university"
+            ],
+          investigation:
+            d[
+              "grand.jury.press.information.footnote.privilege.news.criminal.sources.investigation"
+            ],
+          senator:
+            d[
+              "mr.debate.senator.clause.legislative.said.privilege.plaintiff.office.house"
+            ],
+          inquiry:
+            d[
+              "act.congress.committee.answer.service.inquiry.president.united.questions.security"
+            ],
+          opinion:
+            d[
+              "opinion.filed.joined.district.post.respondents.held.argued.dissenting.jj"
+            ],
+          interest:
+            d[
+              "speech.government.interest.act.interests.governmental.opinion.case.united.states"
+            ],
+          advertising:
+            d[
+              "advertising.commercial.speech.regulations.information.central.cable.marketing.interest.broadcasting"
+            ],
+          campaign:
+            d[
+              "candidates.candidate.political.election.footnote.contributions.party.expenditures.contribution.campaign"
+            ],
+          injunction:
+            d[
+              "injunction.review.maryland.district.restraint.prior.judicial.order.footnote.relief"
+            ],
+          contributions:
+            d[
+              "limits.federal.election.buckley.bcra.contributions.campaign.political.candidates.candidate"
+            ],
+          affirmed:
+            d[
+              "affirmed.syllabus.decided.argued.freedom.held.act.law.case.reversed"
+            ],
+          damages:
+            d[
+              "false.statements.jury.damages.petitioner.malice.times.respondent.actual.trial"
+            ],
+          telemarketers:
+            d[
+              "solicitation.charitable.fraud.paid.fee.organizations.requirement.telemarketers.circulators.north"
+            ],
+          flag:
+            d[
+              "flag.words.peace.conviction.ohio.convicted.conduct.street.symbol.group"
+            ],
+          obscenity:
+            d[
+              "obscene.obscenity.material.materials.film.sexual.standards.films.indecent.minors"
+            ],
+          religious:
+            d[
+              "religious.tax.prison.religion.inmates.rfra.exercise.burden.inmate.sales"
+            ],
+          public:
+            d[
+              "ordinance.city.picketing.public.streets.ordinances.park.police.permit.regulation"
+            ],
+        };
+      });
+      // 4 columns --> incl. top topic + value
+      this.topicSubset2 = subsetData;
+    });
   },
 };
 </script>
@@ -214,6 +362,7 @@ body {
 h1 {
   font-family: Fredericka the Great, serif;
   font-size: 50px;
+  font-weight: 400;
 }
 
 #app {
@@ -239,6 +388,11 @@ h1 {
   position: fixed;
   overflow-y: auto;
   z-index: 99999;
+}
+
+#topicShift {
+  /* text-decoration: underline;*/
+  color: #c33c05;
 }
 
 .about {
@@ -275,9 +429,12 @@ h1 {
 
 .title {
   justify-self: center;
+  align-self: center;
+  cursor: pointer;
 }
 .info {
   justify-self: start;
+  cursor: pointer;
 }
 
 .h2#team {
@@ -297,25 +454,6 @@ h1 {
   padding: 30px 0px 50px 0px;
 }
 
-button {
-  -webkit-appearance: none;
-  appearance: none;
-  border: 0px;
-  background-color: rgba(0, 0, 0, 0);
-  font-family: Caveat Brush, sans-serif;
-  font-size: 18px;
-  position: relative;
-  margin: 10px;
-}
-
-.guide {
-  background-image: url("./assets/Iconography/button1guide.svg");
-  padding: 0px 15px 15px 40px;
-  margin: 15px;
-  background-repeat: no-repeat;
-  position: absolute;
-}
-
 .friends {
   width: 100px;
   padding: 10px;
@@ -332,19 +470,61 @@ button {
   height: 4em;
 }
 
+/*navigation buttons style*/
+
 .mode-wrapper {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-column-gap: 2.5%;
-  padding: 0% 5% 0% 5%;
+  /* grid-template-columns: 1fr 1fr; */
+  /* column-gap: 2.5%; */
+  /* padding: 0% 5% 0% 5%; */
+  height: 300px;
+  grid-template-columns: 500px 500px;
+  justify-content: center;
 }
-
+/* 
 div.explore,
 div.guided {
   border: 1px solid black;
   color: red;
   height: 200px;
-  /**  display: grid;*/
+} */
+
+.explore,
+.guided {
+  display: flex;
+  justify-content: center;
+  width: 500px;
+}
+
+button {
+  -webkit-appearance: none;
+  appearance: none;
+  border: 0px;
+  background-color: rgba(0, 0, 0, 0);
+  font-family: Caveat Brush, sans-serif;
+  font-size: 18px;
+  position: relative;
+  /* margin: 10px; */
+}
+
+.guide {
+  background-image: url("./assets/Iconography/button1guide.svg");
+  background-size: contain;
+  /* padding: 0px 30px 15px 40px; */
+  margin-top: 60px;
+  padding-top: 5px;
+  background-repeat: no-repeat;
+  position: absolute;
+  cursor: pointer;
+  height: 200px;
+  width: 200px;
+  justify-content: center;
+  display: flex;
+  align-items: flex-start;
+}
+
+.suptext {
+  padding: 20px 0px 20px 0px;
 }
 
 .footer {
