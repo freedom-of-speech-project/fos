@@ -1,12 +1,13 @@
 <template>
   <div class="header-explore">
     <div class="header-relevant"># relevant cases</div>
-    <div>
+    <div class="header-topic">
       <img
-        style="position: relative; width: 75%"
+        style="position: relative; height: 75%"
         src="../assets/Iconography/topic-tag.svg"
       />
     </div>
+    <span></span>
     <div class="dropdown">
       <button class="dropbtn">
         <img
@@ -15,12 +16,22 @@
         />
       </button>
       <div class="dropdown-content">
-        <!-- <a href="#">case name</a>
-        <a href="#">year</a> -->
         <img
-          style="position: absolute"
-          src="../assets/Iconography/dropdown-menu.svg"
+          id="dropdown1"
+          style="position: relative"
+          src="../assets/Iconography/alpha-year-menu2.svg"
         />
+        <div>
+          <button id="dropdown1-1" @click="sortByAlphaAsc"></button>
+        </div>
+
+        <div>
+          <button id="dropdown1-2" @click="sortByAlphaDesc"></button>
+        </div>
+
+        <div><button id="dropdown1-3" @click="sortByYearAsc"></button></div>
+
+        <div><button id="dropdown1-4" @click="sortByYearDesc"></button></div>
       </div>
     </div>
     <!-- year / alpha / -->
@@ -35,7 +46,7 @@
         <!-- <a href="#">case name</a>
         <a href="#">year</a> -->
         <img
-          style="position: absolute"
+          style="position: absolute; right: 0"
           src="../assets/Iconography/dropdown-menu.svg"
         />
       </div>
@@ -49,7 +60,7 @@
 
   <div class="wrapper-explore">
     <div class="sidebar">
-      <div class="sidebar-item text">topic</div>
+      <div class="sidebar-item text topic" id="hiddenTopic">topic</div>
       <button type="button" class="sidebar-item topic" v-on:click="showTopics">
         <img
           style="position: relative"
@@ -62,7 +73,8 @@
       />
       <span />
       <div class="sidebar-item-hidden">hi</div>
-      <div class="sidebar-item-hidden">hi</div>
+      <span class="sidebar-item-hidden" />
+      <!-- <div class="sidebar-item-hidden">hi</div> -->
       <img
         class="border-line sidebar-item-hidden"
         src="../assets/Iconography/sidebar-border-line.svg"
@@ -119,7 +131,9 @@
       <!--/div-->
     </div>
 
-    <div class="content-explore">{{ card() }}</div>
+    <div class="content-explore">
+      {{ card() }}
+    </div>
   </div>
 </template>
 <script>
@@ -136,34 +150,51 @@ let showTopics = true;
 export default {
   name: "Explore",
   props: ["caseData"],
-  //{data: Object,}
   data() {
     return {
-      msg: "hi from Explore component",
       title: "caseName",
       cases: [],
       topicSubset: {},
-      // could define landmarkVisible here
     };
   },
   methods: {
     takeMeToGuided: function () {
-      console.log("did that work");
+      // console.log("did that work");
     },
     takeMeToExplore: function () {
-      console.log("of course it did");
+      // console.log("of course it did");
     },
     showTopics: function () {
       showTopics = !showTopics;
+
+      // const topicGroups = d3.group(this.topicSubset2, (d) => d.topTopic);
+      const topicRollup = d3.rollup(
+        this.topicSubset2,
+        (v) => v.length,
+        (d) => d.topTopic
+      );
+
+      console.log("data", [...topicRollup.entries()]);
+
+      //console.log("object", Object.keys(this.topicSubset[0]));
+
       if (showTopics) {
-        d3.selectAll(".sidebar-item-hidden")
-          .data(this.topicSubset)
-          .text(console.log("plz show topics", [...this.topicSubset.values(0)]))
+        d3.select(".sidebar") //("#hiddenTopic") //or (".sidebar")
+          .selectAll("new")
+          .data([...topicRollup.entries()]) // all 20 of the topic names + number
           .join("div")
-          .style("display", "block");
+          // .html(
+          //   ([category, items]) =>
+          //     `<span><span class="name">${category}</span> <span class="count">(${items})</span> `
+          // )
+          .style("display", "block")
+          .attr("class", "showTopics")
+          .text((d) => d);
       } else {
-        d3.selectAll(".sidebar-item-hidden").style("display", "none");
+        d3.selectAll(".showTopics").style("display", "none");
       }
+
+      // d3.filter - show one topic at a time
     },
     landmarkVis: function () {
       landmarkVisible = !landmarkVisible;
@@ -183,15 +214,28 @@ export default {
           .style("display", "none");
       }
     },
-    sortByYear: function () {
+    sortByYearAsc: function () {
+      d3.selectAll(".card").sort((a, b) => d3.ascending(a.term, b.term));
+    },
+    sortByYearDesc: function () {
       d3.selectAll(".card").sort((a, b) => d3.descending(a.term, b.term));
+    },
+    sortByAlphaAsc: function () {
+      d3.selectAll(".card").sort((a, b) =>
+        d3.ascending(a.caseName, b.caseName)
+      );
+    },
+    sortByAlphaDesc: function () {
+      d3.selectAll(".card").sort((a, b) =>
+        d3.descending(a.caseName, b.caseName)
+      );
     },
     card: function () {
       /** select the .content-explore div and create a card for every case in the dataset,
        * give it a class based on Landmark status, set the background image and sizing
        */
 
-      const svg = d3
+      this.svg = d3
         .select(".content-explore")
         .selectAll("card")
         .data(this.cases)
@@ -226,7 +270,7 @@ export default {
         });
 
       /** add a div for case name and year */
-      svg
+      this.svg
         .append("div")
         .style("position", "absolute")
         .style("top", "20%")
@@ -242,7 +286,7 @@ export default {
         .style("font-size", "1.75vw");
 
       /** add the button to open the modal */
-      svg
+      this.svg
         .append("button")
         .attr("type", "button")
         .attr("class", "button")
@@ -293,166 +337,185 @@ export default {
         .on("mouseleave", function () {
           d3.select("#text").remove();
         });
-
-      svg
+      this.svg
         .append("div")
+        .attr("class", "topicUgh")
         .style("position", "absolute")
-        .style("top", "20%")
+        .style("top", "80%")
         .style("width", "80%")
         .style("left", "5%")
         .style("right", "5%")
         .style("margin", "auto")
-        .text(this.topTopic2());
+        .data(this.topicSubset2)
+        .text((d) => d.topTopic + ", " + (d.topicValue * 100).toFixed(1) + "%");
 
-      /** call the cards */
-      svg;
+      this.svg;
     },
-    topTopic2: function () {
-      console.log("show me", this.topicSubset);
-
-      const topicSubset = this.topicSubset;
-
-      function topicValuesSubsetSimple(d) {
-        var arr = [];
-        for (let i = 1; i < 21; i++) {
-          arr.push(Object.values(topicSubset[d])[i]);
-        }
-        return arr;
-      }
-
-      function compareNumbers(a, b) {
-        return b - a;
-      }
-
-      function getKeyByValue(object, value) {
-        return Object.keys(object).find((key) => object[key] === value);
-      }
-
-      function object(d) {
-        return topicSubset[d];
-      }
-
-      function topTopicValue(d) {
-        return topicValuesSubsetSimple(d).sort(compareNumbers)[0];
-      }
-
-      function topTopicInSyllabus(indexNumber) {
-        return getKeyByValue(object(indexNumber), topTopicValue(indexNumber));
-      }
-      topTopicInSyllabus;
-      // console.log("the top topic is:", topTopicInSyllabus);
-    },
+    //topTopic2: function () {
+    // have to define topicSubset in this scope
+    // let topicSubset = this.topicSubset;
+    // function topicValuesSubsetSimple(d) {
+    //   let arr = [];
+    //   for (let i = 1; i < 21; i++) {
+    //     arr.push(Object.values(topicSubset[d])[i]);
+    //   }
+    //   return arr;
+    // }
+    // function compareNumbers(a, b) {
+    //   return b - a;
+    // }
+    // function getKeyByValue(object, value) {
+    //   return Object.keys(object).find((key) => object[key] === value);
+    // }
+    // function object(d) {
+    //   return topicSubset[d];
+    // }
+    // function topTopicValue(d) {
+    //   return topicValuesSubsetSimple(d).sort(compareNumbers)[0];
+    // }
+    // function topTopicInSyllabus(indexNumber) {
+    //   return getKeyByValue(object(indexNumber), topTopicValue(indexNumber));
+    // }
+    // console.log("ts", topTopicInSyllabus(300));
+    // console.log("ts", this.topicSubset2);
+    // function topicMap() {
+    //   return d3.rollup(
+    //     topicSubset,
+    //     (v) => v.length,
+    //     (d) => topTopicInSyllabus(d.index)
+    //   );
+    // }
+    // console.log(mapThing);
+    // console.log(mapThing);
+    //console.log(topicMap());
+    // this.svg
+    //   .append("div")
+    //   .attr("class", "topicUgh")
+    //   .style("position", "absolute")
+    //   .style("top", "80%")
+    //   .style("width", "80%")
+    //   .style("left", "5%")
+    //   .style("right", "5%")
+    //   .style("margin", "auto")
+    //   .data(this.topicSubset2)
+    //   .text((d) => d.topTopic + ", " + (d.topicValue * 100).toFixed(1) + "%");
+    // .text(
+    //   (d) =>
+    //     topTopicInSyllabus(d.index) +
+    //     ", " +
+    //     (topTopicValue(d.index) * 100).toFixed(1) +
+    //     "%"
+    // );
+    // },
     caseModal: function () {
       console.log("show me the case");
     },
   },
   created() {
-    Promise.all([d3.csv("/full-merged-tm-10-by-20-3.csv", d3.autoType)]).then(
-      ([caseData]) => {
-        this.cases = caseData;
-        //console.log("cases: ", this.cases);
-        // topic subset
-        this.topicSubset = caseData.map(function (d) {
-          return {
-            //index: d.index,
-            case: d.caseName,
-            labor:
-              d[
-                "employees.employee.employment.public.union.board.political.labor.employer.government"
-              ],
-            general:
-              d[
-                "general.attorney.briefs.solicitor.argued.assistant.cause.curiae.brief.jr"
-              ],
-            communism:
-              d[
-                "communist.party.organization.board.foreign.registration.act.control.movement.organizations"
-              ],
-            school:
-              d[
-                "school.religious.schools.student.establishment.religion.students.forum.program.university"
-              ],
-            investigation:
-              d[
-                "grand.jury.press.information.footnote.privilege.news.criminal.sources.investigation"
-              ],
-            senator:
-              d[
-                "mr.debate.senator.clause.legislative.said.privilege.plaintiff.office.house"
-              ],
-            inquiry:
-              d[
-                "act.congress.committee.answer.service.inquiry.president.united.questions.security"
-              ],
-            opinion:
-              d[
-                "opinion.filed.joined.district.post.respondents.held.argued.dissenting.jj"
-              ],
-            interest:
-              d[
-                "speech.government.interest.act.interests.governmental.opinion.case.united.states"
-              ],
-            advertising:
-              d[
-                "advertising.commercial.speech.regulations.information.central.cable.marketing.interest.broadcasting"
-              ],
-            campaign:
-              d[
-                "candidates.candidate.political.election.footnote.contributions.party.expenditures.contribution.campaign"
-              ],
-            injunction:
-              d[
-                "injunction.review.maryland.district.restraint.prior.judicial.order.footnote.relief"
-              ],
-            contributions:
-              d[
-                "limits.federal.election.buckley.bcra.contributions.campaign.political.candidates.candidate"
-              ],
-            affirmed:
-              d[
-                "affirmed.syllabus.decided.argued.freedom.held.act.law.case.reversed"
-              ],
-            damages:
-              d[
-                "false.statements.jury.damages.petitioner.malice.times.respondent.actual.trial"
-              ],
-            telemarketers:
-              d[
-                "solicitation.charitable.fraud.paid.fee.organizations.requirement.telemarketers.circulators.north"
-              ],
-            flag:
-              d[
-                "flag.words.peace.conviction.ohio.convicted.conduct.street.symbol.group"
-              ],
-            obscenity:
-              d[
-                "obscene.obscenity.material.materials.film.sexual.standards.films.indecent.minors"
-              ],
-            religious:
-              d[
-                "religious.tax.prison.religion.inmates.rfra.exercise.burden.inmate.sales"
-              ],
-            public:
-              d[
-                "ordinance.city.picketing.public.streets.ordinances.park.police.permit.regulation"
-              ],
-          };
-        });
-        //console.log("subset", this.topicSubset);
-      }
-    );
+    Promise.all([
+      d3.csv("/full-merged-tm-10-by-20-3.csv", d3.autoType),
+      d3.csv("/topicSubset2.csv", d3.autoType),
+    ]).then(([caseData, subsetData]) => {
+      this.cases = caseData;
+      console.log("cases: ", this.cases);
+      // topic subset - honestly do I even need this
+      this.topicSubset = caseData.map(function (d) {
+        return {
+          index: d.index,
+          case: d.caseName,
+          labor:
+            d[
+              "employees.employee.employment.public.union.board.political.labor.employer.government"
+            ],
+          general:
+            d[
+              "general.attorney.briefs.solicitor.argued.assistant.cause.curiae.brief.jr"
+            ],
+          communism:
+            d[
+              "communist.party.organization.board.foreign.registration.act.control.movement.organizations"
+            ],
+          school:
+            d[
+              "school.religious.schools.student.establishment.religion.students.forum.program.university"
+            ],
+          investigation:
+            d[
+              "grand.jury.press.information.footnote.privilege.news.criminal.sources.investigation"
+            ],
+          senator:
+            d[
+              "mr.debate.senator.clause.legislative.said.privilege.plaintiff.office.house"
+            ],
+          inquiry:
+            d[
+              "act.congress.committee.answer.service.inquiry.president.united.questions.security"
+            ],
+          opinion:
+            d[
+              "opinion.filed.joined.district.post.respondents.held.argued.dissenting.jj"
+            ],
+          interest:
+            d[
+              "speech.government.interest.act.interests.governmental.opinion.case.united.states"
+            ],
+          advertising:
+            d[
+              "advertising.commercial.speech.regulations.information.central.cable.marketing.interest.broadcasting"
+            ],
+          campaign:
+            d[
+              "candidates.candidate.political.election.footnote.contributions.party.expenditures.contribution.campaign"
+            ],
+          injunction:
+            d[
+              "injunction.review.maryland.district.restraint.prior.judicial.order.footnote.relief"
+            ],
+          contributions:
+            d[
+              "limits.federal.election.buckley.bcra.contributions.campaign.political.candidates.candidate"
+            ],
+          affirmed:
+            d[
+              "affirmed.syllabus.decided.argued.freedom.held.act.law.case.reversed"
+            ],
+          damages:
+            d[
+              "false.statements.jury.damages.petitioner.malice.times.respondent.actual.trial"
+            ],
+          telemarketers:
+            d[
+              "solicitation.charitable.fraud.paid.fee.organizations.requirement.telemarketers.circulators.north"
+            ],
+          flag:
+            d[
+              "flag.words.peace.conviction.ohio.convicted.conduct.street.symbol.group"
+            ],
+          obscenity:
+            d[
+              "obscene.obscenity.material.materials.film.sexual.standards.films.indecent.minors"
+            ],
+          religious:
+            d[
+              "religious.tax.prison.religion.inmates.rfra.exercise.burden.inmate.sales"
+            ],
+          public:
+            d[
+              "ordinance.city.picketing.public.streets.ordinances.park.police.permit.regulation"
+            ],
+        };
+      });
+      // 4 columns --> incl. top topic + value
+      this.topicSubset2 = subsetData;
+    });
   },
-  computed: {
-    topTopicPerCase() {
-      console.log("to come");
-      const thing = "Thing";
-      return { thing };
-    },
-  },
+  computed: {},
+  // mounted() {
+  //   this.topTopic2();
+  // },
   updated() {
-    this.topTopic2();
+    //  this.topTopic2();
   },
-  // might need to put topTopic2() in watched or something
 };
 </script>
 <style scoped>
@@ -461,25 +524,29 @@ export default {
   min-height: 30px;
   width: 100%;
   background-color: white;
-  /* border-bottom: 2px solid gray; */
   display: grid;
-  grid-template-columns: auto auto auto auto /* 150px auto auto 150px*/;
+  grid-template-columns: 2fr 1fr 1fr 2fr 2fr; /*auto auto auto auto auto /* 150px auto auto 150px*/
   align-content: center;
 }
 
 /* Dropdown Button */
-.dropbtn {
-  /* background-color: white(207, 206, 206);
+/* .dropbtn {
+  background-color: white(207, 206, 206);
   color: black;
   border: none;
   font-family: Caveat Brush;
   font-size: 16px;
   border: 1px solid gray;
-  padding: 0 5% 0 5%; */
-}
+  padding: 0 5% 0 5%;
+} */
+
 .header-relevant {
   font-size: 1.5em;
   align-self: center; /** TODO: do this everything else that needs it */
+  padding-left: 10px;
+}
+.header-topic {
+  align-self: center;
 }
 /* The container <div> - needed to position the dropdown content */
 .dropdown {
@@ -491,9 +558,9 @@ export default {
 .dropdown-content {
   display: none;
   position: absolute;
-  background-color: #f1f1f1;
+  background-color: none;
   min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  /* box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2); */
   z-index: 1;
 }
 
@@ -518,6 +585,35 @@ export default {
 /* Change the background color of the dropdown button when the dropdown content is shown */
 .dropdown:hover .dropbtn {
   background-color: #e6b996;
+}
+#dropdown1-1,
+#dropdown1-2,
+#dropdown1-3,
+#dropdown1-4 {
+  position: absolute;
+  bottom: 70%;
+  left: -9px;
+  /* border: 2px solid red; */
+  width: 95%;
+  height: 25%;
+  background: transparent;
+}
+#dropdown1-2 {
+  top: 18%;
+  /* border: 2px solid purple; */
+}
+#dropdown1-3 {
+  top: 42%;
+  /* border: 2px solid blue; */
+}
+#dropdown1-4 {
+  top: 65%;
+  /* border: 2px solid green; */
+}
+
+#dropdown1-1:hover,
+#dropdown1-2:hover {
+  border: 2px solid #0d3fd2;
 }
 
 /* wrapper for sidebar and content */
