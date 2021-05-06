@@ -57,6 +57,7 @@ export default {
       aster: false,
       guided: true,
       states: [],
+      landmarks: [],
     };
   },
   methods: {
@@ -82,6 +83,21 @@ export default {
         .attr("class", "state")
         .attr("fill", "white")
         .attr("stroke", "white");
+
+      this.svg
+        .selectAll("circle")
+        .data(this.landmarks)
+        .join("circle")
+        .attr("r", 3)
+        .attr("fill", "black")
+        .attr("transform", (d) => {
+          const [x, y] = projection([d.long, d.lat]);
+          return `translate(${x}, ${y})`;
+        })
+        .style("z-index", 99999)
+        .on("mouseover", (d) => {
+          console.log(d.caseName);
+        });
     },
     asterClick: function () {
       console.log("aster helping!");
@@ -93,9 +109,15 @@ export default {
         "https://raw.githubusercontent.com/jramadani/observable-data/master/gz_2010_us_040_00_20m.json",
         d3.autoType
       ),
-    ]).then(([statesdata]) => {
+      d3.csv(
+        "https://raw.githubusercontent.com/freedom-of-speech-project/fos/vue-joanne/public/landmark_latlong_final.csv",
+        d3.autoType
+      ),
+    ]).then(([statesdata, landmarkdata]) => {
       this.states = statesdata;
+      this.landmarks = landmarkdata;
       console.log("states: ", this.states);
+      console.log("landmarks: ", this.landmarks);
     });
   },
 };

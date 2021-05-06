@@ -349,7 +349,9 @@ export default {
         .data(this.topicSubset2)
         .text((d) => d.topTopic + ", " + (d.topicValue * 100).toFixed(1) + "%");
 
+
       this.svg;
+
     },
     //topTopic2: function () {
     // have to define topicSubset in this scope
@@ -530,15 +532,16 @@ export default {
 }
 
 /* Dropdown Button */
-.dropbtn {
-  /* background-color: white(207, 206, 206);
+/* .dropbtn {
+  background-color: white(207, 206, 206);
   color: black;
   border: none;
   font-family: Caveat Brush;
   font-size: 16px;
   border: 1px solid gray;
-  padding: 0 5% 0 5%; */
-}
+  padding: 0 5% 0 5%;
+} */
+
 .header-relevant {
   font-size: 1.5em;
   align-self: center; /** TODO: do this everything else that needs it */
