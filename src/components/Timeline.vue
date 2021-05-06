@@ -2,7 +2,9 @@
   <div class="timeline-wrapper">
     <div class="tog-wrapper">
       <label class="toggle">
-        <input type="checkbox" /><span class="slider round"></span> </label
+        <input type="checkbox" @click="guidedOn" /><span
+          class="slider round"
+        ></span> </label
       ><span class="toglabel">Explore by era (Guided experience)</span>
     </div>
     <div id="timeline">
@@ -15,12 +17,12 @@ import * as d3 from "d3";
 
 const width = window.innerWidth;
 const height = window.innerHeight;
-const margin = { top: 0, bottom: 0, left: 50, right: 460 };
+const margin = { top: 0, bottom: 0, left: 115, right: 600 };
 
 export default {
   name: "Timeline",
   data() {
-    return { width, height, margin, explore: false };
+    return { width, height, margin, explore: false, checked: true };
   },
   methods: {
     eras: function () {
@@ -53,8 +55,9 @@ export default {
 
       this.svg
         .append("rect")
+        .attr("class", "era")
         .attr("y", "0")
-        .attr("x", "50")
+        .attr("x", `${margin.left}`)
         .attr("width", "90")
         .attr("height", "45")
         .attr("fill", "#3d6fee")
@@ -65,6 +68,10 @@ export default {
         .on("mouseout", function () {
           d3.selectAll("rect").attr("fill-opacity", "40%");
         });
+    },
+    guidedOn: function () {
+      this.guided = !this.guided;
+      console.log(this.guided);
     },
   },
   mounted() {
@@ -158,5 +165,7 @@ input:checked + .slider:before {
   padding: 30px 0px 30px 0px;
   border-radius: 20px;
   position: relative;
+  display: flex;
+  justify-content: center;
 }
 </style>

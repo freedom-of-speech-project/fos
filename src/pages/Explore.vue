@@ -349,9 +349,7 @@ export default {
         .data(this.topicSubset2)
         .text((d) => d.topTopic + ", " + (d.topicValue * 100).toFixed(1) + "%");
 
-
       this.svg;
-
     },
     //topTopic2: function () {
     // have to define topicSubset in this scope
