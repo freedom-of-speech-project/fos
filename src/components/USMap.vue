@@ -84,19 +84,20 @@ export default {
         .attr("fill", "white")
         .attr("stroke", "white");
 
-      // this.svg
-      //   .selectAll("circle")
-      //   .data(this.landmarks)
-      //   .join("circle")
-      //   .attr("r", 3)
-      //   .attr("fill", "black")
-      //   .attr("transform", (d) => {
-      //     const [x, y] = projection([d.long, d.lat]);
-      //     return `translate(${x}, ${y})`;
-      //   })
-      //   .on("mouseover", (d) => {
-      //     console.log(d.caseName);
-      //   });
+      this.svg
+        .selectAll("circle")
+        .data(this.landmarks)
+        .join("circle")
+        .attr("r", 3)
+        .attr("fill", "black")
+        .attr("transform", (d) => {
+          const [x, y] = projection([d.long, d.lat]);
+          return `translate(${x}, ${y})`;
+        })
+        .style("z-index", 99999)
+        .on("mouseover", (d) => {
+          console.log(d.caseName);
+        });
     },
     asterClick: function () {
       console.log("aster helping!");
@@ -109,7 +110,7 @@ export default {
         d3.autoType
       ),
       d3.csv(
-        "https://raw.githubusercontent.com/freedom-of-speech-project/fos-data/joanne-data/landmark_latlong_final.csv?token=AKLRQWWIEBZRROLUF5LYSSLASIKF4",
+        "https://raw.githubusercontent.com/freedom-of-speech-project/fos/vue-joanne/public/landmark_latlong_final.csv",
         d3.autoType
       ),
     ]).then(([statesdata, landmarkdata]) => {
