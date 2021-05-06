@@ -2,10 +2,12 @@
   <div class="header-explore">
     <div class="header-relevant"># relevant cases</div>
     <div class="header-topic">
-      <img
+      <div id="topic-button">{{}}</div>
+      <!-- <img
         style="position: relative; height: 75%"
-        src="../assets/Iconography/topic-tag.svg"
-      />
+        src="../assets/Iconography/blank-topic-button.svg"
+      /> -->
+      <!-- <div>hi</div> -->
     </div>
     <span></span>
     <div class="dropdown">
@@ -165,7 +167,11 @@ export default {
       // console.log("of course it did");
     },
     showTopics: function () {
+      // includes hiding/showing cards on click
       showTopics = !showTopics;
+
+      //TODO: this negates hide/show functionality of LandmarkVis b/c it selects all
+      //could add if statement
 
       // const topicGroups = d3.group(this.topicSubset2, (d) => d.topTopic);
       const topicRollup = d3.rollup(
@@ -174,27 +180,60 @@ export default {
         (d) => d.topTopic
       );
 
-      console.log("data", [...topicRollup.entries()]);
+      //console.log("data", [...topicRollup.keys()], [...topicRollup.values()]);
 
-      //console.log("object", Object.keys(this.topicSubset[0]));
+      console.log("this.topicsubset2", this.topicSubset2);
+      const topicSubset2 = this.topicSubset2;
 
       if (showTopics) {
-        d3.select(".sidebar") //("#hiddenTopic") //or (".sidebar")
-          .selectAll("new")
-          .data([...topicRollup.entries()]) // all 20 of the topic names + number
+        const parent = d3.select(".sidebar");
+
+        this.wrapper = parent
+          .selectAll("div.new")
+          .data([...topicRollup.entries()])
           .join("div")
-          // .html(
-          //   ([category, items]) =>
-          //     `<span><span class="name">${category}</span> <span class="count">(${items})</span> `
-          // )
+          .attr("class", "wrapper");
+        this.row = this.wrapper
+          .append("div")
+          .data([...topicRollup.entries()])
+          //.join("div")
+          .attr("class", "row")
           .style("display", "block")
-          .attr("class", "showTopics")
-          .text((d) => d);
+          .attr("class", (d) => `${d[0]}`)
+          .html(
+            (d) =>
+              `<span><span class="topic ${d[0]}">${d[0]}</span> <span class="count">(${d[1]})</span> `
+          )
+          .on("click", function () {
+            // console.log("this classname:", this.className);
+
+            let topic = this.className;
+            d3.selectAll(".card").style("display", "block");
+
+            d3.selectAll(".card")
+              .data(topicSubset2)
+              .filter(function (d) {
+                return d.topTopic !== topic;
+              })
+              // .sort(function (a, b) {
+              //   console.log("b", b);
+              //   return d3.descending(a.topicValue, b.topicValue);
+              // })
+              .style("display", "none");
+
+            //showTheTopic;
+          });
       } else {
+        //TODO: this class doesn't exist anymore so this doesn't work
         d3.selectAll(".showTopics").style("display", "none");
       }
-
-      // d3.filter - show one topic at a time
+      // console.log("Topic,", this.className);
+      // const button = d3
+      //   .select("#topic-button")
+      //   .append("div")
+      //   .attr("class", "work")
+      //   .text("hello");
+      // button;
     },
     landmarkVis: function () {
       landmarkVisible = !landmarkVisible;
@@ -219,6 +258,13 @@ export default {
     },
     sortByYearDesc: function () {
       d3.selectAll(".card").sort((a, b) => d3.descending(a.term, b.term));
+      // d3.selectAll(".card")
+      //   .data(this.topicSubset2)
+      //   .filter(function (d) {
+      //     return d.topTopic !== "senator";
+      //   })
+      //   .style("display", "none");
+      // console.log("okay", this);
     },
     sortByAlphaAsc: function () {
       d3.selectAll(".card").sort((a, b) =>
@@ -510,12 +556,10 @@ export default {
     });
   },
   computed: {},
-  // mounted() {
-  //   this.topTopic2();
-  // },
-  updated() {
-    //  this.topTopic2();
+  mounted() {
+    // this.showTopics();
   },
+  updated() {},
 };
 </script>
 <style scoped>
@@ -546,6 +590,16 @@ export default {
 }
 .header-topic {
   align-self: center;
+  background-image: "../assets/Iconography/blank-topic-button.svg";
+  /* 'url("https://raw.githubusercontent.com/freedom-of-speech-project/fos/vue-eva/src/assets/Iconography/blank-topic-button.svg")'
+    50% 50% no-repeat; */
+
+  /* background-image: "../assets/Iconography/blank-topic-button.svg"; */
+  /* background-size: contain; */
+  /* <img
+        style="position: relative; height: 75%"
+        src="../assets/Iconography/blank-topic-button.svg"
+      />; */
 }
 /* The container <div> - needed to position the dropdown content */
 .dropdown {
@@ -611,7 +665,9 @@ export default {
 }
 
 #dropdown1-1:hover,
-#dropdown1-2:hover {
+#dropdown1-2:hover,
+#dropdown1-3:hover,
+#dropdown1-4:hover {
   border: 2px solid #0d3fd2;
 }
 
