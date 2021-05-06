@@ -25,8 +25,10 @@
           <button @click="takeMeToExplore">explore</button>
         </div>
         <div class="suptext">
-          Want to explore all the cases? Click through to filter by a case topic
-          like <span id="topicShift">{{ " " + topicShift() }}</span>
+          Want to explore all the cases on your own? Click through to <br />sort
+          by year or filter by a topic like
+          <span id="topicShift">{{ " " + topicShift() }}</span
+          >:
         </div>
       </div>
       <div class="guided">
@@ -34,7 +36,8 @@
           <button @click="takeMeToGuided">guide me through</button>
         </div>
         <div class="suptext">
-          For a more guided experience, click the button below!
+          Interested in a bit more context? For a <br />
+          guided experience, click the button below:
         </div>
       </div>
     </div>
@@ -511,7 +514,7 @@ button {
   background-image: url("./assets/Iconography/button1guide.svg");
   background-size: contain;
   /* padding: 0px 30px 15px 40px; */
-  margin-top: 60px;
+  margin-top: 80px;
   padding-top: 5px;
   background-repeat: no-repeat;
   position: absolute;
