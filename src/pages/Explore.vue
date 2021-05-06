@@ -63,7 +63,12 @@
   <div class="wrapper-explore">
     <div class="sidebar">
       <div class="sidebar-item text topic" id="hiddenTopic">topic</div>
-      <button type="button" class="sidebar-item topic" v-on:click="showTopics">
+      <button
+        type="button"
+        class="sidebar-item topic"
+        id="caret"
+        v-on:click="showTopics"
+      >
         <img
           style="position: relative"
           src="../assets/Iconography/caret-down.svg"
@@ -74,21 +79,25 @@
         src="../assets/Iconography/sidebar-border-line.svg"
       />
       <span />
-      <div class="sidebar-item-hidden">hi</div>
-      <span class="sidebar-item-hidden" />
-      <!-- <div class="sidebar-item-hidden">hi</div> -->
+      <!-- <div class="sidebar-item-hidden">hi</div>
+      <span class="sidebar-item-hidden" /> -->
       <img
         class="border-line sidebar-item-hidden"
         src="../assets/Iconography/sidebar-border-line.svg"
       />
       <span class="sidebar-item-hidden" />
       <div class="sidebar-item year text">year</div>
-      <button type="button" class="sidebar-item">
-        <img
+      <button type="button" class="sidebar-item" id="caret">
+        <!-- <img
           style="position: relative"
           src="../assets/Iconography/caret-down.svg"
-        />
+        /> -->
       </button>
+
+      <div class="sidebar-item-1 brush-container" id="longer">
+        {{ brush() }}
+      </div>
+      <span class="sidebar-item-1" id="shorter" />
 
       <img
         class="border-line"
@@ -96,7 +105,7 @@
       />
       <span />
       <div class="sidebar-item location text">location</div>
-      <button type="button" class="sidebar-item">
+      <button type="button" class="sidebar-item" id="caret">
         <img
           style="position: relative"
           src="../assets/Iconography/caret-down.svg"
@@ -109,7 +118,7 @@
       />
       <span />
       <div class="sidebar-item text">landmark case</div>
-      <label class="switch sidebar-item">
+      <label class="switch sidebar-item" id="caret">
         <input type="checkbox" v-on:click="landmarkVis" />
         <span class="slider round"></span>
       </label>
@@ -121,7 +130,7 @@
       <!--/div>
       <div class="toggle-wrapper"-->
       <div class="sidebar-item text">protected speech</div>
-      <label class="switch sidebar-item">
+      <label class="switch sidebar-item" id="caret">
         <input type="checkbox" />
         <span class="slider round"></span>
       </label>
@@ -197,35 +206,41 @@ export default {
           .append("div")
           .data([...topicRollup.entries()])
           //.join("div")
-          .attr("class", "row")
           .style("display", "block")
           .attr("class", (d) => `${d[0]}`)
+          .attr("id", "topicDiv")
           .html(
             (d) =>
               `<span><span class="topic ${d[0]}">${d[0]}</span> <span class="count">(${d[1]})</span> `
           )
           .on("click", function () {
-            // console.log("this classname:", this.className);
-
+            //set the current topic by picking it up from the DOM selection
             let topic = this.className;
+            // reset card display
             d3.selectAll(".card").style("display", "block");
-
+            // UI for selected topic
+            d3.selectAll("#topicDiv")
+              .style("color", "#7f8887") // make all other topics gray + reduce opacity
+              .style("opacity", 0.75);
+            d3.select(this).style("color", "#3d6fee").style("opacity", 1); // selected topic is blue
+            //filter cards to display only selected topic
             d3.selectAll(".card")
               .data(topicSubset2)
+              .style("color", "#3d6fee")
               .filter(function (d) {
                 return d.topTopic !== topic;
               })
-              // .sort(function (a, b) {
-              //   console.log("b", b);
-              //   return d3.descending(a.topicValue, b.topicValue);
-              // })
+              //.attr("class", "active")
               .style("display", "none");
-
+            // d3.selectAll(".active").sort(function (a, b) {
+            //   console.log("b", b);
+            //   return d3.descending(a.topicValue, b.topicValue);
+            // });
             //showTheTopic;
           });
       } else {
-        //TODO: this class doesn't exist anymore so this doesn't work
-        d3.selectAll(".showTopics").style("display", "none");
+        d3.selectAll("#topicDiv").remove();
+        d3.selectAll(".wrapper").remove();
       }
       // console.log("Topic,", this.className);
       // const button = d3
@@ -254,10 +269,14 @@ export default {
       }
     },
     sortByYearAsc: function () {
-      d3.selectAll(".card").sort((a, b) => d3.ascending(a.term, b.term));
+      d3.selectAll(".card")
+        .data(this.cases)
+        .sort((a, b) => d3.ascending(a.term, b.term));
     },
     sortByYearDesc: function () {
-      d3.selectAll(".card").sort((a, b) => d3.descending(a.term, b.term));
+      d3.selectAll(".card")
+        .data(this.cases)
+        .sort((a, b) => d3.descending(a.term, b.term));
       // d3.selectAll(".card")
       //   .data(this.topicSubset2)
       //   .filter(function (d) {
@@ -267,14 +286,84 @@ export default {
       // console.log("okay", this);
     },
     sortByAlphaAsc: function () {
-      d3.selectAll(".card").sort((a, b) =>
-        d3.ascending(a.caseName, b.caseName)
-      );
+      d3.selectAll(".card")
+        .data(this.cases)
+        .sort((a, b) => d3.ascending(a.caseName, b.caseName));
     },
     sortByAlphaDesc: function () {
-      d3.selectAll(".card").sort((a, b) =>
-        d3.descending(a.caseName, b.caseName)
-      );
+      d3.selectAll(".card")
+        .data(this.cases)
+        .sort((a, b) => d3.descending(a.caseName, b.caseName));
+    },
+    brush: function () {
+      const width = 300;
+      const height = 60;
+
+      var x = d3.scaleLinear().domain([1900, 2020]).range([0, 200]);
+      var x2 = d3.scaleLinear().domain([1900, 2020]).range([0, 200]);
+
+      const xAxis = d3.axisBottom(x).ticks(4).tickFormat(d3.format("d"));
+      const xAxis2 = d3.axisBottom(x2).ticks(4).tickFormat(d3.format("d"));
+
+      this.svg = d3
+        .select(".brush-container")
+        .append("svg")
+        .attr("width", width)
+        .style("height", height * 0.5)
+        .style("position", "absolute")
+        .style("left", 10);
+
+      this.svg
+        .append("g")
+        .attr("class", "axis x-axis")
+        .attr("transform", `translate(10, 10)`)
+        .call(xAxis);
+
+      this.svg
+        .append("g")
+        .attr("class", "axis x-axis")
+        .attr("transform", `translate(10, 10)`)
+        .call(xAxis2);
+
+      var brush = d3
+        .brushX()
+        .extent([
+          [0, 0],
+          [width, height],
+        ])
+        .on("brush end", brushed);
+
+      console.log("d3 enevnt", d3.event);
+
+      //ADD ALL CASES TO TIMELINE -- but invisible/opacity = 0 and then make that the node selected by brushed()
+
+      function brushed({ selection }) {
+        let value = [];
+        if (selection) {
+          const [[x, x2]] = selection;
+          value = xAxis
+            .style("stroke", "gray")
+            .filter((d) => x <= x(d.x) && x(d.x) < x2)
+            .style("stroke", "steelblue")
+            .data();
+          console.log("value", value);
+        }
+        // else {
+        //   dot.style("stroke", "steelblue");
+        // }
+        // svg.property("value", value).dispatch("input");
+      }
+
+      this.svg.attr("class", "brush").call(brush);
+      // const selection = d3.brushSelection();
+
+      // console.log("sel", selection);
+      // //   .selectAll("text")
+      //   .style("text-anchor", "start")
+      //   .attr("dx", "-3em")
+      //   .attr("dy", ".5em");
+      //this.brush = d3.brushX();
+      //.extent([])
     },
     card: function () {
       /** select the .content-explore div and create a card for every case in the dataset,
@@ -289,7 +378,8 @@ export default {
         .attr("class", function (d) {
           return "card landmark" + d.landmark;
         })
-        .style("margin-top", "5%")
+        .style("margin-top", "4%")
+        .style("margin-bottom", "1%")
         .style("margin-left", "auto")
         .style("margin-right", " auto")
         .style("position", "relative")
@@ -348,7 +438,7 @@ export default {
         .style("align-content", "center")
         .style("left", "30%")
         .style("bottom", "20%")
-        .style("width", "40%")
+        .style("width", "39%")
         .style("height", "12%");
 
       /** add gavin icon to landmark cases */
@@ -678,28 +768,53 @@ export default {
   top: 16.23vh; /** .header height + .header-explore height // IDEALLY we could add min-height: 70px so it matches the min heights but not sure how to do that rn*/
   background-color: white;
   position: fixed;
-  height: 100%;
+  height: 84vh;
   width: 100%;
   overflow: auto;
   /* border: 1px solid gray; */
   display: grid;
-  grid-template-columns: 1fr 4fr;
+  grid-template-columns: 3fr 8fr;
 }
 
 .sidebar {
   /* border: 1px solid pink; */
   min-width: 200px;
+  max-width: 280px;
   padding-top: 10px;
   display: grid;
-  grid-template-columns: 4fr 1fr;
+  grid-template-columns: 2fr 1fr;
   max-height: 100%;
   align-content: flex-start;
   row-gap: 4px;
 }
 
 img.border-line {
-  width: 142%;
+  width: 150%;
   height: 20px;
+}
+
+/** sidebar list items */
+.sidebar-item-1 {
+  /* height: 40px; */
+  /* border: 1px solid pink; */
+}
+
+#caret {
+  /* margin-left: 50%; */
+  /* border: 1px solid orange; */
+  align-self: center;
+}
+
+/** full sidebar width */
+#longer {
+  width: 145%; /** TODO: figure this out */
+  /* border: 1px solid red; */
+  height: 35px;
+}
+
+#shorter {
+  width: 0px;
+  /* border: 1px solid purple; */
 }
 
 /** sidebar list items */
@@ -710,7 +825,8 @@ img.border-line {
 
 .sidebar-item.text {
   padding-top: 5%;
-  /* border: 1px solid pink; */
+  /* border: 1px solid blue; */
+  align-self: center;
 }
 
 .sidebar-item-hidden {
@@ -740,6 +856,8 @@ button {
   width: 60px;
   height: 34px;
   transform: scale(0.7);
+  align-self: center;
+  justify-content: center;
 }
 
 /* Hide default HTML checkbox */
@@ -757,7 +875,9 @@ button {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #ccc;
+  background-color: #53605f;
+  border: 3px solid #7f8887;
+
   -webkit-transition: 0.4s;
   transition: 0.4s;
 }
@@ -767,15 +887,16 @@ button {
   content: "";
   height: 26px;
   width: 26px;
-  left: 4px;
-  bottom: 4px;
+  left: 2px;
+  bottom: 1px;
   background-color: white;
-  -webkit-transition: 0.4s;
-  transition: 0.4s;
+  -webkit-transition: 0.7s;
+  transition: 0.7s;
 }
 
 input:checked + .slider {
-  background-color: #e6b996;
+  background-color: #3d6fee;
+  border: 3px solid #7ba6f1;
 }
 
 input:focus + .slider {
@@ -783,9 +904,9 @@ input:focus + .slider {
 }
 
 input:checked + .slider:before {
-  -webkit-transform: translateX(26px);
-  -ms-transform: translateX(26px);
-  transform: translateX(26px);
+  -webkit-transform: translateX(24px);
+  -ms-transform: translateX(24px);
+  transform: translateX(24px);
 }
 
 /* Rounded sliders */
@@ -795,6 +916,11 @@ input:checked + .slider:before {
 
 .slider.round:before {
   border-radius: 50%;
+}
+
+/** created topic divs */
+div.wrapper {
+  border: 2px solid green;
 }
 
 .content-explore {
