@@ -86,8 +86,9 @@
         src="../assets/Iconography/sidebar-border-line.svg"
       />
       <span class="sidebar-item-hidden" />
-      <div class="sidebar-item year text">year</div>
-      <button type="button" class="sidebar-item" id="caret">
+      <div class="sidebar-item year text" id="year">year</div>
+      {{ filterByYear() }}
+      <button type="button" class="sidebar-item yearDisplay" id="caret">
         <!-- <img
           style="position: relative"
           src="../assets/Iconography/caret-down.svg"
@@ -157,6 +158,10 @@ export default defineComponent({
 import * as d3 from "d3";
 let landmarkVisible = true;
 let showTopics = true;
+let yearArray = [];
+
+let startYear;
+let endYear;
 
 export default {
   name: "Explore",
@@ -295,16 +300,21 @@ export default {
         .data(this.cases)
         .sort((a, b) => d3.descending(a.caseName, b.caseName));
     },
+
     brush: function () {
       const width = 300;
       const height = 60;
+      //var dispatch = d3.dispatch("arrayFinished");
 
-      var x = d3.scaleLinear().domain([1900, 2020]).range([0, 200]);
-      var x2 = d3.scaleLinear().domain([1900, 2020]).range([0, 200]);
-
+      //make the scales and axes
+      const x = d3.scaleLinear().domain([1900, 2020]).range([0, 200]);
+      const x2 = d3.scaleLinear().domain([1900, 2020]).range([0, 200]);
       const xAxis = d3.axisBottom(x).ticks(4).tickFormat(d3.format("d"));
       const xAxis2 = d3.axisBottom(x2).ticks(4).tickFormat(d3.format("d"));
 
+      //TODO: change axis font to Noto Sans
+
+      // make the container
       this.svg = d3
         .select(".brush-container")
         .append("svg")
@@ -313,19 +323,19 @@ export default {
         .style("position", "absolute")
         .style("left", 10);
 
+      //call both x axes (needed to position brush start and end)
       this.svg
         .append("g")
         .attr("class", "axis x-axis")
         .attr("transform", `translate(10, 10)`)
         .call(xAxis);
-
       this.svg
         .append("g")
         .attr("class", "axis x-axis")
         .attr("transform", `translate(10, 10)`)
         .call(xAxis2);
-
-      var brush = d3
+      //make the brush
+      const brush = d3
         .brushX()
         .extent([
           [0, 0],
@@ -333,38 +343,84 @@ export default {
         ])
         .on("brush end", brushed);
 
-      console.log("d3 enevnt", d3.event);
+      //add data points to the axis
+      const dot = this.svg
+        .append("g")
+        .attr("fill", "none")
+        .attr("stroke", "#3d6fee")
+        .attr("stroke-width", 1)
+        .selectAll("circle")
+        .data(this.cases)
+        .join("circle")
+        .attr("transform", (d) => `translate(${x(d.term)}, 10)`)
+        .attr("r", 3);
+      //TODO: change circles to ticks/rects
 
-      //ADD ALL CASES TO TIMELINE -- but invisible/opacity = 0 and then make that the node selected by brushed()
+      //call the brush
+      this.svg.attr("class", "brush").call(brush);
+
+      //make brushed function
+      // this.startYear = startYear;
+      // this.endYear = endYear;
+      console.log("1", this); // "this" is the app
+
+      const data = this.cases;
 
       function brushed({ selection }) {
-        let value = [];
         if (selection) {
-          const [[x, x2]] = selection;
-          value = xAxis
-            .style("stroke", "gray")
-            .filter((d) => x <= x(d.x) && x(d.x) < x2)
-            .style("stroke", "steelblue")
+          const fx = d3.scaleLinear().domain([1900, 2020]).range([0, 200]);
+          const fx2 = d3.scaleLinear().domain([1900, 2020]).range([0, 200]);
+          const [x, x2] = selection;
+          yearArray = dot
+            .style("stroke", "#B5BBC0") //gray
+            .filter((d) => x <= fx(d.term) && fx2(d.term) < x2)
+            .style("stroke", "#3d6fee") //blue
+            .style("opacity", 1)
             .data();
-          console.log("value", value);
+          startYear = yearArray[0].term;
+          endYear = yearArray[yearArray.length - 1].term;
+
+          const cards = d3
+            .selectAll(".card")
+            .style("display", "none")
+            .data(data)
+            .filter(function (d) {
+              return d.term > startYear && d.term < endYear;
+              //return d.term <= endYear; //startYear <= d.term; // &&
+            })
+            .style("display", "block");
+
+          const display = d3
+            .select(".yearDisplay")
+            .text(startYear + "-" + endYear);
+          display;
+
+          //(d) => startYear <= d.term && d.term < endYear);
+
+          console.log("cards", cards);
+          // this.startYear = yearArray[0].term;
+          // this.endYear = yearArray[yearArray.length - 1].term;
+          // console.log("2", data); // "this" is the selection of svgs
+
+          //all i want is to make this.startyear and this.endyear available outside this function
+
+          // OR call the filterbyyear method inside here
+          // this.filterByYear(); // can't do this because brushed is not an arrow function
+          //can't make it an arrow function because it won't work in d3
+        } else {
+          dot.style("stroke", "#3d6fee").attr("opacity", 1); //blue
         }
-        // else {
-        //   dot.style("stroke", "steelblue");
-        // }
-        // svg.property("value", value).dispatch("input");
+        console.log("2", data);
       }
-
-      this.svg.attr("class", "brush").call(brush);
-      // const selection = d3.brushSelection();
-
-      // console.log("sel", selection);
-      // //   .selectAll("text")
-      //   .style("text-anchor", "start")
-      //   .attr("dx", "-3em")
-      //   .attr("dy", ".5em");
-      //this.brush = d3.brushX();
-      //.extent([])
     },
+
+    filterByYear: function () {
+      console.log("yearArray2", yearArray);
+      d3.selectAll(".card").data(this.cases).filter(yearArray);
+      //if i could access this.startYear and this.endYear
+      console.log("yearArray", startYear, endYear);
+    },
+
     card: function () {
       /** select the .content-explore div and create a card for every case in the dataset,
        * give it a class based on Landmark status, set the background image and sizing
@@ -549,8 +605,14 @@ export default {
   },
   created() {
     Promise.all([
-      d3.csv("/full-merged-tm-10-by-20-3.csv", d3.autoType),
-      d3.csv("/topicSubset2.csv", d3.autoType),
+      d3.csv(
+        "https://raw.githubusercontent.com/freedom-of-speech-project/fos/draft-production/full-merged-tm-10-by-20-3.csv",
+        d3.autoType
+      ),
+      d3.csv(
+        "https://raw.githubusercontent.com/freedom-of-speech-project/fos/draft-production/topicSubset2.csv",
+        d3.autoType
+      ),
     ]).then(([caseData, subsetData]) => {
       this.cases = caseData;
       console.log("cases: ", this.cases);
@@ -649,7 +711,13 @@ export default {
   mounted() {
     // this.showTopics();
   },
-  updated() {},
+  updated() {
+    // filterByYear(function () {
+    //   //this goes up above
+    //   dispatch.on("arrayFinished");
+    //   console.log("yearArray", startYear, endYear);
+    // });
+  },
 };
 </script>
 <style scoped>

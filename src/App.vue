@@ -222,7 +222,7 @@ export default {
 
       //console.log("d", [...topicRollup.keys()]);
 
-      var t = d3.transition().duration(3000);
+      var t = d3.transition().duration(2000);
       var topic = d3
         .select("#topicShift")
         .data([...topicRollup.keys()])
