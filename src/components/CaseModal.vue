@@ -53,7 +53,7 @@ import * as d3 from "d3";
 export default {
   name: "CaseModal",
   data() {
-    return { title: "caseName", cases: [], topicSubset: {} };
+    return { title: "caseName", cases: [], topicSubset: {}, landmarkData: {} };
   },
   methods: {
     protectedSpeech: function () {
@@ -81,7 +81,7 @@ export default {
       // waiting for landmarks JSON
       /** 
       d3.select(".modal-decision")
-        .data(this.landmarks) // json dataset
+        .data(this.landmarkData) // json dataset
         .text(function (d) {
           return d.decision;
         })
@@ -111,22 +111,21 @@ export default {
     },
     keyIssue: function () {
       // waiting for landmarks JSON
-      /** 
+
       d3.select(".modal-keyIssue")
-        .data(this.landmarks) // json dataset
+        .data(this.landmarkData) // json dataset
         .text(function (d) {
           return d.keyissue;
         })
         .style("color", "black")
         .style("font-family", "Noto Sans")
         .style("font-size", ".75em");
-       */
     },
     significance: function () {
       // waiting for landmarks JSON
       /** 
       d3.select(".modal-significance")
-        .data(this.landmarks) // json dataset
+        .data(this.landmarkData) // json dataset
         .text(function (d) {
           return d.significance;
         })
@@ -139,7 +138,7 @@ export default {
       // waiting for landmarks JSON
       /** 
       d3.select(".modal-related")
-        .data(this.landmarks) // json dataset
+        .data(this.landmarkData) // json dataset
         .text(function (d) {
           return d.related;
         })
@@ -152,18 +151,24 @@ export default {
   created() {
     Promise.all([
       d3.csv(
-        "https://raw.githubusercontent.com/freedom-of-speech-project/fos-data/3f80e39e563c2073e93973a2f20367f0e4fa516d/tmpvfull-05-03_09-59.csv?token=ALBDZW3Y6ZUW26CZVKGV4WLATB66U",
+        "https://raw.githubusercontent.com/freedom-of-speech-project/fos/vue-joanne/data_and_processing/tmpvfull-05-03_09-59.csv",
         d3.autoType
       ),
       d3.csv(
         "https://raw.githubusercontent.com/freedom-of-speech-project/fos/draft-production/topicSubset2.csv",
         d3.autoType
       ),
-    ]).then(([caseData, subsetData]) => {
+      d3.json(
+        "https://dl.dropboxusercontent.com/s/vuu4wd1a5h8opus/landmarks.json?dl=0",
+        d3.autoType
+      ),
+    ]).then(([caseData, subsetData, landmarkData]) => {
       this.cases = caseData;
-      console.log("new cases: ", this.cases);
+      // console.log("new cases: ", this.cases);
       // 4 columns --> incl. top topic + value
       this.topicSubset2 = subsetData;
+      this.landmarkData = landmarkData;
+      console.log("Landmark json", this.landmarkData);
     });
   },
 };
@@ -181,6 +186,8 @@ export default {
   width: 100%;
   background-color: rgba(0, 0, 0, 0.427);
 }
+
+/* TODO: needs a media querey/ aspect ratio thing for mobile */
 #modal-container {
   width: 700px;
   height: 900px;

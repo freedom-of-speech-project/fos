@@ -542,7 +542,7 @@ export default {
         .style("background-image", function (d) {
           if (d.protected === "No") return "none";
           else if (d.protected === "Yes")
-            return 'url("https://raw.githubusercontent.com/freedom-of-speech-project/fos/vue-eva/src/assets/Iconography/asterrisk.svg")';
+            return 'url("https://raw.githubusercontent.com/freedom-of-speech-project/fos/vue-eva/src/assets/Iconography/courthouse.svg")';
         })
         .style("background-size", "contain")
         .style("background-repeat", "no-repeat")
@@ -589,8 +589,7 @@ export default {
   created() {
     Promise.all([
       d3.csv(
-        "https://raw.githubusercontent.com/freedom-of-speech-project/fos-data/joanne-data/05-03-fulldataprotectedvar.csv?token=ALBDZWYD3KYNHIPJQXXTYSDAS5ITQ",
-        // "https://raw.githubusercontent.com/freedom-of-speech-project/fos/draft-production/full-merged-tm-10-by-20-3.csv",
+        "https://raw.githubusercontent.com/freedom-of-speech-project/fos/vue-joanne/data_and_processing/tmpvfull-05-03_09-59.csv",
         d3.autoType
       ),
       d3.csv(
