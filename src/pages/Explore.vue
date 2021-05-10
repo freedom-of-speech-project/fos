@@ -77,6 +77,7 @@
       <img
         class="border-line"
         src="../assets/Iconography/sidebar-border-line.svg"
+        id="longer"
       />
       <span />
       <!-- <div class="sidebar-item-hidden">hi</div>
@@ -84,10 +85,11 @@
       <img
         class="border-line sidebar-item-hidden"
         src="../assets/Iconography/sidebar-border-line.svg"
+        id="longer"
       />
       <span class="sidebar-item-hidden" />
       <div class="sidebar-item year text" id="year">year</div>
-      {{ filterByYear() }}
+
       <button type="button" class="sidebar-item yearDisplay" id="caret">
         <!-- <img
           style="position: relative"
@@ -103,8 +105,9 @@
       <img
         class="border-line"
         src="../assets/Iconography/sidebar-border-line.svg"
+        id="longer"
       />
-      <span />
+      <span id="shorter" />
       <div class="sidebar-item location text">location</div>
       <button type="button" class="sidebar-item" id="caret">
         <img
@@ -116,8 +119,9 @@
       <img
         class="border-line"
         src="../assets/Iconography/sidebar-border-line.svg"
+        id="longer"
       />
-      <span />
+      <span id="shorter" />
       <div class="sidebar-item text">landmark case</div>
       <label class="switch sidebar-item" id="caret">
         <input type="checkbox" v-on:click="landmarkVis" />
@@ -126,18 +130,20 @@
       <img
         class="border-line"
         src="../assets/Iconography/sidebar-border-line.svg"
+        id="longer"
       />
       <span />
       <!--/div>
       <div class="toggle-wrapper"-->
       <div class="sidebar-item text">protected speech</div>
       <label class="switch sidebar-item" id="caret">
-        <input type="checkbox" />
+        <input type="checkbox" v-on:click="protectedVis" />
         <span class="slider round"></span>
       </label>
       <img
         class="border-line"
         src="../assets/Iconography/sidebar-border-line.svg"
+        id="longer"
       />
       <span />
       <!--/div-->
@@ -157,6 +163,7 @@ export default defineComponent({
 */
 import * as d3 from "d3";
 let landmarkVisible = true;
+let protectedVisible = true;
 let showTopics = true;
 let yearArray = [];
 
@@ -194,8 +201,6 @@ export default {
         (d) => d.topTopic
       );
 
-      //console.log("data", [...topicRollup.keys()], [...topicRollup.values()]);
-
       console.log("this.topicsubset2", this.topicSubset2);
       const topicSubset2 = this.topicSubset2;
 
@@ -210,7 +215,6 @@ export default {
         this.row = this.wrapper
           .append("div")
           .data([...topicRollup.entries()])
-          //.join("div")
           .style("display", "block")
           .attr("class", (d) => `${d[0]}`)
           .attr("id", "topicDiv")
@@ -235,25 +239,12 @@ export default {
               .filter(function (d) {
                 return d.topTopic !== topic;
               })
-              //.attr("class", "active")
               .style("display", "none");
-            // d3.selectAll(".active").sort(function (a, b) {
-            //   console.log("b", b);
-            //   return d3.descending(a.topicValue, b.topicValue);
-            // });
-            //showTheTopic;
           });
       } else {
         d3.selectAll("#topicDiv").remove();
         d3.selectAll(".wrapper").remove();
       }
-      // console.log("Topic,", this.className);
-      // const button = d3
-      //   .select("#topic-button")
-      //   .append("div")
-      //   .attr("class", "work")
-      //   .text("hello");
-      // button;
     },
     landmarkVis: function () {
       landmarkVisible = !landmarkVisible;
@@ -273,6 +264,24 @@ export default {
           .style("display", "none");
       }
     },
+    protectedVis: function () {
+      protectedVisible = !protectedVisible;
+      // console.log("Default value of protectedVisible is", protectedVisible);
+      // console.log("Toggled lv is", protectedVisible);
+      if (protectedVisible) {
+        d3.selectAll(".protectedNo")
+          .transition()
+          //.style("opacity", "1.0")
+          .delay(500)
+          .style("display", "block");
+      } else {
+        d3.selectAll(".protectedNo")
+          .transition()
+          //.style("opacity", "0.5")
+          .delay(500)
+          .style("display", "none");
+      }
+    },
     sortByYearAsc: function () {
       d3.selectAll(".card")
         .data(this.cases)
@@ -282,13 +291,6 @@ export default {
       d3.selectAll(".card")
         .data(this.cases)
         .sort((a, b) => d3.descending(a.term, b.term));
-      // d3.selectAll(".card")
-      //   .data(this.topicSubset2)
-      //   .filter(function (d) {
-      //     return d.topTopic !== "senator";
-      //   })
-      //   .style("display", "none");
-      // console.log("okay", this);
     },
     sortByAlphaAsc: function () {
       d3.selectAll(".card")
@@ -300,26 +302,41 @@ export default {
         .data(this.cases)
         .sort((a, b) => d3.descending(a.caseName, b.caseName));
     },
-
     brush: function () {
-      const width = 300;
-      const height = 60;
+      const width = window.innerWidth * 0.23;
+      const height = 50;
+      const marginLeft = 20;
       //var dispatch = d3.dispatch("arrayFinished");
 
       //make the scales and axes
-      const x = d3.scaleLinear().domain([1900, 2020]).range([0, 200]);
-      const x2 = d3.scaleLinear().domain([1900, 2020]).range([0, 200]);
-      const xAxis = d3.axisBottom(x).ticks(4).tickFormat(d3.format("d"));
-      const xAxis2 = d3.axisBottom(x2).ticks(4).tickFormat(d3.format("d"));
+      const x = d3
+        .scaleLinear()
+        .domain([1900, 2019])
+        .range([marginLeft, width]);
+      const x2 = d3
+        .scaleLinear()
+        .domain([1900, 2019])
+        .range([marginLeft, width]);
+
+      const xAxis = d3
+        .axisBottom(x)
+        .ticks(4)
+        .tickFormat(d3.format("d"))
+        .tickSize(0);
+      const xAxis2 = d3
+        .axisBottom(x2)
+        .ticks(4)
+        .tickFormat(d3.format("d"))
+        .tickSize(0);
 
       //TODO: change axis font to Noto Sans
-
+      console.log("width", width);
       // make the container
       this.svg = d3
         .select(".brush-container")
         .append("svg")
         .attr("width", width)
-        .style("height", height * 0.5)
+        .style("height", height * 0.75)
         .style("position", "absolute")
         .style("left", 10);
 
@@ -327,49 +344,56 @@ export default {
       this.svg
         .append("g")
         .attr("class", "axis x-axis")
-        .attr("transform", `translate(10, 10)`)
+        .attr("transform", `translate(10, 25)`)
+        .style("font-family", "Noto Sans")
         .call(xAxis);
       this.svg
         .append("g")
         .attr("class", "axis x-axis")
-        .attr("transform", `translate(10, 10)`)
+        .attr("transform", `translate(10, 25)`)
+        .style("font-family", "Noto Sans")
         .call(xAxis2);
       //make the brush
       const brush = d3
         .brushX()
         .extent([
-          [0, 0],
-          [width, height],
+          [0, 7],
+          [width, height * 0.6],
         ])
         .on("brush end", brushed);
 
       //add data points to the axis
       const dot = this.svg
         .append("g")
-        .attr("fill", "none")
         .attr("stroke", "#3d6fee")
+        .attr("fill", "none")
+        // .attr("opacity", 0.5)
+        // .attr("stroke-opacity", 1)
         .attr("stroke-width", 1)
-        .selectAll("circle")
+        .selectAll("rect")
         .data(this.cases)
-        .join("circle")
-        .attr("transform", (d) => `translate(${x(d.term)}, 10)`)
-        .attr("r", 3);
-      //TODO: change circles to ticks/rects
+        .join("rect")
+        .attr("x", (d) => x(d.term))
+        .attr("y", 12)
+        .attr("height", 12)
+        .attr("width", 3);
 
       //call the brush
       this.svg.attr("class", "brush").call(brush);
 
       //make brushed function
-      // this.startYear = startYear;
-      // this.endYear = endYear;
-      console.log("1", this); // "this" is the app
-
       const data = this.cases;
 
       function brushed({ selection }) {
         if (selection) {
-          const fx = d3.scaleLinear().domain([1900, 2020]).range([0, 200]);
-          const fx2 = d3.scaleLinear().domain([1900, 2020]).range([0, 200]);
+          const fx = d3
+            .scaleLinear()
+            .domain([1900, 2019])
+            .range([marginLeft, width]);
+          const fx2 = d3
+            .scaleLinear()
+            .domain([1900, 2019])
+            .range([marginLeft, width]);
           const [x, x2] = selection;
           yearArray = dot
             .style("stroke", "#B5BBC0") //gray
@@ -386,53 +410,32 @@ export default {
             .data(data)
             .filter(function (d) {
               return d.term > startYear && d.term < endYear;
-              //return d.term <= endYear; //startYear <= d.term; // &&
             })
             .style("display", "block");
 
           const display = d3
             .select(".yearDisplay")
-            .text(startYear + "-" + endYear);
+            .text(startYear + "-" + endYear)
+            .style("color", "#3d6fee"); //blue
+
+          cards;
           display;
-
-          //(d) => startYear <= d.term && d.term < endYear);
-
-          console.log("cards", cards);
-          // this.startYear = yearArray[0].term;
-          // this.endYear = yearArray[yearArray.length - 1].term;
-          // console.log("2", data); // "this" is the selection of svgs
-
-          //all i want is to make this.startyear and this.endyear available outside this function
-
-          // OR call the filterbyyear method inside here
-          // this.filterByYear(); // can't do this because brushed is not an arrow function
-          //can't make it an arrow function because it won't work in d3
         } else {
           dot.style("stroke", "#3d6fee").attr("opacity", 1); //blue
         }
-        console.log("2", data);
       }
     },
-
-    filterByYear: function () {
-      console.log("yearArray2", yearArray);
-      d3.selectAll(".card").data(this.cases).filter(yearArray);
-      //if i could access this.startYear and this.endYear
-      console.log("yearArray", startYear, endYear);
-    },
-
     card: function () {
       /** select the .content-explore div and create a card for every case in the dataset,
        * give it a class based on Landmark status, set the background image and sizing
        */
-
       this.svg = d3
         .select(".content-explore")
         .selectAll("card")
         .data(this.cases)
         .join("div")
         .attr("class", function (d) {
-          return "card landmark" + d.landmark;
+          return "card landmark" + d.landmark + " protected" + d.protected;
         })
         .style("margin-top", "4%")
         .style("margin-bottom", "1%")
@@ -529,6 +532,42 @@ export default {
         .on("mouseleave", function () {
           d3.select("#text").remove();
         });
+
+      /** add protected icon to protected speech cases */
+      d3.selectAll(".protectedYes")
+        .append("rect")
+        .attr("class", "protected")
+        .style("position", "absolute")
+        .style("border", "none")
+        .style("background-image", function (d) {
+          if (d.protected === "No") return "none";
+          else if (d.protected === "Yes")
+            return 'url("https://raw.githubusercontent.com/freedom-of-speech-project/fos/vue-eva/src/assets/Iconography/asterrisk.svg")';
+        })
+        .style("background-size", "contain")
+        .style("background-repeat", "no-repeat")
+        .style("align-content", "center")
+        .style("right", "3%")
+        .style("bottom", "10%")
+        .style("width", "10%")
+        .style("height", "15%")
+        .on("mouseenter", function () {
+          d3.select(this)
+            .append("rect")
+            .style("position", "absolute")
+            // .style("left", "-100%")
+            .style("right", "110%")
+            .style("bottom", "30%")
+            .attr("id", "text")
+            .text("Speech was protected!")
+            .style("font-size", "1.15vw")
+            .style("color", "#0d3fd2");
+        })
+        .on("mouseleave", function () {
+          d3.select("#text").remove();
+        });
+
+      // add topic to each case
       this.svg
         .append("div")
         .attr("class", "topicUgh")
@@ -543,62 +582,6 @@ export default {
 
       this.svg;
     },
-    //topTopic2: function () {
-    // have to define topicSubset in this scope
-    // let topicSubset = this.topicSubset;
-    // function topicValuesSubsetSimple(d) {
-    //   let arr = [];
-    //   for (let i = 1; i < 21; i++) {
-    //     arr.push(Object.values(topicSubset[d])[i]);
-    //   }
-    //   return arr;
-    // }
-    // function compareNumbers(a, b) {
-    //   return b - a;
-    // }
-    // function getKeyByValue(object, value) {
-    //   return Object.keys(object).find((key) => object[key] === value);
-    // }
-    // function object(d) {
-    //   return topicSubset[d];
-    // }
-    // function topTopicValue(d) {
-    //   return topicValuesSubsetSimple(d).sort(compareNumbers)[0];
-    // }
-    // function topTopicInSyllabus(indexNumber) {
-    //   return getKeyByValue(object(indexNumber), topTopicValue(indexNumber));
-    // }
-    // console.log("ts", topTopicInSyllabus(300));
-    // console.log("ts", this.topicSubset2);
-    // function topicMap() {
-    //   return d3.rollup(
-    //     topicSubset,
-    //     (v) => v.length,
-    //     (d) => topTopicInSyllabus(d.index)
-    //   );
-    // }
-    // console.log(mapThing);
-    // console.log(mapThing);
-    //console.log(topicMap());
-    // this.svg
-    //   .append("div")
-    //   .attr("class", "topicUgh")
-    //   .style("position", "absolute")
-    //   .style("top", "80%")
-    //   .style("width", "80%")
-    //   .style("left", "5%")
-    //   .style("right", "5%")
-    //   .style("margin", "auto")
-    //   .data(this.topicSubset2)
-    //   .text((d) => d.topTopic + ", " + (d.topicValue * 100).toFixed(1) + "%");
-    // .text(
-    //   (d) =>
-    //     topTopicInSyllabus(d.index) +
-    //     ", " +
-    //     (topTopicValue(d.index) * 100).toFixed(1) +
-    //     "%"
-    // );
-    // },
     caseModal: function () {
       console.log("show me the case");
     },
@@ -606,7 +589,8 @@ export default {
   created() {
     Promise.all([
       d3.csv(
-        "https://raw.githubusercontent.com/freedom-of-speech-project/fos/draft-production/full-merged-tm-10-by-20-3.csv",
+        "https://raw.githubusercontent.com/freedom-of-speech-project/fos-data/joanne-data/05-03-fulldataprotectedvar.csv?token=ALBDZWYD3KYNHIPJQXXTYSDAS5ITQ",
+        // "https://raw.githubusercontent.com/freedom-of-speech-project/fos/draft-production/full-merged-tm-10-by-20-3.csv",
         d3.autoType
       ),
       d3.csv(
@@ -711,13 +695,7 @@ export default {
   mounted() {
     // this.showTopics();
   },
-  updated() {
-    // filterByYear(function () {
-    //   //this goes up above
-    //   dispatch.on("arrayFinished");
-    //   console.log("yearArray", startYear, endYear);
-    // });
-  },
+  updated() {},
 };
 </script>
 <style scoped>
@@ -847,7 +825,7 @@ export default {
 .sidebar {
   /* border: 1px solid pink; */
   min-width: 200px;
-  max-width: 280px;
+  /* max-width: 300px; */
   padding-top: 10px;
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -857,8 +835,8 @@ export default {
 }
 
 img.border-line {
-  width: 150%;
-  height: 20px;
+  grid-column-start: 1;
+  grid-column-end: 2;
 }
 
 /** sidebar list items */
@@ -895,6 +873,8 @@ img.border-line {
   padding-top: 5%;
   /* border: 1px solid blue; */
   align-self: center;
+  text-align: left;
+  padding-left: 40px;
 }
 
 .sidebar-item-hidden {
