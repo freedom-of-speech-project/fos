@@ -1,5 +1,6 @@
 <template>
   <!-- <img alt="Vue logo" src="./assets/logo.png" /> -->
+
   <div class="header">
     <span @click="whereAmI" class="title">Freedom of Speech* </span>
     <span></span>
@@ -149,7 +150,7 @@
   <!-- <Intro v-if="explore == false && guided == false" /> -->
   <Explore v-if="explore" />
   <Guided v-if="guided" />
-  <!-- <CaseModal /> -->
+  <CaseModal />
   <!--Explore :data="loadData"/-->
 
   <!-- <USMap /> -->
@@ -162,7 +163,7 @@ import * as d3 from "d3";
 // import Intro from "./pages/Intro.vue";
 import Explore from "./pages/Explore.vue";
 import Guided from "./pages/Guided.vue";
-// import CaseModal from "./components/CaseModal.vue";
+import CaseModal from "./components/CaseModal.vue";
 
 export default {
   name: "App",
@@ -171,7 +172,7 @@ export default {
     Guided,
     Explore,
     //USMap,
-    //CaseModal,
+    CaseModal,
   },
   data() {
     return {
@@ -187,6 +188,7 @@ export default {
       topicSubset: [],
       topicSubset2: [],
       cases: [],
+      caseModal: false,
     };
   },
   mounted() {

@@ -150,44 +150,11 @@ export default {
     },
   },
   created() {
-    // const request = require("request");
-
-    // const URL =
-    //   "https://raw.githubusercontent.com/freedom-of-speech-project/fos-data/joanne-data/tmpvfull-05-03_09-59.csv?token=ALBDZW54MMFW4L6GWOWO55DATB4D6";
-    // const TOKEN = "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";
-    // var options = {
-    //   url: URL,
-    //   headers: {
-    //     Authorization: "token " + TOKEN,
-    //   },
-    // };
-    // function callback(error, response, body) {
-    //   console.log(response.statusCode);
-    //   console.error(error);
-    //   console.log(body);
-    // }
-    // request(options, callback);
-
-    // const myHeaders = new Headers();
-    // myHeaders.append("Content-Type", "text/csv");
-    // myHeaders.append(
-    //   "Authorization",
-    //   "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"
-    // );
-    // return fetch(
-    //   "https://raw.githubusercontent.com/freedom-of-speech-project/fos-data/joanne-data/tmpvfull-05-03_09-59.csv?token=ALBDZW76SECVCOYONASUWXDATB4XG",
-    //   {
-    //     method: "GET",
-    //     headers: myHeaders,
-    //   }
-    // );
-
     Promise.all([
       d3.csv(
-        "https://raw.githubusercontent.com/freedom-of-speech-project/fos-data/joanne-data/tmpvfull-05-03_09-59.csv?token=ALBDZWZ2YGRZICYRWTEEDHTATB46Y",
+        "https://raw.githubusercontent.com/freedom-of-speech-project/fos-data/3f80e39e563c2073e93973a2f20367f0e4fa516d/tmpvfull-05-03_09-59.csv?token=ALBDZW3Y6ZUW26CZVKGV4WLATB66U",
         d3.autoType
       ),
-
       d3.csv(
         "https://raw.githubusercontent.com/freedom-of-speech-project/fos/draft-production/topicSubset2.csv",
         d3.autoType
