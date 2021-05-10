@@ -10,7 +10,7 @@ yarn build
 cd dist
 
 # if you are deploying to a custom domain
-echo 'freedomofspeech-project.com' > CNAME
+#echo 'freedomofspeech-project.com' > CNAME
 
 git init
 git add -A
