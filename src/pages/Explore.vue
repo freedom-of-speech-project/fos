@@ -1,8 +1,10 @@
 <template>
   <div class="header-explore">
-    <div class="header-relevant"># relevant cases</div>
+    <div class="header-relevant">
+      <span class="number-relevant"></span>
+    </div>
     <div class="header-topic">
-      <div id="topic-button">{{}}</div>
+      <div id="topic-button"></div>
       <!-- <img
         style="position: relative; height: 75%"
         src="../assets/Iconography/blank-topic-button.svg"
@@ -10,6 +12,7 @@
       <!-- <div>hi</div> -->
     </div>
     <span></span>
+
     <div class="dropdown">
       <button class="dropbtn">
         <img
@@ -37,22 +40,22 @@
       </div>
     </div>
     <!-- year / alpha / -->
-    <div class="dropdown">
+    <!-- <div class="dropdown">
       <button class="dropbtn">
         <img
           style="position: relative; width: 90%"
           src="../assets/Iconography/view-as-button.svg"
         />
       </button>
-      <div class="dropdown-content">
-        <!-- <a href="#">case name</a>
+      <div class="dropdown-content"> -->
+    <!-- <a href="#">case name</a>
         <a href="#">year</a> -->
-        <img
+    <!-- <img
           style="position: absolute; right: 0"
           src="../assets/Iconography/dropdown-menu.svg"
         />
-      </div>
-    </div>
+      </div> 
+    </div>-->
   </div>
   <img
     class="header-border-line"
@@ -62,66 +65,6 @@
 
   <div class="wrapper-explore">
     <div class="sidebar">
-      <div class="sidebar-item text topic" id="hiddenTopic">topic</div>
-      <button
-        type="button"
-        class="sidebar-item topic"
-        id="caret"
-        v-on:click="showTopics"
-      >
-        <img
-          style="position: relative"
-          src="../assets/Iconography/caret-down.svg"
-        />
-      </button>
-      <img
-        class="border-line"
-        src="../assets/Iconography/sidebar-border-line.svg"
-        id="longer"
-      />
-      <span />
-      <!-- <div class="sidebar-item-hidden">hi</div>
-      <span class="sidebar-item-hidden" /> -->
-      <img
-        class="border-line sidebar-item-hidden"
-        src="../assets/Iconography/sidebar-border-line.svg"
-        id="longer"
-      />
-      <span class="sidebar-item-hidden" />
-      <div class="sidebar-item year text" id="year">year</div>
-
-      <button type="button" class="sidebar-item yearDisplay" id="caret">
-        <!-- <img
-          style="position: relative"
-          src="../assets/Iconography/caret-down.svg"
-        /> -->
-      </button>
-
-      <div class="sidebar-item-1 brush-container" id="longer">
-        {{ brush() }}
-      </div>
-      <span class="sidebar-item-1" id="shorter" />
-
-      <img
-        class="border-line"
-        src="../assets/Iconography/sidebar-border-line.svg"
-        id="longer"
-      />
-      <span id="shorter" />
-      <div class="sidebar-item location text">location</div>
-      <button type="button" class="sidebar-item" id="caret">
-        <img
-          style="position: relative"
-          src="../assets/Iconography/caret-down.svg"
-        />
-      </button>
-      <!--div class="toggle-wrapper"-->
-      <img
-        class="border-line"
-        src="../assets/Iconography/sidebar-border-line.svg"
-        id="longer"
-      />
-      <span id="shorter" />
       <div class="sidebar-item text">landmark case</div>
       <label class="switch sidebar-item" id="caret">
         <input type="checkbox" v-on:click="landmarkVis" />
@@ -146,6 +89,68 @@
         id="longer"
       />
       <span />
+      <!-- <div class="sidebar-item-hidden">hi</div>
+      <span class="sidebar-item-hidden" /> -->
+      <!-- <img
+        class="border-line sidebar-item-hidden"
+        src="../assets/Iconography/sidebar-border-line.svg"
+        id="longer"
+      />
+      <span class="sidebar-item-hidden" /> -->
+      <div class="sidebar-item year text" id="year">year</div>
+
+      <button type="button" class="sidebar-item yearDisplay" id="caret">
+        <!-- <img
+          style="position: relative"
+          src="../assets/Iconography/caret-down.svg"
+        /> -->
+      </button>
+
+      <div class="sidebar-item-1 brush-container" id="longer">
+        {{ brush() }}
+      </div>
+      <span class="sidebar-item-1" id="shorter" />
+
+      <img
+        class="border-line"
+        src="../assets/Iconography/sidebar-border-line.svg"
+        id="longer"
+      />
+      <span id="shorter" />
+      <!-- <div class="sidebar-item location text">location</div>
+      <button type="button" class="sidebar-item" id="caret">
+        <img
+          style="position: relative"
+          src="../assets/Iconography/caret-down.svg"
+        />
+      </button>
+      <--div class="toggle-wrapper"--
+      <img
+        class="border-line"
+        src="../assets/Iconography/sidebar-border-line.svg"
+        id="longer"
+      />
+      <span id="shorter" /> -->
+
+      <div class="sidebar-item text topic" id="hiddenTopic">topic</div>
+      <button
+        type="button"
+        class="sidebar-item topic"
+        id="caret"
+        v-on:click="showTopics"
+      >
+        <img
+          id="caret"
+          style="position: relative"
+          src="../assets/Iconography/caret-down.svg"
+        />
+      </button>
+      <img
+        class="border-line"
+        src="../assets/Iconography/sidebar-border-line.svg"
+        id="longer"
+      />
+      <span />
       <!--/div-->
     </div>
 
@@ -164,11 +169,14 @@ export default defineComponent({
 import * as d3 from "d3";
 let landmarkVisible = true;
 let protectedVisible = true;
-let showTopics = true;
+let showTopics = false;
 let yearArray = [];
 
 let startYear;
 let endYear;
+
+//TODO: make state dataset to fill so that filters don't override each other
+// state.data = {}
 
 export default {
   name: "Explore",
@@ -177,7 +185,7 @@ export default {
     return {
       title: "caseName",
       cases: [],
-      topicSubset: {},
+      topicSubset2: {},
     };
   },
   methods: {
@@ -201,7 +209,7 @@ export default {
         (d) => d.topTopic
       );
 
-      console.log("this.topicsubset2", this.topicSubset2);
+      //console.log("this.topicsubset2", this.topicSubset2);
       const topicSubset2 = this.topicSubset2;
 
       if (showTopics) {
@@ -211,7 +219,9 @@ export default {
           .selectAll("div.new")
           .data([...topicRollup.entries()])
           .join("div")
-          .attr("class", "wrapper");
+          .attr("class", "wrapper")
+          .style("grid-column-start", "2")
+          .style("grid-column-end", "4");
         this.row = this.wrapper
           .append("div")
           .data([...topicRollup.entries()])
@@ -220,14 +230,19 @@ export default {
           .attr("id", "topicDiv")
           .html(
             (d) =>
-              `<span><span class="topic ${d[0]}">${d[0]}</span> <span class="count">(${d[1]})</span> `
+              `<span class="topic ${d[0]}">${d[0]}</span> <span class="count">(${d[1]})</span> `
           )
+          .on("mouseover", function () {
+            d3.select(this).style("cursor", "pointer");
+          })
           .on("click", function () {
             //set the current topic by picking it up from the DOM selection
             let topic = this.className;
-            // reset card display
-            d3.selectAll(".card").style("display", "block");
-            // UI for selected topic
+            //selectedTopic = topic;
+
+            // reset card display to zero cards
+            d3.selectAll(".card").style("display", "none");
+            // UI for selected topic div
             d3.selectAll("#topicDiv")
               .style("color", "#7f8887") // make all other topics gray + reduce opacity
               .style("opacity", 0.75);
@@ -237,13 +252,28 @@ export default {
               .data(topicSubset2)
               .style("color", "#3d6fee")
               .filter(function (d) {
-                return d.topTopic !== topic;
+                return d.topTopic == topic;
               })
-              .style("display", "none");
+              .style("display", "block");
+
+            d3.select(".number-relevant").text(
+              `${topicRollup.get(topic)} cases in this topic`
+            );
+
+            d3.select(".header-topic")
+              .text(`current topic: ${topic}`)
+              .style("color", "#3d6fee");
           });
       } else {
+        // if showTopics is off, remove topic divs and restore all cards with topics
         d3.selectAll("#topicDiv").remove();
         d3.selectAll(".wrapper").remove();
+        d3.selectAll(".card")
+          .data(topicSubset2)
+          .style("color", "black")
+          .style("display", "block");
+        d3.select(".header-topic").text(" ");
+        d3.select(".number-relevant").text(" ");
       }
     },
     landmarkVis: function () {
@@ -311,11 +341,11 @@ export default {
       //make the scales and axes
       const x = d3
         .scaleLinear()
-        .domain([1900, 2019])
+        .domain([1900, 2025])
         .range([marginLeft, width]);
       const x2 = d3
         .scaleLinear()
-        .domain([1900, 2019])
+        .domain([1900, 2025])
         .range([marginLeft, width]);
 
       const xAxis = d3
@@ -325,12 +355,10 @@ export default {
         .tickSize(0);
       const xAxis2 = d3
         .axisBottom(x2)
-        .ticks(4)
+        .ticks(0)
         .tickFormat(d3.format("d"))
         .tickSize(0);
 
-      //TODO: change axis font to Noto Sans
-      console.log("width", width);
       // make the container
       this.svg = d3
         .select(".brush-container")
@@ -388,11 +416,11 @@ export default {
         if (selection) {
           const fx = d3
             .scaleLinear()
-            .domain([1900, 2019])
+            .domain([1900, 2025])
             .range([marginLeft, width]);
           const fx2 = d3
             .scaleLinear()
-            .domain([1900, 2019])
+            .domain([1900, 2025])
             .range([marginLeft, width]);
           const [x, x2] = selection;
           yearArray = dot
@@ -409,19 +437,38 @@ export default {
             .style("display", "none")
             .data(data)
             .filter(function (d) {
-              return d.term > startYear && d.term < endYear;
+              return d.term >= startYear && d.term <= endYear;
             })
             .style("display", "block");
 
           const display = d3
             .select(".yearDisplay")
             .text(startYear + "-" + endYear)
-            .style("color", "#3d6fee"); //blue
+            .style("color", "#3d6fee") //blue
+            .style("font-size", ".9em")
+            .style("padding-right", "10%")
+            .style("padding-bottom", "20%");
 
           cards;
           display;
         } else {
+          //no selection de facto clears the brush: reset all cards and reset the year display
+          const cards = d3
+            .selectAll(".card")
+            .style("display", "block")
+            .data(data);
+
+          const display = d3
+            .select(".yearDisplay")
+            .text("1900-2019")
+            .style("color", "#2c3e50") //navy blue
+            .style("font-size", ".9em")
+            .style("padding-right", "10%")
+            .style("padding-bottom", "20%");
+
           dot.style("stroke", "#3d6fee").attr("opacity", 1); //blue
+          cards;
+          display;
         }
       }
     },
@@ -475,7 +522,7 @@ export default {
         .style("margin", "auto")
         .attr("class", "text")
         .text(function (d) {
-          return d.caseName + "  (" + d.term + ")";
+          return d.caseName + " (" + d.term + ")";
         })
         .style("color", "black")
         .style("font-size", "1.75vw");
@@ -500,7 +547,7 @@ export default {
         .style("width", "39%")
         .style("height", "12%");
 
-      /** add gavin icon to landmark cases */
+      /** add courthouse icon to landmark cases */
       d3.selectAll(".landmarkYes")
         .append("rect")
         .attr("class", "landmark")
@@ -509,7 +556,7 @@ export default {
         .style("background-image", function (d) {
           if (d.landmark === "No") return "none";
           else if (d.landmark === "Yes")
-            return 'url("https://raw.githubusercontent.com/freedom-of-speech-project/fos/vue-eva/src/assets/Iconography/gavinblock.svg")';
+            return 'url("https://raw.githubusercontent.com/freedom-of-speech-project/fos/vue-eva/src/assets/Iconography/courthouse.svg")';
         })
         .style("background-size", "contain")
         .style("background-repeat", "no-repeat")
@@ -533,7 +580,7 @@ export default {
           d3.select("#text").remove();
         });
 
-      /** add protected icon to protected speech cases */
+      /** add gavin icon to protected speech cases */
       d3.selectAll(".protectedYes")
         .append("rect")
         .attr("class", "protected")
@@ -542,7 +589,7 @@ export default {
         .style("background-image", function (d) {
           if (d.protected === "No") return "none";
           else if (d.protected === "Yes")
-            return 'url("https://raw.githubusercontent.com/freedom-of-speech-project/fos/vue-eva/src/assets/Iconography/courthouse.svg")';
+            return 'url("https://raw.githubusercontent.com/freedom-of-speech-project/fos/vue-eva/src/assets/Iconography/gavinblock.svg")';
         })
         .style("background-size", "contain")
         .style("background-repeat", "no-repeat")
@@ -555,8 +602,8 @@ export default {
           d3.select(this)
             .append("rect")
             .style("position", "absolute")
-            // .style("left", "-100%")
-            .style("right", "110%")
+            .style("width", "90%")
+            .style("right", "90%")
             .style("bottom", "30%")
             .attr("id", "text")
             .text("Speech was protected!")
@@ -704,20 +751,10 @@ export default {
   width: 100%;
   background-color: white;
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 2fr 2fr; /*auto auto auto auto auto /* 150px auto auto 150px*/
+  grid-template-columns: 2fr 2fr 1fr 2fr; /*auto auto auto auto auto /* 150px auto auto 150px*/
   align-content: center;
 }
 
-/* Dropdown Button */
-.dropbtn {
-  /* background-color: white(207, 206, 206);
-  color: black;
-  border: none;
-  font-family: Caveat Brush;
-  font-size: 16px;
-  border: 1px solid gray;
-  padding: 0 5% 0 5%; */
-}
 .header-relevant {
   font-size: 1.5em;
   align-self: center; /** TODO: do this everything else that needs it */
@@ -825,9 +862,10 @@ export default {
   /* border: 1px solid pink; */
   min-width: 200px;
   /* max-width: 300px; */
-  padding-top: 10px;
+  padding-top: 20px;
+  padding-bottom: 20px;
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
   max-height: 100%;
   align-content: flex-start;
   row-gap: 4px;
@@ -835,7 +873,7 @@ export default {
 
 img.border-line {
   grid-column-start: 1;
-  grid-column-end: 2;
+  grid-column-end: 4;
 }
 
 /** sidebar list items */
@@ -848,13 +886,15 @@ img.border-line {
   /* margin-left: 50%; */
   /* border: 1px solid orange; */
   align-self: center;
+  grid-column-start: 4;
+  grid-column-end: 4;
 }
 
 /** full sidebar width */
 #longer {
-  width: 145%; /** TODO: figure this out */
+  width: 145%; /* TODO: figure this out */
   /* border: 1px solid red; */
-  height: 35px;
+  height: 25px;
 }
 
 #shorter {
@@ -874,6 +914,8 @@ img.border-line {
   align-self: center;
   text-align: left;
   padding-left: 40px;
+  grid-column-start: 1;
+  grid-column-end: 4;
 }
 
 .sidebar-item-hidden {
@@ -966,38 +1008,18 @@ input:checked + .slider:before {
 }
 
 /** created topic divs */
-div.wrapper {
+/* div.wrapper {
   border: 2px solid green;
-}
+} */
 
 .content-explore {
-  /* border: 1px solid pink; */
-  /* background-color: #e6b996; */
   background-color: #e6b996;
   overflow: scroll;
 }
 
 .card:hover {
-  /* margin: auto;
-  margin-top: 5%;
-  position: relative; */
   background-image: 'url("https://raw.githubusercontent.com/freedom-of-speech-project/fos/vue-eva/src/assets/Iconography/utbh.svg")';
-  /* background-size: 100% 100%;
-  width: 85%;
-  height: 35%; */
 }
-
-/** styled in d3.append */
-/* #card-content {
-  position: absolute;
-  top: 25%;
-  left: 12%;
-  right: 12%;
-  margin-left: auto;
-  margin-right: auto;
-  /* font-size: 1.25em; */
-/* set min and max font sizes for re-sizing *
-} */
 
 .ruling-btn {
   position: absolute;
