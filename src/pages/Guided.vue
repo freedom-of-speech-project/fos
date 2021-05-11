@@ -1,4 +1,3 @@
-/*eslint-disable*/
 <template>
   <div class="wrapper">
     <!-- <USMap />
@@ -63,7 +62,7 @@
           <div class="guided-content"><p>Content</p></div>
         </div>
         <button class="modal-close">
-          <span class="close">( X )</span>
+          <span @click="guidedOn" class="close">( X )</span>
         </button>
         <button><div class="guided-nav right">&gt;</div></button>
       </div>
@@ -212,21 +211,8 @@ export default {
         .attr("font-size", "24")
         .attr("dx", "-10")
         .attr("dy", "60");
-      // .attr("transform", );
 
       // START LANDMARK CASE POSITION ON AXIS
-
-      //ORIGINAL DOTS
-      // console.log(this.landmarks.map((d) => new Date(d.dateDecision))[0]);
-      // this.svg
-      //   .selectAll(".dot")
-      //   .data(this.landmarks, (d) => new Date(d.dateDecision))
-      //   .join("circle")
-      //   .attr("class", "dot")
-      //   .attr("r", 3)
-      //   .attr("fill", "#E5AB7E")
-      //   .attr("cy", "25")
-      //   .attr("cx", (d) => xScale(new Date(d.dateDecision)));
 
       //CUSTOM MARKERS
       this.svg
@@ -267,7 +253,6 @@ export default {
         .attr("x", (d) => xScale(new Date(d.dateDecision)));
 
       // BELOW DRAWS RECTS
-      // this.svg.append("rect").attr("class", "era").attr("fill", "blue");
 
       // this.svg
       //   .append("rect")
@@ -288,15 +273,10 @@ export default {
       // console.log();
     },
     guidedOn: function () {
-      // d3.select("#switch-guided").on("change", (e) => {
-      //   if (d3.select("#customSwitch1").property("checked") == true) {
-      //     this.guided = true;
-      //   } else {
-      //     this.guided = false;
-      //   }
-      // });
+      if (this.guided == true) {
+        d3.select("#switch-guided").property("checked", false);
+      }
       this.guided = !this.guided;
-      console.log(this.guided);
     },
   },
   mounted() {
@@ -381,7 +361,7 @@ button {
 #utbhc-cont {
   top: 0;
   left: 0;
-  bottom: 0;
+  bottom: 50;
   right: 0;
   margin: auto;
   position: fixed;
@@ -516,9 +496,9 @@ input:checked + .slider {
 }
 
 input:checked + .slider:before {
-  -webkit-transform: translateX(34px);
-  -ms-transform: translateX(34px);
-  transform: translateX(34px);
+  -webkit-transform: translateX(24px);
+  -ms-transform: translateX(24px);
+  transform: translateX(24px);
 }
 
 .slider.round {
