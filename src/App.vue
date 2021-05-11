@@ -1,5 +1,6 @@
 <template>
   <!-- <img alt="Vue logo" src="./assets/logo.png" /> -->
+
   <div class="header">
     <span @click="whereAmI" class="title">Freedom of Speech* </span>
     <span></span>
@@ -171,7 +172,7 @@ export default {
     Guided,
     Explore,
     //USMap,
-    //CaseModal,
+    // CaseModal,
   },
   data() {
     return {
@@ -187,6 +188,7 @@ export default {
       topicSubset: [],
       topicSubset2: [],
       cases: [],
+      caseModal: false,
     };
   },
   mounted() {
@@ -197,12 +199,21 @@ export default {
       //  console.log("did that work");
       this.guided = !this.guided;
       this.introtoggle = !this.introtoggle;
+      d3.select(".title")
+        .append("span")
+        .attr("class", "breadcrumb")
+        .text(" Guided mode");
     },
     takeMeToExplore: function () {
       // console.log("of course it did");
       this.explore = !this.explore;
       // console.log(this.explore);
       this.introtoggle = !this.introtoggle;
+
+      d3.select(".title")
+        .append("span")
+        .attr("class", "breadcrumb")
+        .text(" Explore mode");
     },
     whereAmI: function () {
       this.introtoggle = true;
@@ -212,6 +223,7 @@ export default {
       if (this.explore) {
         this.explore = false;
       }
+      d3.select(".breadcrumb").remove();
     },
     topicShift: function () {
       const topicRollup = d3.rollup(
@@ -222,7 +234,8 @@ export default {
 
       //console.log("d", [...topicRollup.keys()]);
 
-      var t = d3.transition().duration(3000);
+      var t = d3.transition().duration(1500);
+
       var topic = d3
         .select("#topicShift")
         .data([...topicRollup.keys()])
@@ -246,10 +259,6 @@ export default {
         .text("public schools")
         .transition(t);
 
-      //   function (d) {
-      //   return d;
-      // })
-      // .remove();
       topic;
     },
   },
@@ -417,6 +426,8 @@ h1 {
   appearance: none;
   border: 0px;
   background-color: rgba(0, 0, 0, 0);
+  justify-self: right;
+  padding-right: 20px;
 }
 
 .header {
@@ -425,18 +436,19 @@ h1 {
   background-color: #0d3fd2;
   color: white;
   display: grid;
-  grid-template-columns: 200px auto 60px;
+  grid-template-columns: 3fr 1fr 1fr;
   align-content: center;
   /** drop shadow?? */
 }
 
 .title {
-  justify-self: center;
+  justify-self: left;
   align-self: center;
   cursor: pointer;
+  padding-left: 20px;
 }
 .info {
-  justify-self: start;
+  justify-self: center;
   cursor: pointer;
 }
 

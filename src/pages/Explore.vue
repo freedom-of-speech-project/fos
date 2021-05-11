@@ -1,8 +1,10 @@
 <template>
   <div class="header-explore">
-    <div class="header-relevant"># relevant cases</div>
+    <div class="header-relevant">
+      <span class="number-relevant"></span>
+    </div>
     <div class="header-topic">
-      <div id="topic-button">{{}}</div>
+      <div id="topic-button"></div>
       <!-- <img
         style="position: relative; height: 75%"
         src="../assets/Iconography/blank-topic-button.svg"
@@ -10,6 +12,7 @@
       <!-- <div>hi</div> -->
     </div>
     <span></span>
+
     <div class="dropdown">
       <button class="dropbtn">
         <img
@@ -37,22 +40,22 @@
       </div>
     </div>
     <!-- year / alpha / -->
-    <div class="dropdown">
+    <!-- <div class="dropdown">
       <button class="dropbtn">
         <img
           style="position: relative; width: 90%"
           src="../assets/Iconography/view-as-button.svg"
         />
       </button>
-      <div class="dropdown-content">
-        <!-- <a href="#">case name</a>
+      <div class="dropdown-content"> -->
+    <!-- <a href="#">case name</a>
         <a href="#">year</a> -->
-        <img
+    <!-- <img
           style="position: absolute; right: 0"
           src="../assets/Iconography/dropdown-menu.svg"
         />
-      </div>
-    </div>
+      </div> 
+    </div>-->
   </div>
   <img
     class="header-border-line"
@@ -62,32 +65,41 @@
 
   <div class="wrapper-explore">
     <div class="sidebar">
-      <div class="sidebar-item text topic" id="hiddenTopic">topic</div>
-      <button
-        type="button"
-        class="sidebar-item topic"
-        id="caret"
-        v-on:click="showTopics"
-      >
-        <img
-          style="position: relative"
-          src="../assets/Iconography/caret-down.svg"
-        />
-      </button>
+      <div class="sidebar-item text">landmark case</div>
+      <label class="switch sidebar-item" id="caret">
+        <input type="checkbox" v-on:click="landmarkVis" />
+        <span class="slider round"></span>
+      </label>
       <img
         class="border-line"
         src="../assets/Iconography/sidebar-border-line.svg"
+        id="longer"
+      />
+      <span />
+      <!--/div>
+      <div class="toggle-wrapper"-->
+      <div class="sidebar-item text">protected speech</div>
+      <label class="switch sidebar-item" id="caret">
+        <input type="checkbox" v-on:click="protectedVis" />
+        <span class="slider round"></span>
+      </label>
+      <img
+        class="border-line"
+        src="../assets/Iconography/sidebar-border-line.svg"
+        id="longer"
       />
       <span />
       <!-- <div class="sidebar-item-hidden">hi</div>
       <span class="sidebar-item-hidden" /> -->
-      <img
+      <!-- <img
         class="border-line sidebar-item-hidden"
         src="../assets/Iconography/sidebar-border-line.svg"
+        id="longer"
       />
-      <span class="sidebar-item-hidden" />
-      <div class="sidebar-item year text">year</div>
-      <button type="button" class="sidebar-item" id="caret">
+      <span class="sidebar-item-hidden" /> -->
+      <div class="sidebar-item year text" id="year">year</div>
+
+      <button type="button" class="sidebar-item yearDisplay" id="caret">
         <!-- <img
           style="position: relative"
           src="../assets/Iconography/caret-down.svg"
@@ -102,41 +114,41 @@
       <img
         class="border-line"
         src="../assets/Iconography/sidebar-border-line.svg"
+        id="longer"
       />
-      <span />
-      <div class="sidebar-item location text">location</div>
+      <span id="shorter" />
+      <!-- <div class="sidebar-item location text">location</div>
       <button type="button" class="sidebar-item" id="caret">
         <img
           style="position: relative"
           src="../assets/Iconography/caret-down.svg"
         />
       </button>
-      <!--div class="toggle-wrapper"-->
+      <--div class="toggle-wrapper"--
       <img
         class="border-line"
         src="../assets/Iconography/sidebar-border-line.svg"
+        id="longer"
       />
-      <span />
-      <div class="sidebar-item text">landmark case</div>
-      <label class="switch sidebar-item" id="caret">
-        <input type="checkbox" v-on:click="landmarkVis" />
-        <span class="slider round"></span>
-      </label>
+      <span id="shorter" /> -->
+
+      <div class="sidebar-item text topic" id="hiddenTopic">topic</div>
+      <button
+        type="button"
+        class="sidebar-item topic"
+        id="caret"
+        v-on:click="showTopics"
+      >
+        <img
+          id="caret"
+          style="position: relative"
+          src="../assets/Iconography/caret-down.svg"
+        />
+      </button>
       <img
         class="border-line"
         src="../assets/Iconography/sidebar-border-line.svg"
-      />
-      <span />
-      <!--/div>
-      <div class="toggle-wrapper"-->
-      <div class="sidebar-item text">protected speech</div>
-      <label class="switch sidebar-item" id="caret">
-        <input type="checkbox" />
-        <span class="slider round"></span>
-      </label>
-      <img
-        class="border-line"
-        src="../assets/Iconography/sidebar-border-line.svg"
+        id="longer"
       />
       <span />
       <!--/div-->
@@ -156,7 +168,15 @@ export default defineComponent({
 */
 import * as d3 from "d3";
 let landmarkVisible = true;
-let showTopics = true;
+let protectedVisible = true;
+let showTopics = false;
+let yearArray = [];
+
+let startYear;
+let endYear;
+
+//TODO: make state dataset to fill so that filters don't override each other
+// state.data = {}
 
 export default {
   name: "Explore",
@@ -165,7 +185,7 @@ export default {
     return {
       title: "caseName",
       cases: [],
-      topicSubset: {},
+      topicSubset2: {},
     };
   },
   methods: {
@@ -189,9 +209,7 @@ export default {
         (d) => d.topTopic
       );
 
-      //console.log("data", [...topicRollup.keys()], [...topicRollup.values()]);
-
-      console.log("this.topicsubset2", this.topicSubset2);
+      //console.log("this.topicsubset2", this.topicSubset2);
       const topicSubset2 = this.topicSubset2;
 
       if (showTopics) {
@@ -201,24 +219,30 @@ export default {
           .selectAll("div.new")
           .data([...topicRollup.entries()])
           .join("div")
-          .attr("class", "wrapper");
+          .attr("class", "wrapper")
+          .style("grid-column-start", "2")
+          .style("grid-column-end", "4");
         this.row = this.wrapper
           .append("div")
           .data([...topicRollup.entries()])
-          //.join("div")
           .style("display", "block")
           .attr("class", (d) => `${d[0]}`)
           .attr("id", "topicDiv")
           .html(
             (d) =>
-              `<span><span class="topic ${d[0]}">${d[0]}</span> <span class="count">(${d[1]})</span> `
+              `<span class="topic ${d[0]}">${d[0]}</span> <span class="count">(${d[1]})</span> `
           )
+          .on("mouseover", function () {
+            d3.select(this).style("cursor", "pointer");
+          })
           .on("click", function () {
             //set the current topic by picking it up from the DOM selection
             let topic = this.className;
-            // reset card display
-            d3.selectAll(".card").style("display", "block");
-            // UI for selected topic
+            //selectedTopic = topic;
+
+            // reset card display to zero cards
+            d3.selectAll(".card").style("display", "none");
+            // UI for selected topic div
             d3.selectAll("#topicDiv")
               .style("color", "#7f8887") // make all other topics gray + reduce opacity
               .style("opacity", 0.75);
@@ -228,27 +252,29 @@ export default {
               .data(topicSubset2)
               .style("color", "#3d6fee")
               .filter(function (d) {
-                return d.topTopic !== topic;
+                return d.topTopic == topic;
               })
-              //.attr("class", "active")
-              .style("display", "none");
-            // d3.selectAll(".active").sort(function (a, b) {
-            //   console.log("b", b);
-            //   return d3.descending(a.topicValue, b.topicValue);
-            // });
-            //showTheTopic;
+              .style("display", "block");
+
+            d3.select(".number-relevant").text(
+              `${topicRollup.get(topic)} cases in this topic`
+            );
+
+            d3.select(".header-topic")
+              .text(`current topic: ${topic}`)
+              .style("color", "#3d6fee");
           });
       } else {
+        // if showTopics is off, remove topic divs and restore all cards with topics
         d3.selectAll("#topicDiv").remove();
         d3.selectAll(".wrapper").remove();
+        d3.selectAll(".card")
+          .data(topicSubset2)
+          .style("color", "black")
+          .style("display", "block");
+        d3.select(".header-topic").text(" ");
+        d3.select(".number-relevant").text(" ");
       }
-      // console.log("Topic,", this.className);
-      // const button = d3
-      //   .select("#topic-button")
-      //   .append("div")
-      //   .attr("class", "work")
-      //   .text("hello");
-      // button;
     },
     landmarkVis: function () {
       landmarkVisible = !landmarkVisible;
@@ -268,6 +294,24 @@ export default {
           .style("display", "none");
       }
     },
+    protectedVis: function () {
+      protectedVisible = !protectedVisible;
+      // console.log("Default value of protectedVisible is", protectedVisible);
+      // console.log("Toggled lv is", protectedVisible);
+      if (protectedVisible) {
+        d3.selectAll(".protectedNo")
+          .transition()
+          //.style("opacity", "1.0")
+          .delay(500)
+          .style("display", "block");
+      } else {
+        d3.selectAll(".protectedNo")
+          .transition()
+          //.style("opacity", "0.5")
+          .delay(500)
+          .style("display", "none");
+      }
+    },
     sortByYearAsc: function () {
       d3.selectAll(".card")
         .data(this.cases)
@@ -277,13 +321,6 @@ export default {
       d3.selectAll(".card")
         .data(this.cases)
         .sort((a, b) => d3.descending(a.term, b.term));
-      // d3.selectAll(".card")
-      //   .data(this.topicSubset2)
-      //   .filter(function (d) {
-      //     return d.topTopic !== "senator";
-      //   })
-      //   .style("display", "none");
-      // console.log("okay", this);
     },
     sortByAlphaAsc: function () {
       d3.selectAll(".card")
@@ -296,87 +333,156 @@ export default {
         .sort((a, b) => d3.descending(a.caseName, b.caseName));
     },
     brush: function () {
-      const width = 300;
-      const height = 60;
+      const width = window.innerWidth * 0.25;
+      const height = 50;
+      const marginLeft = 10;
+      const marginRight = 10;
 
-      var x = d3.scaleLinear().domain([1900, 2020]).range([0, 200]);
-      var x2 = d3.scaleLinear().domain([1900, 2020]).range([0, 200]);
+      //make the scales and axes
+      const x = d3
+        .scaleLinear()
+        .domain([1900, 2025])
+        .range([marginLeft, width - marginRight]);
+      const x2 = d3
+        .scaleLinear()
+        .domain([1900, 2025])
+        .range([marginLeft, width - marginRight]);
 
-      const xAxis = d3.axisBottom(x).ticks(4).tickFormat(d3.format("d"));
-      const xAxis2 = d3.axisBottom(x2).ticks(4).tickFormat(d3.format("d"));
+      const xAxis = d3
+        .axisBottom(x)
+        .ticks(4)
+        .tickFormat(d3.format("d"))
+        .tickSize(0);
+      const xAxis2 = d3
+        .axisBottom(x2)
+        .ticks(0)
+        .tickFormat(d3.format("d"))
+        .tickSize(0);
 
+      // make the container
       this.svg = d3
         .select(".brush-container")
         .append("svg")
         .attr("width", width)
-        .style("height", height * 0.5)
+        .style("height", height * 0.75)
         .style("position", "absolute")
         .style("left", 10);
 
+      //call both x axes (needed to position brush start and end)
       this.svg
         .append("g")
         .attr("class", "axis x-axis")
-        .attr("transform", `translate(10, 10)`)
+        .attr("transform", `translate(10, 25)`)
+        .style("font-family", "Noto Sans")
         .call(xAxis);
-
       this.svg
         .append("g")
         .attr("class", "axis x-axis")
-        .attr("transform", `translate(10, 10)`)
+        .attr("transform", `translate(10, 25)`)
+        .style("font-family", "Noto Sans")
         .call(xAxis2);
-
-      var brush = d3
+      //make the brush
+      const brush = d3
         .brushX()
         .extent([
-          [0, 0],
-          [width, height],
+          [0, 7],
+          [width, height * 0.6],
         ])
         .on("brush end", brushed);
 
-      console.log("d3 enevnt", d3.event);
+      //add data points to the axis
+      const dot = this.svg
+        .append("g")
+        .attr("stroke", "#3d6fee")
+        .attr("fill", "none")
+        // .attr("opacity", 0.5)
+        // .attr("stroke-opacity", 1)
+        .attr("stroke-width", 1)
+        .selectAll("rect")
+        .data(this.cases)
+        .join("rect")
+        .attr("x", (d) => x(d.term))
+        .attr("y", 12)
+        .attr("height", 12)
+        .attr("width", 3);
 
-      //ADD ALL CASES TO TIMELINE -- but invisible/opacity = 0 and then make that the node selected by brushed()
+      //call the brush
+      this.svg.attr("class", "brush").call(brush);
+
+      //make brushed function
+      const data = this.cases;
 
       function brushed({ selection }) {
-        let value = [];
         if (selection) {
-          const [[x, x2]] = selection;
-          value = xAxis
-            .style("stroke", "gray")
-            .filter((d) => x <= x(d.x) && x(d.x) < x2)
-            .style("stroke", "steelblue")
+          const fx = d3
+            .scaleLinear()
+            .domain([1900, 2025])
+            .range([marginLeft, width - marginRight]);
+          const fx2 = d3
+            .scaleLinear()
+            .domain([1900, 2025])
+            .range([marginLeft, width - marginRight]);
+          const [x, x2] = selection;
+          yearArray = dot
+            .style("stroke", "#B5BBC0") //gray
+            .filter((d) => x <= fx(d.term) && fx2(d.term) < x2)
+            .style("stroke", "#3d6fee") //blue
+            .style("opacity", 1)
             .data();
-          console.log("value", value);
+          startYear = yearArray[0].term;
+          endYear = yearArray[yearArray.length - 1].term;
+
+          const cards = d3
+            .selectAll(".card")
+            .style("display", "none")
+            .data(data)
+            .filter(function (d) {
+              return d.term >= startYear && d.term <= endYear;
+            })
+            .style("display", "block");
+
+          const display = d3
+            .select(".yearDisplay")
+            .text(startYear + "-" + endYear)
+            .style("color", "#3d6fee") //blue
+            .style("font-size", ".9em")
+            .style("padding-right", "10%")
+            .style("padding-bottom", "20%");
+
+          cards;
+          display;
+        } else {
+          //no selection de facto clears the brush: reset all cards and reset the year display
+          const cards = d3
+            .selectAll(".card")
+            .style("display", "block")
+            .data(data);
+
+          const display = d3
+            .select(".yearDisplay")
+            .text("1900-2019")
+            .style("color", "#2c3e50") //navy blue
+            .style("font-size", ".9em")
+            .style("padding-right", "10%")
+            .style("padding-bottom", "20%");
+
+          dot.style("stroke", "#3d6fee").attr("opacity", 1); //blue
+          cards;
+          display;
         }
-        // else {
-        //   dot.style("stroke", "steelblue");
-        // }
-        // svg.property("value", value).dispatch("input");
       }
-
-      this.svg.attr("class", "brush").call(brush);
-      // const selection = d3.brushSelection();
-
-      // console.log("sel", selection);
-      // //   .selectAll("text")
-      //   .style("text-anchor", "start")
-      //   .attr("dx", "-3em")
-      //   .attr("dy", ".5em");
-      //this.brush = d3.brushX();
-      //.extent([])
     },
     card: function () {
       /** select the .content-explore div and create a card for every case in the dataset,
        * give it a class based on Landmark status, set the background image and sizing
        */
-
       this.svg = d3
         .select(".content-explore")
         .selectAll("card")
         .data(this.cases)
         .join("div")
         .attr("class", function (d) {
-          return "card landmark" + d.landmark;
+          return "card landmark" + d.landmark + " protected" + d.protected;
         })
         .style("margin-top", "4%")
         .style("margin-bottom", "1%")
@@ -416,7 +522,7 @@ export default {
         .style("margin", "auto")
         .attr("class", "text")
         .text(function (d) {
-          return d.caseName + "  (" + d.term + ")";
+          return d.caseName + " (" + d.term + ")";
         })
         .style("color", "black")
         .style("font-size", "1.75vw");
@@ -441,7 +547,7 @@ export default {
         .style("width", "39%")
         .style("height", "12%");
 
-      /** add gavin icon to landmark cases */
+      /** add courthouse icon to landmark cases */
       d3.selectAll(".landmarkYes")
         .append("rect")
         .attr("class", "landmark")
@@ -450,7 +556,7 @@ export default {
         .style("background-image", function (d) {
           if (d.landmark === "No") return "none";
           else if (d.landmark === "Yes")
-            return 'url("https://raw.githubusercontent.com/freedom-of-speech-project/fos/vue-eva/src/assets/Iconography/gavinblock.svg")';
+            return 'url("https://raw.githubusercontent.com/freedom-of-speech-project/fos/vue-eva/src/assets/Iconography/courthouse.svg")';
         })
         .style("background-size", "contain")
         .style("background-repeat", "no-repeat")
@@ -473,6 +579,42 @@ export default {
         .on("mouseleave", function () {
           d3.select("#text").remove();
         });
+
+      /** add gavin icon to protected speech cases */
+      d3.selectAll(".protectedYes")
+        .append("rect")
+        .attr("class", "protected")
+        .style("position", "absolute")
+        .style("border", "none")
+        .style("background-image", function (d) {
+          if (d.protected === "No") return "none";
+          else if (d.protected === "Yes")
+            return 'url("https://raw.githubusercontent.com/freedom-of-speech-project/fos/vue-eva/src/assets/Iconography/gavinblock.svg")';
+        })
+        .style("background-size", "contain")
+        .style("background-repeat", "no-repeat")
+        .style("align-content", "center")
+        .style("right", "3%")
+        .style("bottom", "10%")
+        .style("width", "10%")
+        .style("height", "15%")
+        .on("mouseenter", function () {
+          d3.select(this)
+            .append("rect")
+            .style("position", "absolute")
+            .style("width", "90%")
+            .style("right", "90%")
+            .style("bottom", "30%")
+            .attr("id", "text")
+            .text("Speech was protected!")
+            .style("font-size", "1.15vw")
+            .style("color", "#0d3fd2");
+        })
+        .on("mouseleave", function () {
+          d3.select("#text").remove();
+        });
+
+      // add topic to each case
       this.svg
         .append("div")
         .attr("class", "topicUgh")
@@ -487,70 +629,20 @@ export default {
 
       this.svg;
     },
-    //topTopic2: function () {
-    // have to define topicSubset in this scope
-    // let topicSubset = this.topicSubset;
-    // function topicValuesSubsetSimple(d) {
-    //   let arr = [];
-    //   for (let i = 1; i < 21; i++) {
-    //     arr.push(Object.values(topicSubset[d])[i]);
-    //   }
-    //   return arr;
-    // }
-    // function compareNumbers(a, b) {
-    //   return b - a;
-    // }
-    // function getKeyByValue(object, value) {
-    //   return Object.keys(object).find((key) => object[key] === value);
-    // }
-    // function object(d) {
-    //   return topicSubset[d];
-    // }
-    // function topTopicValue(d) {
-    //   return topicValuesSubsetSimple(d).sort(compareNumbers)[0];
-    // }
-    // function topTopicInSyllabus(indexNumber) {
-    //   return getKeyByValue(object(indexNumber), topTopicValue(indexNumber));
-    // }
-    // console.log("ts", topTopicInSyllabus(300));
-    // console.log("ts", this.topicSubset2);
-    // function topicMap() {
-    //   return d3.rollup(
-    //     topicSubset,
-    //     (v) => v.length,
-    //     (d) => topTopicInSyllabus(d.index)
-    //   );
-    // }
-    // console.log(mapThing);
-    // console.log(mapThing);
-    //console.log(topicMap());
-    // this.svg
-    //   .append("div")
-    //   .attr("class", "topicUgh")
-    //   .style("position", "absolute")
-    //   .style("top", "80%")
-    //   .style("width", "80%")
-    //   .style("left", "5%")
-    //   .style("right", "5%")
-    //   .style("margin", "auto")
-    //   .data(this.topicSubset2)
-    //   .text((d) => d.topTopic + ", " + (d.topicValue * 100).toFixed(1) + "%");
-    // .text(
-    //   (d) =>
-    //     topTopicInSyllabus(d.index) +
-    //     ", " +
-    //     (topTopicValue(d.index) * 100).toFixed(1) +
-    //     "%"
-    // );
-    // },
     caseModal: function () {
       console.log("show me the case");
     },
   },
   created() {
     Promise.all([
-      d3.csv("/full-merged-tm-10-by-20-3.csv", d3.autoType),
-      d3.csv("/topicSubset2.csv", d3.autoType),
+      d3.csv(
+        "https://raw.githubusercontent.com/freedom-of-speech-project/fos/vue-joanne/data_and_processing/tmpvfull-05-03_09-59.csv",
+        d3.autoType
+      ),
+      d3.csv(
+        "https://raw.githubusercontent.com/freedom-of-speech-project/fos/draft-production/topicSubset2.csv",
+        d3.autoType
+      ),
     ]).then(([caseData, subsetData]) => {
       this.cases = caseData;
       console.log("cases: ", this.cases);
@@ -659,20 +751,9 @@ export default {
   width: 100%;
   background-color: white;
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 2fr 2fr; /*auto auto auto auto auto /* 150px auto auto 150px*/
+  grid-template-columns: 2fr 2fr 1fr 2fr; /*auto auto auto auto auto /* 150px auto auto 150px*/
   align-content: center;
 }
-
-/* Dropdown Button */
-/* .dropbtn {
-  background-color: white(207, 206, 206);
-  color: black;
-  border: none;
-  font-family: Caveat Brush;
-  font-size: 16px;
-  border: 1px solid gray;
-  padding: 0 5% 0 5%;
-} */
 
 .header-relevant {
   font-size: 1.5em;
@@ -780,37 +861,34 @@ export default {
 .sidebar {
   /* border: 1px solid pink; */
   min-width: 200px;
-  max-width: 280px;
-  padding-top: 10px;
+  /* max-width: 300px; */
+  padding-top: 20px;
+  padding-bottom: 20px;
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
   max-height: 100%;
   align-content: flex-start;
   row-gap: 4px;
 }
 
 img.border-line {
-  width: 150%;
-  height: 20px;
-}
-
-/** sidebar list items */
-.sidebar-item-1 {
-  /* height: 40px; */
-  /* border: 1px solid pink; */
+  grid-column-start: 1;
+  grid-column-end: 4;
 }
 
 #caret {
   /* margin-left: 50%; */
   /* border: 1px solid orange; */
   align-self: center;
+  grid-column-start: 4;
+  grid-column-end: 4;
 }
 
 /** full sidebar width */
 #longer {
-  width: 145%; /** TODO: figure this out */
+  width: 145%; /* TODO: figure this out */
   /* border: 1px solid red; */
-  height: 35px;
+  height: 25px;
 }
 
 #shorter {
@@ -828,6 +906,10 @@ img.border-line {
   padding-top: 5%;
   /* border: 1px solid blue; */
   align-self: center;
+  text-align: left;
+  padding-left: 40px;
+  grid-column-start: 1;
+  grid-column-end: 4;
 }
 
 .sidebar-item-hidden {
@@ -920,38 +1002,18 @@ input:checked + .slider:before {
 }
 
 /** created topic divs */
-div.wrapper {
+/* div.wrapper {
   border: 2px solid green;
-}
+} */
 
 .content-explore {
-  /* border: 1px solid pink; */
-  /* background-color: #e6b996; */
   background-color: #e6b996;
   overflow: scroll;
 }
 
 .card:hover {
-  /* margin: auto;
-  margin-top: 5%;
-  position: relative; */
   background-image: 'url("https://raw.githubusercontent.com/freedom-of-speech-project/fos/vue-eva/src/assets/Iconography/utbh.svg")';
-  /* background-size: 100% 100%;
-  width: 85%;
-  height: 35%; */
 }
-
-/** styled in d3.append */
-/* #card-content {
-  position: absolute;
-  top: 25%;
-  left: 12%;
-  right: 12%;
-  margin-left: auto;
-  margin-right: auto;
-  /* font-size: 1.25em; */
-/* set min and max font sizes for re-sizing *
-} */
 
 .ruling-btn {
   position: absolute;
