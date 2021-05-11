@@ -333,20 +333,20 @@ export default {
         .sort((a, b) => d3.descending(a.caseName, b.caseName));
     },
     brush: function () {
-      const width = window.innerWidth * 0.23;
+      const width = window.innerWidth * 0.25;
       const height = 50;
-      const marginLeft = 20;
-      //var dispatch = d3.dispatch("arrayFinished");
+      const marginLeft = 10;
+      const marginRight = 10;
 
       //make the scales and axes
       const x = d3
         .scaleLinear()
         .domain([1900, 2025])
-        .range([marginLeft, width]);
+        .range([marginLeft, width - marginRight]);
       const x2 = d3
         .scaleLinear()
         .domain([1900, 2025])
-        .range([marginLeft, width]);
+        .range([marginLeft, width - marginRight]);
 
       const xAxis = d3
         .axisBottom(x)
@@ -417,11 +417,11 @@ export default {
           const fx = d3
             .scaleLinear()
             .domain([1900, 2025])
-            .range([marginLeft, width]);
+            .range([marginLeft, width - marginRight]);
           const fx2 = d3
             .scaleLinear()
             .domain([1900, 2025])
-            .range([marginLeft, width]);
+            .range([marginLeft, width - marginRight]);
           const [x, x2] = selection;
           yearArray = dot
             .style("stroke", "#B5BBC0") //gray
@@ -874,12 +874,6 @@ export default {
 img.border-line {
   grid-column-start: 1;
   grid-column-end: 4;
-}
-
-/** sidebar list items */
-.sidebar-item-1 {
-  /* height: 40px; */
-  /* border: 1px solid pink; */
 }
 
 #caret {

@@ -39,6 +39,7 @@
         <div class="modal-related-cases">
           <div class="modal-related">
             <!-- v:if "landmark = Yes" -->
+            <!-- I'd go for v:if over v:show bc we don't want all the modals rendered but invisible on the whole site -- they can render as needed -->
             {{ related() }}
           </div>
         </div>
