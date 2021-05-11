@@ -19,25 +19,21 @@
       <div id="map">
         <!-- for the map overlays try this: https://stackoverflow.com/a/1997397/14336451 -->
         {{ usMap() }}
-        <img
-          src="../assets/images/drawnmapoutline.svg"
-          class="img-map"
-          :width="width / 2.109"
-        />
       </div>
     </div>
-    <div v-if="guided == true" @click="guided = !guided" id="utbhc-cont">
+    <!-- <button class="modal-close">
+            <span class="close">( X )</span>
+          </button> -->
+    <!-- v-if="guided == true" @click="guided = !guided"  -->
+    <!-- <div id="utbhc-cont">
       <div id="utbh-cont">
         <button><div class="guided-nav left">&lt;</div></button>
         <div class="utbh-content">
-          <!-- <button class="modal-close">
-            <span class="close">( X )</span>
-          </button> -->
           <div class="guided-content"><p>Content</p></div>
         </div>
         <button><div class="guided-nav right">&gt;</div></button>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 <script>
@@ -49,21 +45,36 @@ const margin = { top: 20, bottom: 0, left: 60, right: 40 };
 
 export default {
   name: "USMap",
+  props: ["guided"],
   data() {
     return {
       width,
       height,
       margin,
       aster: false,
-      guided: true,
+      // guided: true,
       states: [],
+      landmarks: [],
     };
   },
   methods: {
     usMap: function () {
+      console.log(this.landmarks);
       if (this.svg) {
         this.svg.remove();
       }
+
+      this.img = d3
+        .select("#map")
+        .append("img")
+        .attr(
+          "src",
+          "https://raw.githubusercontent.com/freedom-of-speech-project/fos/vue-joanne/src/assets/images/filledinusmap.svg"
+        )
+        .attr("class", "img-map")
+        .attr("height", height * 0.4883)
+        .style("position", "absolute");
+
       const projection = d3
         .geoAlbersUsa()
         .fitSize([width * 0.99, height * 0.49], this.states);
@@ -73,29 +84,59 @@ export default {
         .append("svg")
         .attr("width", width * 0.99)
         .attr("height", height * 0.525)
-        .attr("class", "map-overlay");
+        .attr("class", "map-overlay")
+        .style("position", "relative")
+        .style("z-index", "999999");
       this.svg
         .selectAll(".states")
         .data(this.states.features)
         .join("path")
         .attr("d", path)
         .attr("class", "state")
-        .attr("fill", "white")
-        .attr("stroke", "white");
-    },
-    asterClick: function () {
-      console.log("aster helping!");
+        .attr("fill", "none")
+        .attr("stroke", "none");
+
+      this.svg
+        .selectAll(".gavin")
+        .data(this.landmarks)
+        .join("svg")
+        .attr("width", "24")
+        .attr("height", "34")
+        .attr("viewBox", "0 0 24 34")
+        .attr("fill", "none")
+        .html(
+          `<rect x="4.7998" y="1.61914" width="14.4" height="9.71429" rx="3" fill="#DC7A46"/>
+<rect x="19.7334" width="4.26666" height="12.6825" rx="2.13333" fill="#DC7A46"/>
+<rect x="9.8667" y="12.1428" width="4.26666" height="21.8571" rx="2.13333" fill="#DC7A46"/>
+<rect width="4.26667" height="12.6825" rx="2.13333" fill="#DC7A46"/>`
+        )
+        .attr("fill-opacity", "40%")
+        .attr("transform", (d) => {
+          const [x, y] = projection([d.long, d.lat]);
+          return `translate(${x}, ${y})`;
+        })
+        // .style("z-index", 99999)
+        .on("mouseover", () => {
+          // console.log(this.landmarks.caseName);
+          console.log("i'm gavin");
+        });
     },
   },
-  created() {
+  mounted() {
     Promise.all([
       d3.json(
         "https://raw.githubusercontent.com/jramadani/observable-data/master/gz_2010_us_040_00_20m.json",
         d3.autoType
       ),
-    ]).then(([statesdata]) => {
+      d3.csv(
+        "https://raw.githubusercontent.com/freedom-of-speech-project/fos/vue-joanne/public/landmark_latlong_final.csv",
+        d3.autoType
+      ),
+    ]).then(([statesdata, landmarkdata]) => {
       this.states = statesdata;
+      this.landmarks = landmarkdata;
       console.log("states: ", this.states);
+      console.log("landmarks: ", this.landmarks);
     });
   },
 };
@@ -149,17 +190,8 @@ button {
   position: relative;
   top: 0px;
   left: 0px;
-}
-
-.map-overlay {
-  position: relative;
-  top: 0px;
-  left: 0px;
-}
-
-.img-map {
-  position: absolute;
-  margin: 0% 0% 0% 26%;
+  display: flex;
+  justify-content: center;
 }
 
 #utbhc-cont {
