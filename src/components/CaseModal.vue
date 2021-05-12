@@ -10,37 +10,42 @@
           <div class="modal-protected">
             {{ protectedSpeech() }}
           </div>
-          <div class="keyIndicator">
-            {{ keyIndicator }}
-          </div>
-          <div class="modal-verdict">
-            {{ verdict() }}
-          </div>
+
           <div class="modal-caseName">
             {{ caseName() }}
           </div>
-          <h3 v-if="landmark">key issue:</h3>
+          <div class="keyIndicator">
+            {{ keyIndicator }}
+          </div>
+          <h4 v-if="landmark">key issue:</h4>
           <div class="modal-keyIssue">
             {{ keyIssue() }}
           </div>
         </div>
         <div class="modal-before"></div>
         <div class="modal-during">
+          <h4 v-if="landmark">decision:</h4>
+          <div class="modal-verdict">
+            {{ verdict() }}
+          </div>
           <div class="modal-decision">
             {{ decision() }}
           </div>
+          <h4>case syllabus:</h4>
           <div class="modal-cleanSyl">
             <!-- v:if "landmark = No" -->
             {{ cleanSyl() }}
           </div>
         </div>
         <div class="modal-after">
+          <h4 v-if="landmark">significance:</h4>
           <div class="modal-significance">
             <!-- v:if "landmark = Yes" -->
             {{ significance() }}
           </div>
         </div>
         <div class="modal-related-cases">
+          <h4 v-if="landmark">related cases:</h4>
           <div class="modal-related">
             <!-- v:if "landmark = Yes" -->
             <!-- I'd go for v:if over v:show bc we don't want all the modals rendered but invisible on the whole site -- they can render as needed -->
@@ -219,8 +224,9 @@ export default {
 
 /* TODO: needs a media querey/ aspect ratio thing for mobile */
 #modal-container {
-  width: 750px;
-  height: 900px;
+  max-width: 750px;
+  width: 70vw;
+  height: 95vh;
   top: 20px;
   left: 0;
   bottom: 10;
@@ -230,13 +236,13 @@ export default {
   border-radius: 15px;
   background-color: whitesmoke;
   position: fixed;
-  overflow-y: auto;
+  overflow-y: scroll;
   z-index: 99999;
 }
 
 .content {
-  width: 699px;
-  height: 899px;
+  max-width: 699px;
+  height: 92vh;
   overflow-y: scroll;
   /* padding-right: 50px; */
   /* padding: 0px 50px 50px 0px; */
@@ -247,9 +253,12 @@ export default {
   grid-template-rows: repeat(auto-fill);
   row-gap: 2px;
 }
+
+h4 {
+  margin-bottom: 0;
+}
 .modal-intro {
   margin-top: 2%;
-  margin-bottom: 2%;
 }
 .modal-protected {
   font-family: Fredericka the Great, serif;
@@ -259,26 +268,34 @@ export default {
 }
 .modal-verdict {
   margin-top: 2%;
+  /* margin-bottom: 2%; */
+}
+
+.keyIndicator {
+  font-family: "Noto Sans";
+}
+
+.modal-caseName,
+.modal-keyIssue,
+.modal-decision,
+.modal-cleanSyl,
+.modal-significance,
+.modal-related {
+  margin-top: 2%;
   margin-bottom: 2%;
+  padding-left: 7%;
+  padding-right: 7%;
 }
 .modal-caseName {
-  margin-top: 2%;
-  margin-bottom: 2%;
-  padding-left: 7%;
-  padding-right: 7%;
+  margin-top: 6%;
+  font-size: 1.5em;
 }
-.modal-keyIssue {
-  margin-top: 2%;
-  margin-bottom: 2%;
-  padding-left: 7%;
-  padding-right: 7%;
-}
+
 .modal-cleanSyl {
   text-align: justify;
-  padding-left: 7%;
-  padding-right: 7%;
-  margin-top: 2%;
-  margin-bottom: 2%;
+}
+.modal-related {
+  margin-bottom: 5%;
 }
 
 /* MODAL CLOSE */
