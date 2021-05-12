@@ -202,7 +202,7 @@ export default {
       d3.select(".title")
         .append("span")
         .attr("class", "breadcrumb")
-        .text(" Guided mode");
+        .text(" →  Guided mode");
     },
     takeMeToExplore: function () {
       // console.log("of course it did");
@@ -213,7 +213,7 @@ export default {
       d3.select(".title")
         .append("span")
         .attr("class", "breadcrumb")
-        .text(" Explore mode");
+        .text(" →  Explore mode");
     },
     whereAmI: function () {
       this.introtoggle = true;

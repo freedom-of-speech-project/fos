@@ -157,16 +157,18 @@
     <div class="content-explore">
       {{ card() }}
     </div>
+
+    <CaseModal
+      v-if="keyIndicator != null"
+      :keyIndicator="keyIndicator"
+      @modalOff="keyIndicator = null"
+    />
   </div>
 </template>
 <script>
-/* import { defineComponent } from "@vue/composition-api";
-
-export default defineComponent({
-  setup() {},
-});
-*/
 import * as d3 from "d3";
+import CaseModal from "../components/CaseModal.vue";
+
 let landmarkVisible = true;
 let protectedVisible = true;
 let showTopics = false;
@@ -180,12 +182,14 @@ let endYear;
 
 export default {
   name: "Explore",
+  components: { CaseModal },
   props: ["caseData"],
   data() {
     return {
       title: "caseName",
       cases: [],
       topicSubset2: {},
+      keyIndicator: null,
     };
   },
   methods: {
@@ -545,7 +549,12 @@ export default {
         .style("left", "30%")
         .style("bottom", "20%")
         .style("width", "39%")
-        .style("height", "12%");
+        .style("height", "12%")
+        .on("click", (d) => {
+          console.log("data!!", d.srcElement.offsetParent.__data__.caseId);
+          this.keyIndicator = d.srcElement.offsetParent.__data__.usCite;
+          console.log("key Indicator", this.keyIndicator);
+        });
 
       /** add courthouse icon to landmark cases */
       d3.selectAll(".landmarkYes")

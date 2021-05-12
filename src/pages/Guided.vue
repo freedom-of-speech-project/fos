@@ -96,6 +96,10 @@ export default {
       states: [],
       landmarks: [],
       guided: false,
+      coords: {
+        x: null,
+        y: null,
+      },
     };
   },
   methods: {
@@ -129,6 +133,7 @@ export default {
         .attr("class", "map-overlay")
         .style("position", "relative")
         .style("z-index", "999");
+
       this.svg
         .selectAll(".states")
         .data(this.states.features)
@@ -138,25 +143,42 @@ export default {
         .attr("fill", "none")
         .attr("stroke", "none");
 
+      // this.svg
+      //   .selectAll("circle")
+      //   .data(this.landmarks)
+      //   .join("circle")
+      //   .attr("r", 3)
+      //   .attr("fill", "black")
+      //   .attr("transform", (d) => {
+      //     const [x, y] = projection([d.long, d.lat]);
+      //     return `translate(${x}, ${y})`;
+      //   })
+      //   .style("z-index", 99999)
+      //   .on("mouseover", (d) => {
+      //     console.log(d.caseName);
+      //   });
+
       this.svg
-        .selectAll(".gavin")
+        .selectAll(".gavin-point")
         .data(this.landmarks)
-        .join("svg")
+        .join("g")
+        .attr("class", "gavin-point")
         .attr("width", "24")
         .attr("height", "34")
         .attr("viewBox", "0 0 24 34")
         .attr("fill", "none")
         .html(
           `<rect x="4.7998" y="1.61914" width="14.4" height="9.71429" rx="3" fill="#DC7A46"/>
-<rect x="19.7334" width="4.26666" height="12.6825" rx="2.13333" fill="#DC7A46"/>
-<rect x="9.8667" y="12.1428" width="4.26666" height="21.8571" rx="2.13333" fill="#DC7A46"/>
-<rect width="4.26667" height="12.6825" rx="2.13333" fill="#DC7A46"/>`
+      <rect x="19.7334" width="4.26666" height="12.6825" rx="2.13333" fill="#DC7A46"/>
+      <rect x="9.8667" y="12.1428" width="4.26666" height="21.8571" rx="2.13333" fill="#DC7A46"/>
+      <rect width="4.26667" height="12.6825" rx="2.13333" fill="#DC7A46"/>`
         )
-        .attr("fill-opacity", "40%")
         .attr("transform", (d) => {
           const [x, y] = projection([d.long, d.lat]);
           return `translate(${x}, ${y})`;
         })
+        .attr("fill-opacity", "40%")
+        .style("z-index", 999999)
         .on("mouseover", () => {
           console.log("i'm gavin");
         });
@@ -213,6 +235,18 @@ export default {
         .attr("dy", "60");
 
       // START LANDMARK CASE POSITION ON AXIS
+
+      //ORIGINAL DOTS
+      // console.log(this.landmarks.map((d) => new Date(d.dateDecision))[0]);
+      // this.svg
+      //   .selectAll(".dot")
+      //   .data(this.landmarks, (d) => new Date(d.dateDecision))
+      //   .join("circle")
+      //   .attr("class", "dot")
+      //   .attr("r", 3)
+      //   .attr("fill", "#E5AB7E")
+      //   .attr("cy", "25")
+      //   .attr("cx", (d) => xScale(new Date(d.dateDecision)));
 
       //CUSTOM MARKERS
       this.svg
@@ -338,8 +372,12 @@ button {
 
 .aster-tips {
   height: 200px;
-  width: 300px;
+  width: 250px;
   background-image: url("../assets/Iconography/asterspeech.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  display: grid;
+  align-items: center;
   position: fixed;
   margin-left: 100px;
   z-index: 99999;

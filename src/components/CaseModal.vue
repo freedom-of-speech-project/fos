@@ -1,11 +1,17 @@
 <template>
   <div id="container">
     <div id="modal-container">
-      <div class="content">
+      <div class="content" :keyIndicator="keyIndicator">
+        <button class="modal-close">
+          <span @click="$emit('modalOff')" class="close">( X )</span>
+        </button>
         <div class="modal-top">
           <div class="modal-intro">In this case, speech was...</div>
           <div class="modal-protected">
             {{ protectedSpeech() }}
+          </div>
+          <div class="keyIndicator">
+            {{ keyIndicator }}
           </div>
           <div class="modal-verdict">
             {{ verdict() }}
@@ -13,18 +19,16 @@
           <div class="modal-caseName">
             {{ caseName() }}
           </div>
-          <div class="modal-decision">
-            <!-- v:if "landmark = Yes" -->
-            {{ decision() }}
-          </div>
-        </div>
-        <div class="modal-before">
+          <h3 v-if="landmark">key issue:</h3>
           <div class="modal-keyIssue">
-            <!-- v:if "landmark = Yes" -->
             {{ keyIssue() }}
           </div>
         </div>
+        <div class="modal-before"></div>
         <div class="modal-during">
+          <div class="modal-decision">
+            {{ decision() }}
+          </div>
           <div class="modal-cleanSyl">
             <!-- v:if "landmark = No" -->
             {{ cleanSyl() }}
@@ -51,16 +55,44 @@
 <script>
 import * as d3 from "d3";
 
+// this.keyIndicator == null;
+// console.log("key indiccator", this.keyIndicator);
+
 export default {
   name: "CaseModal",
+  props: ["keyIndicator"],
   data() {
-    return { title: "caseName", cases: [], topicSubset: {}, landmarkData: {} };
+    return {
+      title: "caseName",
+      cases: [],
+      topicSubset: {},
+      landmarkData: [],
+      selectedData: {},
+      selectedLandmark: [],
+      landmark: null,
+    };
   },
   methods: {
     protectedSpeech: function () {
+      this.selectedData = this.cases.filter(
+        (d) => d.usCite == this.keyIndicator
+      );
+      this.selectedLandmark = this.landmarkData.filter(
+        (d) => d.usCite == this.keyIndicator
+      );
+
+      if (this.selectedData.map((d) => d.landmark) == "Yes") {
+        this.landmark = true;
+      } else {
+        this.landmark = false;
+      }
+      console.log(this.keyIndicator);
+      console.log("selectd data", this.selectedData);
+      console.log("selectd land", this.selectedLandmark);
+
       //  console.log("protex", this.cases[0].protected);
       d3.select(".modal-protected")
-        .data(this.cases) // are we going to pass in the data for each case...? pre-load all modals?
+        .data(this.selectedData) // are we going to pass in the data for each case...? pre-load all modals?
         .text(function (d) {
           if (d.protected == "No") {
             return "Not protected!";
@@ -72,17 +104,15 @@ export default {
     },
     verdict: function () {
       d3.select(".modal-verdict")
-        .data(this.cases) // are we going to pass in the data for each case...? pre-load all modals?
+        .data(this.selectedData) // are we going to pass in the data for each case...? pre-load all modals?
         .text(function (d) {
           return d.majVotes + " - " + d.minVotes;
         })
         .style("color", "black");
     },
     decision: function () {
-      // waiting for landmarks JSON
-      /** 
       d3.select(".modal-decision")
-        .data(this.landmarkData) // json dataset
+        .data(this.selectedLandmark) // json dataset
         .text(function (d) {
           return d.decision;
         })
@@ -90,11 +120,9 @@ export default {
         .style("font-family", "Noto Sans")
         .style("font-size", ".75em");
     },
-    */
-    },
     caseName: function () {
       d3.select(".modal-caseName")
-        .data(this.cases) // are we going to pass in the data for each case...? pre-load all modals?
+        .data(this.selectedData) // are we going to pass in the data for each case...? pre-load all modals?
         .text(function (d) {
           return d.caseName;
         })
@@ -102,7 +130,7 @@ export default {
     },
     cleanSyl: function () {
       d3.select(".modal-cleanSyl")
-        .data(this.cases) // are we going to pass in the data for each case...? pre-load all modals?
+        .data(this.selectedData) // are we going to pass in the data for each case...? pre-load all modals?
         .text(function (d) {
           return d.cleansyl;
         })
@@ -111,10 +139,8 @@ export default {
         .style("font-size", ".75em");
     },
     keyIssue: function () {
-      // waiting for landmarks JSON
-
       d3.select(".modal-keyIssue")
-        .data(this.landmarkData) // json dataset
+        .data(this.selectedLandmark) // json dataset
         .text(function (d) {
           return d.keyissue;
         })
@@ -124,29 +150,29 @@ export default {
     },
     significance: function () {
       // waiting for landmarks JSON
-      /** 
       d3.select(".modal-significance")
-        .data(this.landmarkData) // json dataset
+        .data(this.selectedLandmark) // json dataset
         .text(function (d) {
           return d.significance;
         })
         .style("color", "black")
         .style("font-family", "Noto Sans")
         .style("font-size", ".75em");
-       */
     },
     related: function () {
       // waiting for landmarks JSON
-      /** 
       d3.select(".modal-related")
-        .data(this.landmarkData) // json dataset
+        .data(this.selectedLandmark) // json dataset
         .text(function (d) {
           return d.related;
         })
         .style("color", "black")
         .style("font-family", "Noto Sans")
         .style("font-size", ".75em");
-       */
+    },
+    modalOn: function () {
+      console.log("things");
+      // this.keyIndicator = null;
     },
   },
   created() {
@@ -161,6 +187,8 @@ export default {
       ),
       d3.json(
         "https://dl.dropboxusercontent.com/s/vuu4wd1a5h8opus/landmarks.json?dl=0",
+
+        //"https://dl.dropboxusercontent.com/s/vuu4wd1a5h8opus/landmarks.json?dl=0",
         d3.autoType
       ),
     ]).then(([caseData, subsetData, landmarkData]) => {
@@ -170,11 +198,11 @@ export default {
       this.topicSubset2 = subsetData;
       this.landmarkData = landmarkData;
       console.log("Landmark json", this.landmarkData);
+      // console.log("Landmark json1", Object.keys(this.landmarkData[0])[33]);
     });
   },
 };
 </script>
-
 
 <style scoped>
 #container {
@@ -186,18 +214,19 @@ export default {
   position: fixed;
   width: 100%;
   background-color: rgba(0, 0, 0, 0.427);
+  z-index: 999999999;
 }
 
 /* TODO: needs a media querey/ aspect ratio thing for mobile */
 #modal-container {
-  width: 700px;
+  width: 750px;
   height: 900px;
   top: 20px;
   left: 0;
   bottom: 10;
   right: 0;
   margin: auto;
-  padding: 5px 50px 25px 50px;
+  padding: 5px 0px 0px 0px;
   border-radius: 15px;
   background-color: whitesmoke;
   position: fixed;
@@ -207,9 +236,12 @@ export default {
 
 .content {
   width: 699px;
-  height: 699px;
+  height: 899px;
   overflow-y: scroll;
   /* padding-right: 50px; */
+  /* padding: 0px 50px 50px 0px; */
+  padding-left: 3%;
+  padding-right: 3%;
   display: grid;
   display: grid;
   grid-template-rows: repeat(auto-fill);
@@ -235,11 +267,32 @@ export default {
   padding-left: 7%;
   padding-right: 7%;
 }
+.modal-keyIssue {
+  margin-top: 2%;
+  margin-bottom: 2%;
+  padding-left: 7%;
+  padding-right: 7%;
+}
 .modal-cleanSyl {
   text-align: justify;
   padding-left: 7%;
   padding-right: 7%;
   margin-top: 2%;
   margin-bottom: 2%;
+}
+
+/* MODAL CLOSE */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
 }
 </style>
