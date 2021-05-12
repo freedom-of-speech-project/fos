@@ -12,13 +12,31 @@
   <div id="intro-wrapper" v-show="introtoggle">
     <div class="title-header">
       <div class="friends">
-        <img class="gavin" src="./assets/Iconography/gavinblock.svg" />
-        <!-- {{ gavin }} -->
+        <button @click="gavinBubble = !gavinBubble" class="gavin-intro">
+          <img class="gavin" src="./assets/Iconography/gavinblock.svg" />
+        </button>
+        <div v-show="gavinBubble" class="gavin-bubble">
+          Freedom of speech is sooo easy! "Congress shall make no law abrdiging
+          the freedom of speech" -- *nailed it*
+        </div>
       </div>
+
       <h1 class="“title”">{{ title }}</h1>
       <div class="friends">
         <img class="aster" src="./assets/Iconography/asterrisk.svg" />
       </div>
+      <!-- 
+<div class="aster-cont">
+          <button @click="aster = !aster" class="aster-help">
+            <img
+              :height="height * 0.07"
+              :width="width * 0.099"
+              src="../assets/Iconography/asterrisk.svg"
+            />
+          </button>
+          <div v-show="aster" class="aster-tips">Here if you need me lol</div>
+        </div>
+ -->
     </div>
     <div class="mode-wrapper">
       <div class="explore">
@@ -189,6 +207,7 @@ export default {
       topicSubset2: [],
       cases: [],
       caseModal: false,
+      gavinBubble: false,
     };
   },
   mounted() {
@@ -399,6 +418,15 @@ h1 {
   background-color: whitesmoke;
   position: fixed;
   overflow-y: auto;
+  z-index: 99999;
+}
+
+.gavin-bubble {
+  height: 200px;
+  width: 300px;
+  background-image: url("../assets/Iconography/intro-speech.svg");
+  position: fixed;
+  margin-left: 100px;
   z-index: 99999;
 }
 
