@@ -1,20 +1,196 @@
 <template>
   <div id="container">
     <div id="modal-container">
-      <div class="content"></div>
+      <div class="content" :keyIndicator="keyIndicator">
+        <button class="modal-close">
+          <span @click="$emit('modalOff')" class="close">( X )</span>
+        </button>
+        <div class="modal-top">
+          <div class="modal-intro">In this case, speech was...</div>
+          <div class="modal-protected">
+            {{ protectedSpeech() }}
+          </div>
+
+          <div class="modal-caseName">
+            {{ caseName() }}
+          </div>
+          <div class="keyIndicator">
+            {{ keyIndicator }}
+          </div>
+          <h4 v-show="landmark">key issue:</h4>
+          <div v-show="landmark" class="modal-keyIssue">
+            {{ keyIssue() }}
+          </div>
+        </div>
+        <div class="modal-before"></div>
+        <div class="modal-during">
+          <h4 v-show="landmark">decision:</h4>
+          <div class="modal-verdict">
+            {{ verdict() }}
+          </div>
+          <div v-show="landmark" class="modal-decision">
+            {{ decision() }}
+          </div>
+          <h4>case syllabus:</h4>
+          <div class="modal-cleanSyl">
+            {{ cleanSyl() }}
+          </div>
+        </div>
+        <div class="modal-after">
+          <h4 v-show="landmark">significance:</h4>
+          <div v-show="landmark" class="modal-significance">
+            {{ significance() }}
+          </div>
+        </div>
+        <div class="modal-related-cases">
+          <h4 v-show="landmark">related cases:</h4>
+          <div v-show="landmark" class="modal-related">
+            {{ related() }}
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
+
 <script>
-// import * as d3 from "d3";
+import * as d3 from "d3";
 
 export default {
   name: "CaseModal",
+  props: ["keyIndicator"],
   data() {
-    return {};
+    return {
+      title: "caseName",
+      cases: [],
+      topicSubset: {},
+      landmarkData: [],
+      selectedData: {},
+      selectedLandmark: [],
+      landmark: null,
+    };
+  },
+  methods: {
+    protectedSpeech: function () {
+      this.selectedData = this.cases.filter(
+        (d) => d.caseId == this.keyIndicator
+      );
+      this.selectedLandmark = this.landmarkData.filter(
+        (d) => d.caseId == this.keyIndicator
+      );
+
+      if (this.selectedData.map((d) => d.landmark) == "Yes") {
+        this.landmark = true;
+      } else {
+        this.landmark = false;
+      }
+      console.log(this.keyIndicator);
+      // console.log("selectd data", this.selectedData);
+      // console.log("selectd land", this.selectedLandmark);
+      //  console.log("protex", this.cases[0].protected);
+      d3.select(".modal-protected")
+        .data(this.selectedData)
+        .text(function (d) {
+          if (d.protected == "No") {
+            return "Not protected!";
+          } else if (d.protected == "Yes") {
+            return "Protected!";
+          }
+        })
+        .style("color", "#C33C05");
+    },
+    verdict: function () {
+      d3.select(".modal-verdict")
+        .data(this.selectedData)
+        .text(function (d) {
+          return d.majVotes + " - " + d.minVotes;
+        })
+        .style("color", "black");
+    },
+    decision: function () {
+      d3.select(".modal-decision")
+        .data(this.selectedLandmark)
+        .text(function (d) {
+          return d.decision;
+        })
+        .style("color", "black")
+        .style("font-family", "Noto Sans")
+        .style("font-size", ".75em");
+    },
+    caseName: function () {
+      d3.select(".modal-caseName")
+        .data(this.selectedData)
+        .text(function (d) {
+          return d.caseName;
+        })
+        .style("color", "black");
+    },
+    cleanSyl: function () {
+      d3.select(".modal-cleanSyl")
+        .data(this.selectedData)
+        .text(function (d) {
+          return d.cleansyl;
+        })
+        .style("color", "black")
+        .style("font-family", "Noto Sans")
+        .style("font-size", ".75em");
+    },
+    keyIssue: function () {
+      d3.select(".modal-keyIssue")
+        .data(this.selectedLandmark)
+        .text(function (d) {
+          return d.keyissue;
+        })
+        .style("color", "black")
+        .style("font-family", "Noto Sans")
+        .style("font-size", ".75em");
+    },
+    significance: function () {
+      d3.select(".modal-significance")
+        .data(this.selectedLandmark)
+        .text(function (d) {
+          return d.significance;
+        })
+        .style("color", "black")
+        .style("font-family", "Noto Sans")
+        .style("font-size", ".75em");
+    },
+    related: function () {
+      d3.select(".modal-related")
+        .data(this.selectedLandmark)
+        .text(function (d) {
+          return d.related;
+        })
+        .style("color", "black")
+        .style("font-family", "Noto Sans")
+        .style("font-size", ".75em");
+    },
+    modalOn: function () {},
+  },
+  created() {
+    Promise.all([
+      d3.csv(
+        "https://raw.githubusercontent.com/freedom-of-speech-project/fos/vue-joanne/data_and_processing/tmpvfull-05-03_09-59.csv",
+        d3.autoType
+      ),
+      d3.csv(
+        "https://raw.githubusercontent.com/freedom-of-speech-project/fos/draft-production/topicSubset2.csv",
+        d3.autoType
+      ),
+      d3.json(
+        "https://dl.dropboxusercontent.com/s/vuu4wd1a5h8opus/landmarks.json?dl=0",
+        d3.autoType
+      ),
+    ]).then(([caseData, subsetData, landmarkData]) => {
+      this.cases = caseData;
+      this.topicSubset2 = subsetData;
+      this.landmarkData = landmarkData;
+      // console.log("Landmark json", this.landmarkData);
+    });
   },
 };
 </script>
+
 <style scoped>
 #container {
   top: 0;
@@ -25,27 +201,98 @@ export default {
   position: fixed;
   width: 100%;
   background-color: rgba(0, 0, 0, 0.427);
+  z-index: 999999999;
 }
+
+/* TODO: needs a media querey/ aspect ratio thing for mobile */
 #modal-container {
-  width: 700px;
-  height: 900px;
-  top: 0;
+  max-width: 750px;
+  width: 70vw;
+  height: 95vh;
+  top: 20px;
   left: 0;
-  bottom: 0;
+  bottom: 10;
   right: 0;
   margin: auto;
-  padding: 5px 50px 25px 50px;
+  padding: 5px 0px 0px 0px;
   border-radius: 15px;
   background-color: whitesmoke;
   position: fixed;
-  overflow-y: auto;
+  overflow-y: scroll;
   z-index: 99999;
 }
 
 .content {
-  width: 699px;
-  height: 699px;
+  max-width: 699px;
+  height: 92vh;
   overflow-y: scroll;
-  padding-right: 50px;
+  /* padding-right: 50px; */
+  /* padding: 0px 50px 50px 0px; */
+  padding-left: 3%;
+  padding-right: 3%;
+  display: grid;
+  display: grid;
+  grid-template-rows: repeat(auto-fill);
+  row-gap: 2px;
+}
+
+h4 {
+  margin-bottom: 0;
+}
+.modal-intro {
+  margin-top: 2%;
+}
+.modal-protected {
+  font-family: Fredericka the Great, serif;
+  font-size: 50px;
+  font-weight: 400;
+  color: "#C33C05";
+}
+.modal-verdict {
+  margin-top: 2%;
+  /* margin-bottom: 2%; */
+}
+
+.keyIndicator {
+  font-family: "Noto Sans";
+}
+
+.modal-caseName,
+.modal-keyIssue,
+.modal-decision,
+.modal-cleanSyl,
+.modal-significance,
+.modal-related {
+  margin-top: 2%;
+  margin-bottom: 2%;
+  padding-left: 7%;
+  padding-right: 7%;
+}
+.modal-caseName {
+  margin-top: 6%;
+  font-size: 1.5em;
+}
+
+.modal-cleanSyl {
+  text-align: justify;
+}
+.modal-related {
+  margin-bottom: 5%;
+}
+
+/* MODAL CLOSE */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 14px;
+  font-weight: bold;
+  position: sticky;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
 }
 </style>

@@ -1,5 +1,6 @@
 <template>
   <!-- <img alt="Vue logo" src="./assets/logo.png" /> -->
+
   <div class="header">
     <span @click="whereAmI" class="title">Freedom of Speech* </span>
     <span></span>
@@ -11,13 +12,66 @@
   <div id="intro-wrapper" v-show="introtoggle">
     <div class="title-header">
       <div class="friends">
-        <img class="gavin" src="./assets/Iconography/gavinblock.svg" />
-        <!-- {{ gavin }} -->
+        <div class="gavin-container">
+          <button @click="gavinBubble = !gavinBubble" class="gavin-intro">
+            <img class="gavin" src="./assets/Iconography/gavinblock.svg" />
+          </button>
+          <img
+            v-show="gavinBubble"
+            class="gavin-bubble"
+            @click="gavinBubble = !gavinBubble"
+            src="https://raw.githubusercontent.com/freedom-of-speech-project/fos/vue-eva/src/assets/Iconography/intro-speech.svg"
+          />
+          <div
+            v-show="gavinBubble"
+            class="gavin-bubble-text"
+            @click="gavinBubble = !gavinBubble"
+          >
+            Freedom of speech is sooo easy! "Congress shall make no law
+            abrdiging the freedom of speech" <br />
+            <br />
+            *nailed it*
+          </div>
+        </div>
       </div>
+
       <h1 class="“title”">{{ title }}</h1>
       <div class="friends">
-        <img class="aster" src="./assets/Iconography/asterrisk.svg" />
+        <!-- <img class="aster" src="./assets/Iconography/asterrisk.svg" /> -->
+
+        <div class="aster-container">
+          <button @click="asterBubble = !asterBubble" class="aster-intro">
+            <img class="aster" src="./assets/Iconography/asterrisk.svg" />
+          </button>
+          <img
+            v-show="asterBubble"
+            class="aster-bubble"
+            @click="asterBubble = !asterBubble"
+            src="https://raw.githubusercontent.com/freedom-of-speech-project/fos/vue-eva/src/assets/Iconography/intro-speech.svg"
+          />
+          <div
+            v-show="asterBubble"
+            class="aster-bubble-text"
+            @click="asterBubble = !asterBubble"
+          >
+            *full body eye roll* <br /><br />
+            Freedom of speech protection is <i>constantly</i> changing in
+            relation to american values and anxieties
+          </div>
+        </div>
       </div>
+      <!-- 
+<div class="aster-cont">
+          <button @click="aster = !aster" class="aster-help">
+            <img
+              :height="height * 0.07"
+              :width="width * 0.099"
+              src="../assets/Iconography/asterrisk.svg"
+            />
+          </button>
+          <div v-show="aster" class="aster-tips">Here if you need me lol</div>
+        </div>
+ -->
     </div>
     <div class="mode-wrapper">
       <div class="explore">
@@ -41,22 +95,43 @@
         </div>
       </div>
     </div>
-    <!-- <div class="footer">
-              <div class="ticker ticker-animated">
+    <div class="footer">
+      <div class="ticker ticker-animated">
         <span class="highlighted">Congress shall make no law</span> respecting
         an establishment of religion, or prohibiting the free exercise thereof;
-        <span class="highlighted">or abridging the freedom of speech,</span> or
+        or <span class="highlighted"> abridging the freedom of speech,</span> or
         of the press; or the right of the people peaceably to assemble, and to
         petition the Government for a redress of grievances.
       </div>
-    </div> -->
+    </div>
     <div></div>
   </div>
 
   <div v-show="about" id="about">
     <div class="about">
       <h1>About</h1>
-
+      <p class="h2" id="team">Using the Site</p>
+      <div class="disclaimerLol">
+        This site is a labor of love, and an ambitious project for one semester
+        and four people with moderate-to-no legal background. Some parts of it
+        are broken, which, in the spirit of free speech, we'll call a charming
+        reminder of the fallibility of technology. (By the way, that's exactly
+        what "Freedom of Speech" doesn't mean, and what inspired us to make this
+        whole site in the first place.)
+        <p>
+          That being said, we're proud of the site's progress from an idea to a
+          very clickable thing in about three months and want it to be as
+          functional and beautiful as possible. This is the beta version --
+          we're excited for you to try it out and would value any feedback you
+          might have! If you're interested, you can check out our Github
+          documentation and white paper for more information on functionality
+          and foibles (to be finalized by end of May 2021) and submit feedback
+          to our
+          <a href="mailto:DHFreedomOfSpeechproject@gmail.com ">project email</a
+          >.
+        </p>
+      </div>
+      <p class="h2" id="team">Project Abstract</p>
       <div class="abstract">
         <p>
           Freedom of Speech* is a web project that helps users to understand the
@@ -92,8 +167,8 @@
           mean?
         </p>
       </div>
+      <p class="h2" id="team">Team</p>
       <div class="team">
-        <p class="h2" id="team">Team</p>
         <p>
           <strong>Eva Sibinga</strong> is in her final semester of the Grad
           Center’s Data Analysis & Visualization program. Her research interests
@@ -103,9 +178,8 @@
           analysis and visualization is motivated by a desire to expand the way
           we tell stories and understand the world through our own eyes and
           others’. Eva is one half of Freedom of Speech*’s core data and
-          developer team. She will also support the project’s outreach effort,
-          and hopes to improve her understanding and skills in UX/UI design by
-          applying some time and effort there as well.
+          developer team, focusing on the statistical topic model and... a
+          lot... of web development.
         </p>
         <p>
           <b>Joanne Ramadani</b> is an information designer, data analyst, and
@@ -171,7 +245,7 @@ export default {
     Guided,
     Explore,
     //USMap,
-    //CaseModal,
+    // CaseModal,
   },
   data() {
     return {
@@ -182,11 +256,14 @@ export default {
       about: false,
       loadData: {},
       introtoggle: true,
-      title: "Freedom of Speech Project*",
+      title: "Freedom of Speech* Project",
       topic: "",
       topicSubset: [],
       topicSubset2: [],
       cases: [],
+      caseModal: false,
+      gavinBubble: false,
+      asterBubble: false,
     };
   },
   mounted() {
@@ -194,15 +271,21 @@ export default {
   },
   methods: {
     takeMeToGuided: function () {
-      //  console.log("did that work");
       this.guided = !this.guided;
       this.introtoggle = !this.introtoggle;
+      d3.select(".title")
+        .append("span")
+        .attr("class", "breadcrumb")
+        .text(" →  Guided mode");
     },
     takeMeToExplore: function () {
-      // console.log("of course it did");
       this.explore = !this.explore;
-      // console.log(this.explore);
       this.introtoggle = !this.introtoggle;
+
+      d3.select(".title")
+        .append("span")
+        .attr("class", "breadcrumb")
+        .text(" →  Explore mode");
     },
     whereAmI: function () {
       this.introtoggle = true;
@@ -212,6 +295,7 @@ export default {
       if (this.explore) {
         this.explore = false;
       }
+      d3.select(".breadcrumb").remove();
     },
     topicShift: function () {
       const topicRollup = d3.rollup(
@@ -220,9 +304,8 @@ export default {
         (d) => d.topTopic
       );
 
-      //console.log("d", [...topicRollup.keys()]);
+      var t = d3.transition().duration(1500);
 
-      var t = d3.transition().duration(3000);
       var topic = d3
         .select("#topicShift")
         .data([...topicRollup.keys()])
@@ -246,10 +329,6 @@ export default {
         .text("public schools")
         .transition(t);
 
-      //   function (d) {
-      //   return d;
-      // })
-      // .remove();
       topic;
     },
   },
@@ -259,7 +338,6 @@ export default {
       d3.csv("/topicSubset2.csv", d3.autoType),
     ]).then(([caseData, subsetData]) => {
       this.cases = caseData;
-      console.log("cases: ", this.cases);
       // topic subset - honestly do I even need this
       this.topicSubset = caseData.map(function (d) {
         return {
@@ -392,6 +470,55 @@ h1 {
   overflow-y: auto;
   z-index: 99999;
 }
+.gavin-container {
+  position: relative;
+}
+.gavin-intro {
+  cursor: pointer;
+}
+
+.gavin-bubble {
+  height: 250px;
+  width: 250px;
+  position: absolute;
+  top: 6px;
+  left: 7px;
+  cursor: pointer;
+}
+.gavin-bubble-text {
+  height: 100px;
+  width: 225px;
+  position: absolute;
+  top: 90px;
+  left: 18px;
+  color: #c33c05;
+  cursor: pointer;
+}
+.aster-container {
+  position: relative;
+}
+.aster-intro {
+  cursor: pointer;
+}
+
+.aster-bubble {
+  height: 250px;
+  width: 250px;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  transform: scaleX(-1) scaleY(1);
+  cursor: pointer;
+}
+.aster-bubble-text {
+  height: 100px;
+  width: 225px;
+  position: absolute;
+  top: 80px;
+  right: 25px;
+  color: #3d6fee;
+  cursor: pointer;
+}
 
 #topicShift {
   /* text-decoration: underline;*/
@@ -403,6 +530,11 @@ h1 {
   height: 699px;
   overflow-y: scroll;
   padding-right: 50px;
+}
+.disclaimerLol {
+  font-family: Noto Sans, sans-serif;
+  text-align: left;
+  line-height: 20px;
 }
 
 .abstract p,
@@ -417,6 +549,8 @@ h1 {
   appearance: none;
   border: 0px;
   background-color: rgba(0, 0, 0, 0);
+  justify-self: right;
+  padding-right: 20px;
 }
 
 .header {
@@ -425,18 +559,19 @@ h1 {
   background-color: #0d3fd2;
   color: white;
   display: grid;
-  grid-template-columns: 200px auto 60px;
+  grid-template-columns: 3fr 1fr 1fr;
   align-content: center;
   /** drop shadow?? */
 }
 
 .title {
-  justify-self: center;
+  justify-self: left;
   align-self: center;
   cursor: pointer;
+  padding-left: 20px;
 }
 .info {
-  justify-self: start;
+  justify-self: center;
   cursor: pointer;
 }
 
@@ -480,7 +615,7 @@ h1 {
   /* grid-template-columns: 1fr 1fr; */
   /* column-gap: 2.5%; */
   /* padding: 0% 5% 0% 5%; */
-  height: 300px;
+  height: 30vh;
   grid-template-columns: 500px 500px;
   justify-content: center;
 }
@@ -519,7 +654,7 @@ button {
   background-repeat: no-repeat;
   position: absolute;
   cursor: pointer;
-  height: 200px;
+  height: 30vh;
   width: 200px;
   justify-content: center;
   display: flex;
@@ -531,21 +666,24 @@ button {
 }
 
 .footer {
-  height: 10vh;
+  height: 30vh;
   box-sizing: content-box;
   padding-top: 10px;
   /* line-height: 22px; */
-  width: 100%;
+  width: 50vw;
   overflow: hidden;
   display: inline-block;
   box-sizing: content-box;
+  text-align: justify;
+
   /* text-transform: uppercase; */
 }
 
 .ticker {
-  white-space: nowrap;
-  -webkit-animation: ticker 80s linear 0s infinite normal;
-  animation: ticker 80s linear 0s infinite normal;
+  font-family: Fredericka the Great, serif;
+  /* white-space: nowrap; */
+  /* -webkit-animation: ticker 60s linear 0s infinite normal; */
+  /* animation: ticker 60s linear 0s infinite normal; */
 }
 
 @keyframes ticker {
@@ -560,6 +698,6 @@ button {
 }
 
 .highlighted {
-  color: red;
+  color: #c33c05;
 }
 </style>
