@@ -90,8 +90,8 @@
           <button @click="takeMeToGuided">guide me through</button>
         </div>
         <div class="suptext">
-          Interested in a bit more context? For a <br />
-          guided experience, click the button below:
+          Interested in a bit more context on how speech protection has changed
+          over time? For a guided experience, click the button below:
         </div>
       </div>
     </div>
@@ -662,7 +662,7 @@ button {
 }
 
 .suptext {
-  padding: 20px 0px 20px 0px;
+  padding: 0 9% 0 9%;
 }
 
 .footer {

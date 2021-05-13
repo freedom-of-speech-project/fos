@@ -174,7 +174,7 @@ export default {
         d3.autoType
       ),
       d3.csv(
-        "https://raw.githubusercontent.com/freedom-of-speech-project/fos/draft-production/topicSubset2.csv",
+        "https://raw.githubusercontent.com/freedom-of-speech-project/fos/draft-production/public/topicSubset2.csv",
         d3.autoType
       ),
       d3.json(
@@ -246,7 +246,7 @@ h4 {
   font-family: Fredericka the Great, serif;
   font-size: 50px;
   font-weight: 400;
-  color: "#C33C05";
+  color: #c33c05;
 }
 .modal-verdict {
   margin-top: 2%;

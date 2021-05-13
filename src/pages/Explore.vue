@@ -107,7 +107,26 @@
         id="longer"
       />
       <span id="shorter" />
-      <div class="sidebar-item text topic" id="hiddenTopic">topic</div>
+      <div
+        class="sidebar-item text topic mouseover"
+        id="hiddenTopic"
+        @click="showTooltipT"
+        v-on:click="showTopics"
+      >
+        topic
+      </div>
+      <div
+        class="sidebar-item tooltipT"
+        style="
+          background-image: url('https://raw.githubusercontent.com/freedom-of-speech-project/fos/vue-eva/src/assets/Iconography/tooltip-left.svg');
+        "
+        v-show="activeT"
+      >
+        "topics" were calculated by an LDA topic modeling algorithm -- like a
+        lot of statistical analysis, some of it is clear and helpful, some...
+        less so. the best way to explore is to click a topic and read through
+        cases that come up!
+      </div>
       <button
         type="button"
         class="sidebar-item topic"
@@ -163,6 +182,7 @@ export default {
       keyIndicator: null,
       activeL: false,
       activeP: false,
+      activeT: false,
     };
   },
   methods: {
@@ -171,6 +191,9 @@ export default {
     },
     showTooltipP: function () {
       this.activeP = !this.activeP;
+    },
+    showTooltipT: function () {
+      this.activeT = !this.activeT;
     },
     showTopics: function () {
       // includes hiding/showing cards on click
@@ -369,7 +392,7 @@ export default {
         .selectAll("rect")
         .data(this.cases)
         .join("rect")
-        .attr("x", (d) => x(d.term))
+        .attr("x", (d) => x(new Date(d.dateDecision).getUTCFullYear()))
         .attr("y", 12)
         .attr("height", 12)
         .attr("width", 3);
@@ -393,7 +416,11 @@ export default {
           const [x, x2] = selection;
           yearArray = dot
             .style("stroke", "#B5BBC0") //gray
-            .filter((d) => x <= fx(d.term) && fx2(d.term) < x2)
+            .filter(
+              (d) =>
+                x <= fx(new Date(d.dateDecision).getUTCFullYear()) &&
+                fx2(new Date(d.dateDecision).getUTCFullYear()) < x2
+            )
             .style("stroke", "#3d6fee") //blue
             .style("opacity", 1)
             .data();
@@ -405,7 +432,10 @@ export default {
             .style("display", "none")
             .data(data)
             .filter(function (d) {
-              return d.term >= startYear && d.term <= endYear;
+              return (
+                new Date(d.dateDecision).getUTCFullYear() >= startYear &&
+                new Date(d.dateDecision).getUTCFullYear() <= endYear
+              );
             })
             .style("display", "block");
 
@@ -491,7 +521,9 @@ export default {
         .style("margin", "auto")
         .attr("class", "text")
         .text(function (d) {
-          return d.caseName + " (" + d.term + ")";
+          return (
+            d.caseName + " (" + new Date(d.dateDecision).getUTCFullYear() + ")"
+          );
         })
         .style("color", "black")
         .style("font-size", "1.75vw");
@@ -610,7 +642,7 @@ export default {
         d3.autoType
       ),
       d3.csv(
-        "https://raw.githubusercontent.com/freedom-of-speech-project/fos/draft-production/topicSubset2.csv",
+        "https://raw.githubusercontent.com/freedom-of-speech-project/fos/draft-production/public/topicSubset2.csv",
         d3.autoType
       ),
     ]).then(([caseData, subsetData]) => {
@@ -865,8 +897,13 @@ img.border-line {
   cursor: pointer;
 }
 
+.mouseover:hover {
+  color: #c33c05;
+}
+
 .tooltipL,
-.tooltipP {
+.tooltipP,
+.tooltipT {
   position: absolute;
   left: 150px;
   top: 65px;
@@ -874,11 +911,9 @@ img.border-line {
   background-size: contain;
   background: no-repeat;
   transform: scaleX(1);
-  max-width: 320px;
+  max-width: 330px;
   height: 100px;
-  padding: 3%;
-  padding-top: 2%;
-
+  padding: 20px;
   color: black;
 }
 
@@ -887,6 +922,26 @@ img.border-line {
   left: 130px;
   top: 0px;
   z-index: 9999 !important;
+}
+
+.tooltipT {
+  position: absolute;
+  left: 90px;
+  top: 250px;
+  z-index: 9999 !important;
+}
+
+div.tooltip {
+  position: absolute;
+  text-align: center;
+  width: 60px;
+  height: 28px;
+  padding: 2px;
+  font: 12px sans-serif;
+  background: lightsteelblue;
+  border: 0px;
+  border-radius: 8px;
+  pointer-events: none;
 }
 
 .sidebar-item-hidden::after {
