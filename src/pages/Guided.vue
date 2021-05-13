@@ -64,9 +64,11 @@
           <span @click="guidedOn" class="close">( X )</span>
         </button>
         <div class="utbh-content">
-          <button class="left"><div class="guided-nav left">&lt;</div></button>
-          <div class="guided-content"><p>Content</p></div>
-          <button class="right">
+          <button class="left" @click="bleft">
+            <div class="guided-nav left">&lt;</div>
+          </button>
+          <div class="guided-content">{{ eraContent() }}</div>
+          <button class="right" @click="bright">
             <div class="guided-nav right">&gt;</div>
           </button>
         </div>
@@ -116,6 +118,7 @@ export default {
       guided: false,
       landmarkSelection: null,
       coords: { x: null, y: null },
+      eraStatus: null,
     };
   },
   methods: {
@@ -124,6 +127,7 @@ export default {
         d3.select("#map svg").remove();
         d3.select("#map img").remove();
         d3.select("#timeline svg").remove();
+        d3.select(".eras-boxes").remove();
       }
 
       this.img = d3
@@ -330,12 +334,27 @@ export default {
 
       // BELOW DRAWS RECTS
       if (this.guided == true) {
+        console.log(this.svg);
         this.svg
+          .selectAll(".eras-boxes")
           .append("rect")
-          .attr("class", "era")
+          .data(this.erasData)
+          .join("rect")
           .attr("y", "0")
-          .attr("x", `${margin.left}`)
-          .attr("width", "90")
+          // .attr("x", `${margin.left}`)
+          .attr("x", (d) => {
+            console.log(d);
+            const t = d.cases[0];
+            const cs = this.landmarks.filter((d) => d.caseId == t);
+            console.log("cs", cs);
+            console.log("date", cs[0].dateDecision);
+            console.log("scale", xScale(new Date(cs[0].dateDecision)));
+            return xScale(new Date(cs[0].dateDecision));
+          })
+          // .attr("width", "90")
+          .attr("width", (d) => {
+            return d.yearlength * 12.5;
+          })
           .attr("height", "45")
           .attr("fill", "#3d6fee")
           .attr("fill-opacity", "40%")
@@ -345,6 +364,13 @@ export default {
           })
           .on("mouseout", function () {
             d3.select(this).attr("fill-opacity", "40%");
+          })
+          .on("click", (d) => {
+            console.log("this", this);
+
+            console.log("d", d);
+            this.eraStatus = d.srcElement.__data__.eracount;
+            console.log("test", this.eraStatus);
           });
       }
     },
@@ -353,6 +379,32 @@ export default {
         d3.select("#switch-guided").property("checked", false);
       }
       this.guided = !this.guided;
+      this.eraStatus = 1;
+    },
+    eraContent: function () {
+      console.log(this.eraStatus);
+      const selectedera = this.erasData.filter(
+        (d) => d.eracount == this.eraStatus
+      )[0];
+      console.log("selectedEra", selectedera);
+      if (selectedera) {
+        d3.select(".guided-content").html(
+          `<h2>(${selectedera.eracount}) Era: ${selectedera.era}</h2><p>${selectedera.description}</p>`
+        );
+      }
+    },
+    bleft: function () {
+      if (this.eraStatus > 1) {
+        return (this.eraStatus -= 1);
+      }
+      console.log(this.eraStatus);
+    },
+    bright: function () {
+      console.log(this.eraStatus);
+      console.log("click");
+      if (this.eraStatus < 13) {
+        return (this.eraStatus += 1);
+      }
     },
   },
   mounted() {
@@ -370,8 +422,17 @@ export default {
         d3.autoType
       ),
       d3.csv(
-        "https://raw.githubusercontent.com/freedom-of-speech-project/fos/vue-joanne/public/eras.csv",
-        d3.autoType
+        "https://raw.githubusercontent.com/freedom-of-speech-project/fos/vue-joanne/public/erasdata.csv",
+        (d) => ({
+          eracount: +d.eracount,
+          era: d.era,
+          description: d.description,
+          yearlength: +d.yearlength,
+          // cases: [d.cases.replace(/[']+/g, "")],
+          cases: eval(d.cases),
+          // cases: [d.cases.replace(/\[(.*?)\]/g, "")],
+          //.replace(/[']+/g, "")
+        })
       ),
     ]).then(([statesdata, landmarkdata, lmContent, erasData]) => {
       this.states = statesdata;
