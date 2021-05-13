@@ -51,7 +51,7 @@ export default {
       );
       this.caseTitle = selectedCase[0].caseName;
       this.caseIssue = content[0].keyissue;
-      this.keyIndicator = selectedCase[0].usCite;
+      this.keyIndicator = selectedCase[0].caseId;
       d3.select("#case-bubble-cont").attr(
         "transform",
         `translate(${this.coords.x},${this.coords.y})`
