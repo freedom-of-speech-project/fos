@@ -75,8 +75,10 @@ export default {
       this.selectedData = this.cases.filter(
         (d) => d.caseId == this.keyIndicator
       );
+      // const case = this.selectedData.find()
+      console.log(this.selectedData);
       this.selectedLandmark = this.landmarkData.filter(
-        (d) => d.caseId == this.keyIndicator
+        (d) => d.uscite == this.selectedData.usCite
       );
 
       if (this.selectedData.map((d) => d.landmark) == "Yes") {
