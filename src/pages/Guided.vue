@@ -112,6 +112,7 @@ export default {
       states: [],
       landmarks: [],
       lmContent: [],
+      erasData: [],
       guided: false,
       landmarkSelection: null,
       coords: { x: null, y: null },
@@ -368,13 +369,19 @@ export default {
         "https://dl.dropboxusercontent.com/s/vuu4wd1a5h8opus/landmarks.json?dl=0",
         d3.autoType
       ),
-    ]).then(([statesdata, landmarkdata, lmContent]) => {
+      d3.csv(
+        "https://raw.githubusercontent.com/freedom-of-speech-project/fos/vue-joanne/public/eras.csv",
+        d3.autoType
+      ),
+    ]).then(([statesdata, landmarkdata, lmContent, erasData]) => {
       this.states = statesdata;
       this.landmarks = landmarkdata;
       this.lmContent = lmContent;
+      this.erasData = erasData;
       console.log("states: ", this.states);
       console.log("landmarks: ", this.landmarks);
       console.log("lmcontent", this.lmContent);
+      console.log("eras: ", this.erasData);
     });
   },
 };
