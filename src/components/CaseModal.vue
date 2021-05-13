@@ -10,40 +10,41 @@
           <div class="modal-protected">
             {{ protectedSpeech() }}
           </div>
-          <div class="keyIndicator">
-            {{ keyIndicator }}
-          </div>
-          <div class="modal-verdict">
-            {{ verdict() }}
-          </div>
+
           <div class="modal-caseName">
             {{ caseName() }}
           </div>
-          <h3 v-if="landmark">key issue:</h3>
-          <div class="modal-keyIssue">
+          <div class="keyIndicator">
+            {{ keyIndicator }}
+          </div>
+          <h4 v-show="landmark">key issue:</h4>
+          <div v-show="landmark" class="modal-keyIssue">
             {{ keyIssue() }}
           </div>
         </div>
         <div class="modal-before"></div>
         <div class="modal-during">
-          <div class="modal-decision">
+          <h4 v-show="landmark">decision:</h4>
+          <div class="modal-verdict">
+            {{ verdict() }}
+          </div>
+          <div v-show="landmark" class="modal-decision">
             {{ decision() }}
           </div>
+          <h4>case syllabus:</h4>
           <div class="modal-cleanSyl">
-            <!-- v:if "landmark = No" -->
             {{ cleanSyl() }}
           </div>
         </div>
         <div class="modal-after">
-          <div class="modal-significance">
-            <!-- v:if "landmark = Yes" -->
+          <h4 v-show="landmark">significance:</h4>
+          <div v-show="landmark" class="modal-significance">
             {{ significance() }}
           </div>
         </div>
         <div class="modal-related-cases">
-          <div class="modal-related">
-            <!-- v:if "landmark = Yes" -->
-            <!-- I'd go for v:if over v:show bc we don't want all the modals rendered but invisible on the whole site -- they can render as needed -->
+          <h4 v-show="landmark">related cases:</h4>
+          <div v-show="landmark" class="modal-related">
             {{ related() }}
           </div>
         </div>
@@ -54,9 +55,6 @@
 
 <script>
 import * as d3 from "d3";
-
-// this.keyIndicator == null;
-// console.log("key indiccator", this.keyIndicator);
 
 export default {
   name: "CaseModal",
@@ -75,10 +73,10 @@ export default {
   methods: {
     protectedSpeech: function () {
       this.selectedData = this.cases.filter(
-        (d) => d.usCite == this.keyIndicator
+        (d) => d.caseId == this.keyIndicator
       );
       this.selectedLandmark = this.landmarkData.filter(
-        (d) => d.usCite == this.keyIndicator
+        (d) => d.caseId == this.keyIndicator
       );
 
       if (this.selectedData.map((d) => d.landmark) == "Yes") {
@@ -87,12 +85,11 @@ export default {
         this.landmark = false;
       }
       console.log(this.keyIndicator);
-      console.log("selectd data", this.selectedData);
-      console.log("selectd land", this.selectedLandmark);
-
+      // console.log("selectd data", this.selectedData);
+      // console.log("selectd land", this.selectedLandmark);
       //  console.log("protex", this.cases[0].protected);
       d3.select(".modal-protected")
-        .data(this.selectedData) // are we going to pass in the data for each case...? pre-load all modals?
+        .data(this.selectedData)
         .text(function (d) {
           if (d.protected == "No") {
             return "Not protected!";
@@ -104,7 +101,7 @@ export default {
     },
     verdict: function () {
       d3.select(".modal-verdict")
-        .data(this.selectedData) // are we going to pass in the data for each case...? pre-load all modals?
+        .data(this.selectedData)
         .text(function (d) {
           return d.majVotes + " - " + d.minVotes;
         })
@@ -112,7 +109,7 @@ export default {
     },
     decision: function () {
       d3.select(".modal-decision")
-        .data(this.selectedLandmark) // json dataset
+        .data(this.selectedLandmark)
         .text(function (d) {
           return d.decision;
         })
@@ -122,7 +119,7 @@ export default {
     },
     caseName: function () {
       d3.select(".modal-caseName")
-        .data(this.selectedData) // are we going to pass in the data for each case...? pre-load all modals?
+        .data(this.selectedData)
         .text(function (d) {
           return d.caseName;
         })
@@ -130,7 +127,7 @@ export default {
     },
     cleanSyl: function () {
       d3.select(".modal-cleanSyl")
-        .data(this.selectedData) // are we going to pass in the data for each case...? pre-load all modals?
+        .data(this.selectedData)
         .text(function (d) {
           return d.cleansyl;
         })
@@ -140,7 +137,7 @@ export default {
     },
     keyIssue: function () {
       d3.select(".modal-keyIssue")
-        .data(this.selectedLandmark) // json dataset
+        .data(this.selectedLandmark)
         .text(function (d) {
           return d.keyissue;
         })
@@ -149,9 +146,8 @@ export default {
         .style("font-size", ".75em");
     },
     significance: function () {
-      // waiting for landmarks JSON
       d3.select(".modal-significance")
-        .data(this.selectedLandmark) // json dataset
+        .data(this.selectedLandmark)
         .text(function (d) {
           return d.significance;
         })
@@ -160,9 +156,8 @@ export default {
         .style("font-size", ".75em");
     },
     related: function () {
-      // waiting for landmarks JSON
       d3.select(".modal-related")
-        .data(this.selectedLandmark) // json dataset
+        .data(this.selectedLandmark)
         .text(function (d) {
           return d.related;
         })
@@ -170,10 +165,7 @@ export default {
         .style("font-family", "Noto Sans")
         .style("font-size", ".75em");
     },
-    modalOn: function () {
-      console.log("things");
-      // this.keyIndicator = null;
-    },
+    modalOn: function () {},
   },
   created() {
     Promise.all([
@@ -187,18 +179,13 @@ export default {
       ),
       d3.json(
         "https://dl.dropboxusercontent.com/s/vuu4wd1a5h8opus/landmarks.json?dl=0",
-
-        //"https://dl.dropboxusercontent.com/s/vuu4wd1a5h8opus/landmarks.json?dl=0",
         d3.autoType
       ),
     ]).then(([caseData, subsetData, landmarkData]) => {
       this.cases = caseData;
-      // console.log("new cases: ", this.cases);
-      // 4 columns --> incl. top topic + value
       this.topicSubset2 = subsetData;
       this.landmarkData = landmarkData;
-      console.log("Landmark json", this.landmarkData);
-      // console.log("Landmark json1", Object.keys(this.landmarkData[0])[33]);
+      // console.log("Landmark json", this.landmarkData);
     });
   },
 };
@@ -219,8 +206,9 @@ export default {
 
 /* TODO: needs a media querey/ aspect ratio thing for mobile */
 #modal-container {
-  width: 750px;
-  height: 900px;
+  max-width: 750px;
+  width: 70vw;
+  height: 95vh;
   top: 20px;
   left: 0;
   bottom: 10;
@@ -230,13 +218,13 @@ export default {
   border-radius: 15px;
   background-color: whitesmoke;
   position: fixed;
-  overflow-y: auto;
+  overflow-y: scroll;
   z-index: 99999;
 }
 
 .content {
-  width: 699px;
-  height: 899px;
+  max-width: 699px;
+  height: 92vh;
   overflow-y: scroll;
   /* padding-right: 50px; */
   /* padding: 0px 50px 50px 0px; */
@@ -247,9 +235,12 @@ export default {
   grid-template-rows: repeat(auto-fill);
   row-gap: 2px;
 }
+
+h4 {
+  margin-bottom: 0;
+}
 .modal-intro {
   margin-top: 2%;
-  margin-bottom: 2%;
 }
 .modal-protected {
   font-family: Fredericka the Great, serif;
@@ -259,26 +250,34 @@ export default {
 }
 .modal-verdict {
   margin-top: 2%;
+  /* margin-bottom: 2%; */
+}
+
+.keyIndicator {
+  font-family: "Noto Sans";
+}
+
+.modal-caseName,
+.modal-keyIssue,
+.modal-decision,
+.modal-cleanSyl,
+.modal-significance,
+.modal-related {
+  margin-top: 2%;
   margin-bottom: 2%;
+  padding-left: 7%;
+  padding-right: 7%;
 }
 .modal-caseName {
-  margin-top: 2%;
-  margin-bottom: 2%;
-  padding-left: 7%;
-  padding-right: 7%;
+  margin-top: 6%;
+  font-size: 1.5em;
 }
-.modal-keyIssue {
-  margin-top: 2%;
-  margin-bottom: 2%;
-  padding-left: 7%;
-  padding-right: 7%;
-}
+
 .modal-cleanSyl {
   text-align: justify;
-  padding-left: 7%;
-  padding-right: 7%;
-  margin-top: 2%;
-  margin-bottom: 2%;
+}
+.modal-related {
+  margin-bottom: 5%;
 }
 
 /* MODAL CLOSE */
@@ -287,6 +286,7 @@ export default {
   float: right;
   font-size: 14px;
   font-weight: bold;
+  position: sticky;
 }
 
 .close:hover,

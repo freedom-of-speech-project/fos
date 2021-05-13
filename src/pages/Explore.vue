@@ -5,11 +5,6 @@
     </div>
     <div class="header-topic">
       <div id="topic-button"></div>
-      <!-- <img
-        style="position: relative; height: 75%"
-        src="../assets/Iconography/blank-topic-button.svg"
-      /> -->
-      <!-- <div>hi</div> -->
     </div>
     <span></span>
 
@@ -39,23 +34,6 @@
         <div><button id="dropdown1-4" @click="sortByYearDesc"></button></div>
       </div>
     </div>
-    <!-- year / alpha / -->
-    <!-- <div class="dropdown">
-      <button class="dropbtn">
-        <img
-          style="position: relative; width: 90%"
-          src="../assets/Iconography/view-as-button.svg"
-        />
-      </button>
-      <div class="dropdown-content"> -->
-    <!-- <a href="#">case name</a>
-        <a href="#">year</a> -->
-    <!-- <img
-          style="position: absolute; right: 0"
-          src="../assets/Iconography/dropdown-menu.svg"
-        />
-      </div> 
-    </div>-->
   </div>
   <img
     class="header-border-line"
@@ -65,7 +43,20 @@
 
   <div class="wrapper-explore">
     <div class="sidebar">
-      <div class="sidebar-item text">landmark case</div>
+      <div class="sidebar-item text mouseover" @click="showTooltipL">
+        landmark case
+      </div>
+      <div
+        class="sidebar-item tooltipL"
+        style="
+          background-image: url('https://raw.githubusercontent.com/freedom-of-speech-project/fos/vue-eva/src/assets/Iconography/tooltip-left.svg');
+        "
+        v-show="activeL"
+      >
+        "landmark cases" are those relating to free speech in Landmark Supreme
+        Court Cases: The Most Influential Decisions of the Supreme Court of the
+        United States by Richard A Leiter and Roy M Mersky.
+      </div>
       <label class="switch sidebar-item" id="caret">
         <input type="checkbox" v-on:click="landmarkVis" />
         <span class="slider round"></span>
@@ -76,9 +67,20 @@
         id="longer"
       />
       <span />
-      <!--/div>
-      <div class="toggle-wrapper"-->
-      <div class="sidebar-item text">protected speech</div>
+      <div class="sidebar-item text mouseover" @click="showTooltipP">
+        protected speech
+      </div>
+      <div
+        class="sidebar-item tooltipP"
+        style="
+          background-image: url('https://raw.githubusercontent.com/freedom-of-speech-project/fos/vue-eva/src/assets/Iconography/tooltip-left.svg');
+        "
+        v-show="activeP"
+      >
+        "protected speech" means the court ruled in favor of the person or
+        entity testing the limits of free speech protection -- their contested
+        speech *is* protected
+      </div>
       <label class="switch sidebar-item" id="caret">
         <input type="checkbox" v-on:click="protectedVis" />
         <span class="slider round"></span>
@@ -89,49 +91,22 @@
         id="longer"
       />
       <span />
-      <!-- <div class="sidebar-item-hidden">hi</div>
-      <span class="sidebar-item-hidden" /> -->
-      <!-- <img
-        class="border-line sidebar-item-hidden"
-        src="../assets/Iconography/sidebar-border-line.svg"
-        id="longer"
-      />
-      <span class="sidebar-item-hidden" /> -->
       <div class="sidebar-item year text" id="year">year</div>
-
-      <button type="button" class="sidebar-item yearDisplay" id="caret">
-        <!-- <img
-          style="position: relative"
-          src="../assets/Iconography/caret-down.svg"
-        /> -->
-      </button>
-
+      <button
+        type="button"
+        class="sidebar-item yearDisplay"
+        id="caret"
+      ></button>
       <div class="sidebar-item-1 brush-container" id="longer">
         {{ brush() }}
       </div>
       <span class="sidebar-item-1" id="shorter" />
-
       <img
         class="border-line"
         src="../assets/Iconography/sidebar-border-line.svg"
         id="longer"
       />
       <span id="shorter" />
-      <!-- <div class="sidebar-item location text">location</div>
-      <button type="button" class="sidebar-item" id="caret">
-        <img
-          style="position: relative"
-          src="../assets/Iconography/caret-down.svg"
-        />
-      </button>
-      <--div class="toggle-wrapper"--
-      <img
-        class="border-line"
-        src="../assets/Iconography/sidebar-border-line.svg"
-        id="longer"
-      />
-      <span id="shorter" /> -->
-
       <div class="sidebar-item text topic" id="hiddenTopic">topic</div>
       <button
         type="button"
@@ -151,9 +126,7 @@
         id="longer"
       />
       <span />
-      <!--/div-->
     </div>
-
     <div class="content-explore">
       {{ card() }}
     </div>
@@ -168,6 +141,7 @@
 <script>
 import * as d3 from "d3";
 import CaseModal from "../components/CaseModal.vue";
+console.log("running Explore");
 
 let landmarkVisible = true;
 let protectedVisible = true;
@@ -176,9 +150,6 @@ let yearArray = [];
 
 let startYear;
 let endYear;
-
-//TODO: make state dataset to fill so that filters don't override each other
-// state.data = {}
 
 export default {
   name: "Explore",
@@ -190,30 +161,27 @@ export default {
       cases: [],
       topicSubset2: {},
       keyIndicator: null,
+      activeL: false,
+      activeP: false,
     };
   },
   methods: {
-    takeMeToGuided: function () {
-      // console.log("did that work");
+    showTooltipL: function () {
+      this.activeL = !this.activeL;
     },
-    takeMeToExplore: function () {
-      // console.log("of course it did");
+    showTooltipP: function () {
+      this.activeP = !this.activeP;
     },
     showTopics: function () {
       // includes hiding/showing cards on click
       showTopics = !showTopics;
 
-      //TODO: this negates hide/show functionality of LandmarkVis b/c it selects all
-      //could add if statement
-
-      // const topicGroups = d3.group(this.topicSubset2, (d) => d.topTopic);
       const topicRollup = d3.rollup(
         this.topicSubset2,
         (v) => v.length,
         (d) => d.topTopic
       );
 
-      //console.log("this.topicsubset2", this.topicSubset2);
       const topicSubset2 = this.topicSubset2;
 
       if (showTopics) {
@@ -242,8 +210,6 @@ export default {
           .on("click", function () {
             //set the current topic by picking it up from the DOM selection
             let topic = this.className;
-            //selectedTopic = topic;
-
             // reset card display to zero cards
             d3.selectAll(".card").style("display", "none");
             // UI for selected topic div
@@ -282,65 +248,64 @@ export default {
     },
     landmarkVis: function () {
       landmarkVisible = !landmarkVisible;
-      // console.log("Default value of landmarkVisible is", landmarkVisible);
-      // console.log("Toggled lv is", landmarkVisible);
       if (landmarkVisible) {
         d3.selectAll(".landmarkNo")
           .transition()
-          //.style("opacity", "1.0")
           .delay(500)
           .style("display", "block");
       } else {
         d3.selectAll(".landmarkNo")
           .transition()
-          //.style("opacity", "0.5")
           .delay(500)
           .style("display", "none");
       }
     },
     protectedVis: function () {
       protectedVisible = !protectedVisible;
-      // console.log("Default value of protectedVisible is", protectedVisible);
-      // console.log("Toggled lv is", protectedVisible);
       if (protectedVisible) {
         d3.selectAll(".protectedNo")
           .transition()
-          //.style("opacity", "1.0")
           .delay(500)
           .style("display", "block");
       } else {
         d3.selectAll(".protectedNo")
           .transition()
-          //.style("opacity", "0.5")
           .delay(500)
           .style("display", "none");
       }
     },
     sortByYearAsc: function () {
-      d3.selectAll(".card")
-        .data(this.cases)
-        .sort((a, b) => d3.ascending(a.term, b.term));
+      d3.selectAll(".card").sort((a, b) => d3.ascending(a.term, b.term));
     },
     sortByYearDesc: function () {
-      d3.selectAll(".card")
-        .data(this.cases)
-        .sort((a, b) => d3.descending(a.term, b.term));
+      d3.selectAll(".card").sort((a, b) => d3.descending(a.term, b.term));
     },
     sortByAlphaAsc: function () {
-      d3.selectAll(".card")
-        .data(this.cases)
-        .sort((a, b) => d3.ascending(a.caseName, b.caseName));
+      d3.selectAll(".card").sort((a, b) =>
+        d3.ascending(a.caseName, b.caseName)
+      );
     },
     sortByAlphaDesc: function () {
-      d3.selectAll(".card")
-        .data(this.cases)
-        .sort((a, b) => d3.descending(a.caseName, b.caseName));
+      d3.selectAll(".card").sort((a, b) =>
+        d3.descending(a.caseName, b.caseName)
+      );
     },
     brush: function () {
       const width = window.innerWidth * 0.25;
       const height = 50;
       const marginLeft = 10;
       const marginRight = 10;
+
+      // v-show on the case modal seems to duplicate this.svg on close, so...
+      if (this.svg) {
+        this.svg.remove();
+      }
+      if (dot) {
+        dot.remove();
+      }
+      if (brush) {
+        brush.remove();
+      }
 
       //make the scales and axes
       const x = d3
@@ -385,6 +350,7 @@ export default {
         .attr("transform", `translate(10, 25)`)
         .style("font-family", "Noto Sans")
         .call(xAxis2);
+
       //make the brush
       const brush = d3
         .brushX()
@@ -399,8 +365,6 @@ export default {
         .append("g")
         .attr("stroke", "#3d6fee")
         .attr("fill", "none")
-        // .attr("opacity", 0.5)
-        // .attr("stroke-opacity", 1)
         .attr("stroke-width", 1)
         .selectAll("rect")
         .data(this.cases)
@@ -477,6 +441,7 @@ export default {
       }
     },
     card: function () {
+      console.log("running card");
       /** select the .content-explore div and create a card for every case in the dataset,
        * give it a class based on Landmark status, set the background image and sizing
        */
@@ -551,9 +516,8 @@ export default {
         .style("width", "39%")
         .style("height", "12%")
         .on("click", (d) => {
-          console.log("data!!", d.srcElement.offsetParent.__data__.caseId);
-          this.keyIndicator = d.srcElement.offsetParent.__data__.usCite;
-          console.log("key Indicator", this.keyIndicator);
+          //set this.keyIndicator, bound to the CaseModal to relay the right case to display
+          this.keyIndicator = d.srcElement.__data__.caseId;
         });
 
       /** add courthouse icon to landmark cases */
@@ -637,9 +601,6 @@ export default {
         .text((d) => d.topTopic + ", " + (d.topicValue * 100).toFixed(1) + "%");
 
       this.svg;
-    },
-    caseModal: function () {
-      console.log("show me the case");
     },
   },
   created() {
@@ -747,40 +708,29 @@ export default {
     });
   },
   computed: {},
-  mounted() {
-    // this.showTopics();
-  },
+  mounted() {},
   updated() {},
 };
 </script>
 <style scoped>
 .header-explore {
-  height: 8vh; /* will this need a media query? */
+  height: 8vh;
   min-height: 30px;
   width: 100%;
   background-color: white;
   display: grid;
-  grid-template-columns: 2fr 2fr 1fr 2fr; /*auto auto auto auto auto /* 150px auto auto 150px*/
+  grid-template-columns: 2fr 2fr 1fr 2fr;
   align-content: center;
 }
 
 .header-relevant {
   font-size: 1.5em;
-  align-self: center; /** TODO: do this everything else that needs it */
+  align-self: center;
   padding-left: 10px;
 }
 .header-topic {
   align-self: center;
   background-image: "../assets/Iconography/blank-topic-button.svg";
-  /* 'url("https://raw.githubusercontent.com/freedom-of-speech-project/fos/vue-eva/src/assets/Iconography/blank-topic-button.svg")'
-    50% 50% no-repeat; */
-
-  /* background-image: "../assets/Iconography/blank-topic-button.svg"; */
-  /* background-size: contain; */
-  /* <img
-        style="position: relative; height: 75%"
-        src="../assets/Iconography/blank-topic-button.svg"
-      />; */
 }
 /* The container <div> - needed to position the dropdown content */
 .dropdown {
@@ -794,7 +744,6 @@ export default {
   position: absolute;
   background-color: none;
   min-width: 160px;
-  /* box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2); */
   z-index: 1;
 }
 
@@ -817,60 +766,50 @@ export default {
 }
 
 /* Change the background color of the dropdown button when the dropdown content is shown */
-.dropdown:hover .dropbtn {
-  background-color: #e6b996;
-}
 #dropdown1-1,
 #dropdown1-2,
 #dropdown1-3,
 #dropdown1-4 {
   position: absolute;
-  bottom: 70%;
-  left: -9px;
-  /* border: 2px solid red; */
+  bottom: 74%;
+  left: 1px;
   width: 95%;
   height: 25%;
   background: transparent;
 }
 #dropdown1-2 {
-  top: 18%;
-  /* border: 2px solid purple; */
+  top: 22%;
 }
 #dropdown1-3 {
-  top: 42%;
-  /* border: 2px solid blue; */
+  top: 45%;
 }
 #dropdown1-4 {
-  top: 65%;
-  /* border: 2px solid green; */
+  top: 70%;
 }
 
 #dropdown1-1:hover,
 #dropdown1-2:hover,
 #dropdown1-3:hover,
 #dropdown1-4:hover {
-  border: 2px solid #0d3fd2;
+  border: 2px solid #3d6fee;
 }
 
 /* wrapper for sidebar and content */
 .wrapper-explore {
   margin: 0;
   padding: 0;
-  top: 16.23vh; /** .header height + .header-explore height // IDEALLY we could add min-height: 70px so it matches the min heights but not sure how to do that rn*/
+  top: 16.23vh; /** .header height + .header-explore height */
   background-color: white;
   position: fixed;
   height: 84vh;
   width: 100%;
-  overflow: auto;
-  /* border: 1px solid gray; */
+  overflow-y: auto;
   display: grid;
   grid-template-columns: 3fr 8fr;
 }
 
 .sidebar {
-  /* border: 1px solid pink; */
   min-width: 200px;
-  /* max-width: 300px; */
   padding-top: 20px;
   padding-bottom: 20px;
   display: grid;
@@ -886,8 +825,6 @@ img.border-line {
 }
 
 #caret {
-  /* margin-left: 50%; */
-  /* border: 1px solid orange; */
   align-self: center;
   grid-column-start: 4;
   grid-column-end: 4;
@@ -895,25 +832,21 @@ img.border-line {
 
 /** full sidebar width */
 #longer {
-  width: 145%; /* TODO: figure this out */
-  /* border: 1px solid red; */
+  width: 145%;
   height: 25px;
 }
 
 #shorter {
   width: 0px;
-  /* border: 1px solid purple; */
 }
 
 /** sidebar list items */
 .sidebar-item {
   height: 40px;
-  /* border: 1px solid pink; */
 }
 
 .sidebar-item.text {
   padding-top: 5%;
-  /* border: 1px solid blue; */
   align-self: center;
   text-align: left;
   padding-left: 40px;
@@ -923,6 +856,37 @@ img.border-line {
 
 .sidebar-item-hidden {
   display: none;
+}
+
+.protect-hover {
+  display: none;
+}
+.mouseover {
+  cursor: pointer;
+}
+
+.tooltipL,
+.tooltipP {
+  position: absolute;
+  left: 150px;
+  top: 65px;
+  z-index: 9999;
+  background-size: contain;
+  background: no-repeat;
+  transform: scaleX(1);
+  max-width: 320px;
+  height: 100px;
+  padding: 3%;
+  padding-top: 2%;
+
+  color: black;
+}
+
+.tooltipL {
+  position: absolute;
+  left: 130px;
+  top: 0px;
+  z-index: 9999 !important;
 }
 
 .sidebar-item-hidden::after {
@@ -969,7 +933,6 @@ button {
   bottom: 0;
   background-color: #53605f;
   border: 3px solid #7f8887;
-
   -webkit-transition: 0.4s;
   transition: 0.4s;
 }
@@ -1010,14 +973,9 @@ input:checked + .slider:before {
   border-radius: 50%;
 }
 
-/** created topic divs */
-/* div.wrapper {
-  border: 2px solid green;
-} */
-
 .content-explore {
   background-color: #e6b996;
-  overflow: scroll;
+  overflow-y: scroll;
 }
 
 .card:hover {
