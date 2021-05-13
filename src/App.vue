@@ -334,8 +334,14 @@ export default {
   },
   created() {
     Promise.all([
-      d3.csv("/full-merged-tm-10-by-20-3.csv", d3.autoType),
-      d3.csv("/topicSubset2.csv", d3.autoType),
+      d3.csv(
+        "https://raw.githubusercontent.com/freedom-of-speech-project/fos/vue-eva/public/full-merged-tm-10-by-20-3.csv",
+        d3.autoType
+      ),
+      d3.csv(
+        "https://raw.githubusercontent.com/freedom-of-speech-project/fos/vue-eva/public/topicSubset2.csv",
+        d3.autoType
+      ),
     ]).then(([caseData, subsetData]) => {
       this.cases = caseData;
       // topic subset - honestly do I even need this
