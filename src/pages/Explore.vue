@@ -610,7 +610,7 @@ export default {
         d3.autoType
       ),
       d3.csv(
-        "https://raw.githubusercontent.com/freedom-of-speech-project/fos/draft-production/topicSubset2.csv",
+        "https://raw.githubusercontent.com/freedom-of-speech-project/fos/draft-production/public/topicSubset2.csv",
         d3.autoType
       ),
     ]).then(([caseData, subsetData]) => {
